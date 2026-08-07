@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Numele aplicației rămâne netradus: e un nume propriu. -->
+
+    <!--
+      Eticheta din selectorul de complications. Scurtă, ca să nu fie trunchiată pe ecranul mic,
+      și fără marca vendorului.
+    -->
+    <string name="complication_label">Glicemia</string>
+
+    <string name="age_just_now">chiar acum</string>
+    <plurals name="age_minutes_ago">
+        <item quantity="one">acum %d min</item>
+        <item quantity="few">acum %d min</item>
+        <item quantity="other">acum %d min</item>
+    </plurals>
+    <string name="age_no_recent_data">fără date recente</string>
+    <string name="age_may_be_out_of_date">poate fi depășită</string>
+
+    <string name="cd_glucose">Glicemie %1$s %2$s</string>
+    <string name="cd_no_reading">Nicio citire recentă de glicemie</string>
+    <string name="cd_out_of_date">citirea poate fi depășită</string>
+    <string name="unit_spoken_mgdl">miligrame pe decilitru</string>
+    <string name="unit_spoken_mmol">milimoli pe litru</string>
+
+    <string name="range_urgent_low">scăzut urgent</string>
+    <string name="range_low">scăzut</string>
+    <string name="range_high">ridicat</string>
+
+    <string name="trend_rising_rapidly">urcă rapid</string>
+    <string name="trend_rising">urcă</string>
+    <string name="trend_rising_slightly">urcă lent</string>
+    <string name="trend_steady">constant</string>
+    <string name="trend_falling_slightly">scade lent</string>
+    <string name="trend_falling">scade</string>
+    <string name="trend_falling_rapidly">scade rapid</string>
+    <string name="trend_unknown">trend necunoscut</string>
+</resources>

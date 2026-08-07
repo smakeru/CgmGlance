@@ -44,10 +44,12 @@ class WatchMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val store = WatchGlucoseStore(applicationContext)
+        val texts = WearTexts(applicationContext)
 
         setContent {
             MaterialTheme {
                 GlucoseScreen(
+                    texts = texts,
                     read = {
                         val payload = store.loadLatest()
                         val prefs = store.loadPrefs()
@@ -68,7 +70,10 @@ class WatchMainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun GlucoseScreen(read: () -> GlucoseDisplay) {
+private fun GlucoseScreen(
+    texts: WearTexts,
+    read: () -> GlucoseDisplay,
+) {
     var display by remember { mutableStateOf(read()) }
 
     // Re-read while the screen is on. The store is a local file and the screen is only alive
@@ -86,7 +91,7 @@ private fun GlucoseScreen(read: () -> GlucoseDisplay) {
             Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
-                .semantics { contentDescription = display.contentDescription },
+                .semantics { contentDescription = texts.describe(display) },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -104,7 +109,7 @@ private fun GlucoseScreen(read: () -> GlucoseDisplay) {
         )
 
         Text(
-            text = display.ageLabel,
+            text = texts.ageLabel(display),
             fontSize = SECONDARY_SIZE_SP.sp,
             color = COLOR_MUTED,
             modifier = Modifier.padding(top = 8.dp),

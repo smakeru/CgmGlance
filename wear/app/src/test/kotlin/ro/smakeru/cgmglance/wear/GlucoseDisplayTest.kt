@@ -52,7 +52,6 @@ class GlucoseDisplayTest {
         assertEquals("", shown.arrow)
         // The gauge empties before the digits do, because an arc reads as a fact about now.
         assertNull(shown.gaugeValue)
-        assertTrue(shown.contentDescription.contains("may be out of date"))
     }
 
     @Test
@@ -83,17 +82,6 @@ class GlucoseDisplayTest {
     }
 
     @Test
-    fun `the spoken description states value, range, trend and age`() {
-        val shown = display(ReadingFreshness.FRESH, range = GlucoseRange.LOW, ageMinutes = 3)
-
-        // For part of the intended audience this string is the entire app.
-        assertEquals(
-            "Glucose 112 milligrams per decilitre, low, rising slowly, 3 minutes ago",
-            shown.contentDescription,
-        )
-    }
-
-    @Test
     fun `an unknown trend simply has no arrow`() {
         assertEquals("", display(ReadingFreshness.FRESH, trend = TrendArrow.UNKNOWN).arrow)
     }
@@ -113,18 +101,13 @@ class GlucoseDisplayTest {
     }
 
     @Test
-    fun `the age label reads naturally at every scale`() {
-        assertEquals("just now", display(ReadingFreshness.FRESH, ageMinutes = 0).ageLabel)
-        assertEquals("1 min ago", display(ReadingFreshness.FRESH, ageMinutes = 1).ageLabel)
-        assertEquals("8 min ago", display(ReadingFreshness.AGING, ageMinutes = 8).ageLabel)
-    }
+    fun `the structured fields the wording is built from survive`() {
+        // GlucoseDisplay carries no language; WearTextsTest covers how these are said.
+        val aging = display(ReadingFreshness.AGING, ageMinutes = 8)
 
-    @Test
-    fun `a stale reading says so instead of stating an age`() {
-        // Past this point the exact number of minutes is beside the point: what the user needs
-        // to know is that the value may no longer describe the present.
-        assertEquals("may be out of date", display(ReadingFreshness.STALE, ageMinutes = 14).ageLabel)
-        assertEquals("no recent data", display(ReadingFreshness.NO_DATA).ageLabel)
+        assertEquals(8L, aging.ageMinutes)
+        assertEquals(TrendArrow.RISING_SLIGHTLY, aging.trend)
+        assertEquals(GlucoseUnit.MG_DL, aging.unit)
     }
 
     @Test

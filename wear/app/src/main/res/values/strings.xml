@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CGM Glance</string>
+    <!-- A proper noun: deliberately the same in every language. -->
+    <string name="app_name" translatable="false">CGM Glance</string>
 
     <!--
       Shown in the watch face editor's complication picker. Kept short so it is not truncated,
@@ -8,4 +9,35 @@
       route to a takedown.
     -->
     <string name="complication_label">My CGM</string>
+
+    <string name="age_just_now">just now</string>
+    <plurals name="age_minutes_ago">
+        <item quantity="one">%d min ago</item>
+        <item quantity="other">%d min ago</item>
+    </plurals>
+    <string name="age_no_recent_data">no recent data</string>
+    <string name="age_may_be_out_of_date">may be out of date</string>
+
+    <!--
+      Spoken by a screen reader. Not a nicety: long-standing diabetes carries a high rate of
+      visual impairment, so for part of the intended audience this string is the entire app.
+    -->
+    <string name="cd_glucose">Glucose %1$s %2$s</string>
+    <string name="cd_no_reading">No recent glucose reading</string>
+    <string name="cd_out_of_date">reading may be out of date</string>
+    <string name="unit_spoken_mgdl">milligrams per decilitre</string>
+    <string name="unit_spoken_mmol">millimoles per litre</string>
+
+    <string name="range_urgent_low">urgent low</string>
+    <string name="range_low">low</string>
+    <string name="range_high">high</string>
+
+    <string name="trend_rising_rapidly">rising rapidly</string>
+    <string name="trend_rising">rising</string>
+    <string name="trend_rising_slightly">rising slowly</string>
+    <string name="trend_steady">steady</string>
+    <string name="trend_falling_slightly">falling slowly</string>
+    <string name="trend_falling">falling</string>
+    <string name="trend_falling_rapidly">falling rapidly</string>
+    <string name="trend_unknown">trend unknown</string>
 </resources>

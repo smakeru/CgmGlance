@@ -1,4 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CGM Glance</string>
+    <!-- A proper noun: deliberately the same in every language. -->
+    <string name="app_name" translatable="false">CGM Glance</string>
+
+    <!-- Status screen: the verdict card. One headline and one explanation per state. -->
+    <string name="health_ok_title">Working</string>
+    <string name="health_ok_body">Readings are arriving and the watch has the latest one.</string>
+    <string name="health_no_permission_title">Needs notification access</string>
+    <string name="health_no_permission_body">This app reads the value from the LinX notification, so it needs permission to see notifications. It ignores everything that is not from LinX.</string>
+    <string name="health_waiting_title">Waiting for the first reading</string>
+    <string name="health_waiting_body">Permission is granted. Open LinX so it refreshes its notification; this usually takes under a minute.</string>
+    <string name="health_not_receiving_title">Not receiving readings</string>
+    <string name="health_not_receiving_body">Nothing has arrived recently. Check that LinX is running and still connected to the sensor.</string>
+    <string name="health_watch_title">Watch not reachable</string>
+    <string name="health_watch_body">Readings are arriving, but the watch is out of range or switched off. It will catch up on its own once it reconnects.</string>
+
+    <string name="action_open_notification_access">Open notification access</string>
+
+    <!-- Shown only while the parser is running on its positional fallback. -->
+    <string name="fallback_title">Reading via fallback</string>
+    <string name="fallback_body">The LinX layout changed, so values are being found by position rather than by name. Still working, but it needs a look before the fallback stops matching too.</string>
+
+    <string name="details_heading">Details</string>
+    <string name="detail_source">Source</string>
+    <string name="detail_permission">Notification access</string>
+    <string name="detail_last_reading">Last reading</string>
+    <string name="detail_sent">Sent to watch</string>
+    <string name="detail_watch">Watch</string>
+    <string name="value_granted">Granted</string>
+    <string name="value_not_granted">Not granted</string>
+    <string name="value_connected">Connected</string>
+    <string name="value_not_reachable">Not reachable</string>
+    <string name="value_none_yet">None yet</string>
+    <string name="value_not_yet">Not yet</string>
+
+    <string name="age_just_now">just now</string>
+    <plurals name="age_minutes_ago">
+        <item quantity="one">%d min ago</item>
+        <item quantity="other">%d min ago</item>
+    </plurals>
+    <!-- "112 mg/dL, 3 min ago" -->
+    <string name="reading_with_age">%1$d %2$s, %3$s</string>
+    <string name="sent_just_now">Just now</string>
+
+    <string name="action_settings">Target range and unit</string>
+    <string name="disclaimer">Shows a value the official app has already computed. Not a medical device: never use it for treatment decisions, and always confirm with the official app or a meter.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Target range</string>
+    <string name="settings_subtitle">Used for colour and wording only. This app never alerts on these values — alarms stay with the official app.</string>
+    <string name="field_urgent_low">Urgent low</string>
+    <string name="field_low">Low</string>
+    <string name="field_high">High</string>
+    <string name="settings_units_note">All values in mg/dL.</string>
+    <string name="settings_display_unit">Display unit</string>
+    <string name="settings_invalid">Urgent low must be below low, and low below high. All three must be values a sensor can report.</string>
+    <string name="action_save">Save</string>
+    <string name="action_back">Back</string>
+    <string name="action_reset">Reset to 55 / 70 / 180</string>
+
+    <!-- Notifications about this app, never about glucose. -->
+    <string name="channel_status_name">App status</string>
+    <string name="channel_status_description">Tells you when CGM Glance has stopped receiving readings.</string>
+    <string name="notif_no_permission_title">Notification access is off</string>
+    <string name="notif_no_permission_text">CGM Glance cannot read glucose without it. Tap to fix.</string>
+    <string name="notif_not_receiving_title">Not receiving readings</string>
+    <string name="notif_not_receiving_text">Nothing has arrived for a while. Check that LinX is running and connected to the sensor.</string>
 </resources>

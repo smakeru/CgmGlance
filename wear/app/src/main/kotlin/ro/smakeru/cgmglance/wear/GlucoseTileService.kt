@@ -30,6 +30,7 @@ class GlucoseTileService : TileService() {
     private val clock = Clock { System.currentTimeMillis() }
     private val freshnessPolicy = FreshnessPolicy.default
     private val store by lazy { WatchGlucoseStore(applicationContext) }
+    private val texts by lazy { WearTexts(applicationContext) }
 
     override fun onTileRequest(requestParams: RequestBuilders.TileRequest): ListenableFuture<TileBuilders.Tile> {
         val payload = store.loadLatest()
@@ -112,7 +113,7 @@ class GlucoseTileService : TileService() {
                     .setSemantics(
                         ModifiersBuilders.Semantics
                             .Builder()
-                            .setContentDescription(display.contentDescription)
+                            .setContentDescription(texts.describe(display))
                             .build(),
                     ).setClickable(
                         // Tapping the tile opens the watch app, matching the complication.

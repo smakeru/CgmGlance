@@ -35,6 +35,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.delay
@@ -111,7 +114,7 @@ private fun StatusScreen(
 ) {
     var watchConnected by remember { mutableStateOf(false) }
     var status by remember { mutableStateOf(source.snapshot(watchConnected = false)) }
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
 
     // Polled rather than observed. Nothing here changes faster than the eye, the screen is only
     // alive while the user is looking at it, and a push pipeline for four fields would be more
@@ -136,7 +139,7 @@ private fun StatusScreen(
                     .padding(20.dp)
                     .verticalScroll(rememberScrollState()),
         ) {
-            Text(text = "CGM Glance", style = MaterialTheme.typography.headlineMedium)
+            Text(text = stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
             Spacer(Modifier.height(16.dp))
 
             HealthCard(status, onGrantPermission)
@@ -147,26 +150,26 @@ private fun StatusScreen(
             }
 
             Spacer(Modifier.height(24.dp))
-            Text(text = "Details", style = MaterialTheme.typography.titleMedium)
+            Text(text = stringResource(R.string.details_heading), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
 
-            DetailRow("Source", "LinX")
-            DetailRow("Notification access", if (status.permissionGranted) "Granted" else "Not granted")
-            DetailRow("Last reading", describeReading(status))
-            DetailRow("Sent to watch", describeLastSent(status))
-            DetailRow("Watch", if (status.watchConnected) "Connected" else "Not reachable")
-
-            Spacer(Modifier.height(16.dp))
-            TextButton(onClick = onOpenSettings) { Text("Target range and unit") }
-
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text =
-                    "Shows a value the official app has already computed. Not a medical device: " +
-                        "never use it for treatment decisions, and always confirm with the " +
-                        "official app or a meter.",
-                style = MaterialTheme.typography.bodySmall,
+            DetailRow(stringResource(R.string.detail_source), "LinX")
+            DetailRow(
+                stringResource(R.string.detail_permission),
+                stringResource(if (status.permissionGranted) R.string.value_granted else R.string.value_not_granted),
             )
+            DetailRow(stringResource(R.string.detail_last_reading), describeReading(status))
+            DetailRow(stringResource(R.string.detail_sent), describeLastSent(status))
+            DetailRow(
+                stringResource(R.string.detail_watch),
+                stringResource(if (status.watchConnected) R.string.value_connected else R.string.value_not_reachable),
+            )
+
+            Spacer(Modifier.height(16.dp))
+            TextButton(onClick = onOpenSettings) { Text(stringResource(R.string.action_settings)) }
+
+            Spacer(Modifier.height(16.dp))
+            Text(text = stringResource(R.string.disclaimer), style = MaterialTheme.typography.bodySmall)
         }
     }
 }
@@ -176,20 +179,22 @@ private fun HealthCard(
     status: PhoneStatus,
     onGrantPermission: () -> Unit,
 ) {
-    val (headline, explanation) = describeHealth(status.health)
+    val (titleRes, bodyRes) = textsFor(status.health)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = colorFor(status.health)),
     ) {
         Column(Modifier.padding(20.dp)) {
-            Text(text = headline, style = MaterialTheme.typography.titleLarge, color = Color.Black)
+            Text(stringResource(titleRes), style = MaterialTheme.typography.titleLarge, color = Color.Black)
             Spacer(Modifier.height(6.dp))
-            Text(text = explanation, style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+            Text(stringResource(bodyRes), style = MaterialTheme.typography.bodyMedium, color = Color.Black)
 
             if (status.health == PhoneHealth.NO_PERMISSION) {
                 Spacer(Modifier.height(16.dp))
-                Button(onClick = onGrantPermission) { Text("Open notification access") }
+                Button(onClick = onGrantPermission) {
+                    Text(stringResource(R.string.action_open_notification_access))
+                }
             }
         }
     }
@@ -202,13 +207,14 @@ private fun AttentionCard() {
         colors = CardDefaults.cardColors(containerColor = COLOR_ATTENTION),
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text(text = "Reading via fallback", style = MaterialTheme.typography.titleMedium, color = Color.Black)
+            Text(
+                stringResource(R.string.fallback_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.Black,
+            )
             Spacer(Modifier.height(4.dp))
             Text(
-                text =
-                    "The LinX layout changed, so values are being found by position rather than " +
-                        "by name. Still working, but it needs a look before the fallback stops " +
-                        "matching too.",
+                stringResource(R.string.fallback_body),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Black,
             )
@@ -231,35 +237,13 @@ private fun DetailRow(
     }
 }
 
-private fun describeHealth(health: PhoneHealth): Pair<String, String> =
+private fun textsFor(health: PhoneHealth): Pair<Int, Int> =
     when (health) {
-        PhoneHealth.OK -> {
-            "Working" to "Readings are arriving and the watch has the latest one."
-        }
-
-        PhoneHealth.NO_PERMISSION -> {
-            "Needs notification access" to
-                "This app reads the value from the LinX notification, so it needs permission to " +
-                "see notifications. It ignores everything that is not from LinX."
-        }
-
-        PhoneHealth.WAITING_FOR_FIRST_READING -> {
-            "Waiting for the first reading" to
-                "Permission is granted. Open LinX so it refreshes its notification; this usually " +
-                "takes under a minute."
-        }
-
-        PhoneHealth.NOT_RECEIVING -> {
-            "Not receiving readings" to
-                "Nothing has arrived recently. Check that LinX is running and still connected to " +
-                "the sensor."
-        }
-
-        PhoneHealth.WATCH_UNREACHABLE -> {
-            "Watch not reachable" to
-                "Readings are arriving, but the watch is out of range or switched off. It will " +
-                "catch up on its own once it reconnects."
-        }
+        PhoneHealth.OK -> R.string.health_ok_title to R.string.health_ok_body
+        PhoneHealth.NO_PERMISSION -> R.string.health_no_permission_title to R.string.health_no_permission_body
+        PhoneHealth.WAITING_FOR_FIRST_READING -> R.string.health_waiting_title to R.string.health_waiting_body
+        PhoneHealth.NOT_RECEIVING -> R.string.health_not_receiving_title to R.string.health_not_receiving_body
+        PhoneHealth.WATCH_UNREACHABLE -> R.string.health_watch_title to R.string.health_watch_body
     }
 
 private fun colorFor(health: PhoneHealth): Color =
@@ -269,25 +253,35 @@ private fun colorFor(health: PhoneHealth): Color =
         PhoneHealth.NO_PERMISSION, PhoneHealth.NOT_RECEIVING -> COLOR_PROBLEM
     }
 
+@Composable
 private fun describeReading(status: PhoneStatus): String {
-    val reading = status.lastReading ?: return "None yet"
-    val age =
-        when {
-            status.ageMinutes == null -> ""
-            status.ageMinutes <= 0L -> ", just now"
-            status.ageMinutes == 1L -> ", 1 min ago"
-            else -> ", ${status.ageMinutes} min ago"
-        }
-    return "${reading.mgdl} ${GlucoseUnit.MG_DL.label}$age"
+    val reading = status.lastReading ?: return stringResource(R.string.value_none_yet)
+    return stringResource(
+        R.string.reading_with_age,
+        reading.mgdl,
+        GlucoseUnit.MG_DL.label,
+        ageText(status.ageMinutes),
+    )
 }
 
+@Composable
 private fun describeLastSent(status: PhoneStatus): String {
-    val sent = status.lastSentMillis ?: return "Not yet"
-    val minutes = (System.currentTimeMillis() - sent) / 60_000L
-    return when {
-        minutes <= 0L -> "Just now"
-        minutes == 1L -> "1 min ago"
-        else -> "$minutes min ago"
+    val sent = status.lastSentMillis ?: return stringResource(R.string.value_not_yet)
+    val minutes = ((System.currentTimeMillis() - sent) / 60_000L).toInt()
+    return if (minutes <= 0) {
+        stringResource(R.string.sent_just_now)
+    } else {
+        pluralStringResource(R.plurals.age_minutes_ago, minutes, minutes)
+    }
+}
+
+@Composable
+private fun ageText(ageMinutes: Long?): String {
+    val minutes = ageMinutes?.toInt() ?: return stringResource(R.string.age_just_now)
+    return if (minutes <= 0) {
+        stringResource(R.string.age_just_now)
+    } else {
+        pluralStringResource(R.plurals.age_minutes_ago, minutes, minutes)
     }
 }
 

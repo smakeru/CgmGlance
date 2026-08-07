@@ -11,6 +11,7 @@ import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import ro.smakeru.cgmglance.domain.glucose.FreshnessPolicy
+import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
 import ro.smakeru.cgmglance.domain.glucose.ReadingFreshness
 import ro.smakeru.cgmglance.domain.glucose.TrendArrow
 import ro.smakeru.cgmglance.domain.time.Clock
@@ -29,6 +30,7 @@ class GlucoseComplicationService : SuspendingComplicationDataSourceService() {
     private val clock = Clock { System.currentTimeMillis() }
     private val freshnessPolicy = FreshnessPolicy.default
     private val store by lazy { WatchGlucoseStore(applicationContext) }
+    private val texts by lazy { WearTexts(applicationContext) }
 
     /**
      * Opens the watch app when the complication is tapped.
@@ -58,12 +60,12 @@ class GlucoseComplicationService : SuspendingComplicationDataSourceService() {
                 GlucoseDisplay(
                     value = "112",
                     arrow = "↗",
-                    unitLabel = "mg/dL",
+                    unit = GlucoseUnit.MG_DL,
                     range = null,
                     freshness = ReadingFreshness.FRESH,
-                    contentDescription = "Glucose 112 milligrams per decilitre, rising slowly",
+                    trend = TrendArrow.RISING_SLIGHTLY,
+                    ageMinutes = 0,
                     gaugeValue = 112f,
-                    ageLabel = "just now",
                     // Deliberately the value the watch face editor shows before anything has
                     // synced. A blank entry in the picker does not get picked.
                 ),
@@ -95,7 +97,7 @@ class GlucoseComplicationService : SuspendingComplicationDataSourceService() {
         display: GlucoseDisplay,
         type: ComplicationType,
     ): ComplicationData? {
-        val description = PlainComplicationText.Builder(display.contentDescription).build()
+        val description = PlainComplicationText.Builder(texts.describe(display)).build()
 
         return when (type) {
             // The common case. The arrow rides in the text rather than the title, because a
