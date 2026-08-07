@@ -1,0 +1,52 @@
+# ---------------------------------------------------------------------------
+# Health data safety — read this before adding an exception below.
+#
+# Device probes and screenshots taken during development contain the
+# maintainer's real glucose values. Those are special category health data
+# under GDPR and must never enter version control, not even on a branch that
+# is later deleted: git keeps the blob.
+#
+# Test fixtures must use invented values with the real *format*.
+# ---------------------------------------------------------------------------
+/probe/
+/docs/probe/
+shade*.xml
+shade*.png
+dumpsys*.txt
+*.probe.xml
+*.probe.png
+*.dump.txt
+
+# --- Gradle ----------------------------------------------------------------
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+local.properties
+
+# --- Android ---------------------------------------------------------------
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+/captures/
+.cxx/
+release/
+
+# --- Signing — never commit keys or their passwords ------------------------
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+
+# --- IDE -------------------------------------------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+.kotlin/
+
+# --- OS --------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini

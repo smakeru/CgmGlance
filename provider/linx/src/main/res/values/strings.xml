@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shown in the system's notification access screen, where the user grants the permission. -->
+    <string name="linx_listener_label">CGM Glance — read LinX glucose</string>
+</resources>

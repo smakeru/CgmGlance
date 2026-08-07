@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CGM Glance</string>
+
+    <!--
+      Shown in the watch face editor's complication picker. Kept short so it is not truncated,
+      and free of any vendor trademark: naming another company's product here is the fastest
+      route to a takedown.
+    -->
+    <string name="complication_label">My CGM</string>
+</resources>

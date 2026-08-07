@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Minimal platform theme. Compose supplies the real styling; this exists only so the window
+      has no action bar above the composed content. A platform theme rather than a Material
+      Components one keeps the AppCompat dependency out of the build for a single attribute.
+    -->
+    <style name="Theme.CgmGlance" parent="android:Theme.DeviceDefault.NoActionBar" />
+</resources>

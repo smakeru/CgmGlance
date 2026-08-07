@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Placeholder preview for the tile picker.
+
+  A rendered screenshot belongs here before any public release; Play's Wear review checks that
+  this resource exists, and the picker shows it to the user before they add the tile. Kept as a
+  vector for now so the manifest reference resolves and the build stays honest about what is
+  still missing.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <path
+        android:fillColor="#1B1B1B"
+        android:pathData="M0,0h96v96h-96z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,30m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,52h40v6h-40z" />
+</vector>

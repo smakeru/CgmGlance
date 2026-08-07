@@ -1,0 +1,12 @@
+# The build enforces LF via .editorconfig and ktlint. Normalising here as well means a
+# Windows checkout cannot reintroduce CRLF and fail spotlessCheck on the next commit.
+* text=auto eol=lf
+
+*.bat text eol=crlf
+gradlew text eol=lf
+
+*.jar binary
+*.png binary
+*.webp binary
+*.keystore binary
+*.jks binary
