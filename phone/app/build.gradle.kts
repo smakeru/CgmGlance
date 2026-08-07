@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     // AGP 9 compiles Kotlin itself; applying `org.jetbrains.kotlin.android` on top is now
     // a hard error. See https://developer.android.com/build/migrate-to-built-in-kotlin
@@ -5,6 +7,16 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// Release signing, when a key is available.
+//
+// The keystore and its passwords live outside version control, so a checkout without them —
+// CI, or anyone else's machine — still builds; it simply produces an unsigned release APK
+// instead of failing. Both apps must use the *same* key: the Wear Data Layer only pairs nodes
+// sharing an application id and a signing certificate, and a mismatch fails silently.
+val keystoreProperties =
+    rootProject.file("keystore.properties").takeIf { it.exists() }?.let { file ->
+        Properties().apply { file.inputStream().use { load(it) } }
+    }
 android {
     namespace = "ro.smakeru.cgmglance.phone"
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -20,8 +32,20 @@ android {
         versionName = "0.1.0"
     }
 
+    signingConfigs {
+        keystoreProperties?.let { props ->
+            create("release") {
+                storeFile = file(props.getProperty("storeFile"))
+                storePassword = props.getProperty("storePassword")
+                keyAlias = props.getProperty("keyAlias")
+                keyPassword = props.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
