@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      Required, not optional. A single APK cannot serve both watches and phones, so this
+      declaration is what keeps the wear APK off phones and the phone APK off watches.
+    -->
+    <uses-feature
+        android:name="android.hardware.type.watch"
+        android:required="true" />
+
+    <application
+        android:name=".CgmGlanceWearApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true">
+
+        <!--
+          The watch cannot obtain glucose without the phone: the only data source is the
+          official CGM app, which runs there. This flips to true only if a source that
+          works without a phone is ever added.
+        -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="false" />
+
+        <!--
+          The watch app. Also the destination of a tap on the complication, which is why it is
+          exported and carries a launcher filter.
+        -->
+        <activity
+            android:name=".WatchMainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:taskAffinity="">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Receives payloads from the phone over the Data Layer. -->
+        <service
+            android:name=".WearDataListenerService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data
+                    android:host="*"
+                    android:pathPrefix="/cgm"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
+
+        <!--
+          The complication itself. `android:label` is what the user sees in the watch face
+          editor, so it is short and carries no vendor trademark.
+        -->
+        <service
+            android:name=".GlucoseComplicationService"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/complication_label"
+            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER">
+            <intent-filter>
+                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+                android:value="SHORT_TEXT,LONG_TEXT,RANGED_VALUE" />
+
+            <!--
+              Zero means push-only. The platform's minimum polling period is five minutes: it
+              would cost battery on every tick regardless of whether anything changed, and
+              still lag a new reading by up to that long. Updates are requested on arrival
+              instead, by WearDataListenerService.
+            -->
+            <meta-data
+                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+                android:value="0" />
+        </service>
+
+        <!-- The tile: one swipe from the watch face, no complication slot needed. -->
+        <service
+            android:name=".GlucoseTileService"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+
+            <!-- Play's Wear review checks for a preview; its absence is a common rejection. -->
+            <meta-data
+                android:name="androidx.wear.tiles.PREVIEW"
+                android:resource="@drawable/tile_preview" />
+        </service>
+
+    </application>
+
+</manifest>

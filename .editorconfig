@@ -1,0 +1,25 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{kt,kts}]
+max_line_length = 120
+# Test names are written as backticked sentences.
+ktlint_standard_function-naming = disabled
+
+[*.gradle.kts]
+# Build files are declarative configuration. Forcing `libs.versions.x.get().toInt()` onto
+# four lines makes them measurably harder to read for no correctness benefit.
+ktlint_standard_chain-method-continuation = disabled
+
+[*.{yml,yaml,json,toml,xml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false

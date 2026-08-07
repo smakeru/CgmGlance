@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      This APK deliberately does not declare `android.hardware.type.watch`. Declaring it with
+      required="false" is rejected by lint: a single APK cannot serve both watches and phones.
+      Watches are served by the separate wear module, which declares the feature as required.
+    -->
+
+    <!--
+      Only for telling the user this app has stopped working. Never for glucose: no alarm for a
+      low, no vibration for a high. That boundary is what keeps this a display mirror.
+    -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:name=".CgmGlanceApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CgmGlance">
+
+        <!--
+          The launcher entry. Without it the app cannot be opened, a revoked permission cannot
+          be restored from inside it, and a force-stopped app can never be revived — Android
+          will not start a stopped app from a background trigger.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Fires when readings have been silent for longer than a working system ever is. -->
+        <receiver
+            android:name=".SilenceWatchdogReceiver"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

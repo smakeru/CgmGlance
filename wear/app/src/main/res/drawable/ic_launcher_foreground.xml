@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A sensor ring with a trend line rising through it.
+
+  Everything sits inside the adaptive icon's 72dp safe zone, so no launcher mask can clip it.
+  No text and no fine detail: the icon has to survive being drawn at 48dp in a launcher and at
+  24dp in a notification shade, where anything thinner than about 5 units disappears.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Sensor ring. Drawn as two circles with evenOdd so it stays a ring at any scale. -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M54,24 A30,30 0 1,0 54,84 A30,30 0 1,0 54,24 Z M54,31 A23,23 0 1,1 54,77 A23,23 0 1,1 54,31 Z" />
+
+    <!-- Trend line. -->
+    <path
+        android:pathData="M40,64 L50,54 L57,59 L67,47"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="6" />
+
+    <!-- Arrowhead, as a corner rather than a triangle so it matches the line weight. -->
+    <path
+        android:pathData="M59,47 L67,47 L67,55"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="6" />
+
+</vector>
