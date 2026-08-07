@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Numele aplicației rămâne netradus: e un nume propriu. -->
+
+    <string name="health_ok_title">Funcționează</string>
+    <string name="health_ok_body">Citirile sosesc, iar ceasul o are pe cea mai recentă.</string>
+    <string name="health_no_permission_title">Are nevoie de acces la notificări</string>
+    <string name="health_no_permission_body">Aplicația citește valoarea din notificarea LinX, deci are nevoie de permisiunea de a vedea notificări. Ignoră tot ce nu vine de la LinX.</string>
+    <string name="health_waiting_title">Aștept prima citire</string>
+    <string name="health_waiting_body">Permisiunea e acordată. Deschide LinX ca să-și reîmprospăteze notificarea; de obicei durează sub un minut.</string>
+    <string name="health_not_receiving_title">Nu primesc citiri</string>
+    <string name="health_not_receiving_body">Nu a sosit nimic de ceva vreme. Verifică dacă LinX rulează și mai e conectat la senzor.</string>
+    <string name="health_watch_title">Ceasul nu e accesibil</string>
+    <string name="health_watch_body">Citirile sosesc, dar ceasul e în afara razei sau oprit. Se va sincroniza singur când revine.</string>
+
+    <string name="action_open_notification_access">Deschide accesul la notificări</string>
+
+    <string name="fallback_title">Citire prin metoda de rezervă</string>
+    <string name="fallback_body">Layout-ul LinX s-a schimbat, deci valorile sunt găsite după poziție, nu după nume. Încă funcționează, dar are nevoie de o verificare înainte să nu mai prindă nici metoda de rezervă.</string>
+
+    <string name="details_heading">Detalii</string>
+    <string name="detail_source">Sursă</string>
+    <string name="detail_permission">Acces la notificări</string>
+    <string name="detail_last_reading">Ultima citire</string>
+    <string name="detail_sent">Trimis la ceas</string>
+    <string name="detail_watch">Ceas</string>
+    <string name="value_granted">Acordat</string>
+    <string name="value_not_granted">Neacordat</string>
+    <string name="value_connected">Conectat</string>
+    <string name="value_not_reachable">Inaccesibil</string>
+    <string name="value_none_yet">Încă niciuna</string>
+    <string name="value_not_yet">Încă nu</string>
+
+    <string name="age_just_now">chiar acum</string>
+    <!--
+      Româna are trei forme: 1 minut, 2-19 minute, 20+ de minute. Regulile CLDR pentru română
+      acoperă exact asta prin one / few / other.
+    -->
+    <plurals name="age_minutes_ago">
+        <item quantity="one">acum %d minut</item>
+        <item quantity="few">acum %d minute</item>
+        <item quantity="other">acum %d de minute</item>
+    </plurals>
+    <string name="reading_with_age">%1$d %2$s, %3$s</string>
+    <string name="sent_just_now">Chiar acum</string>
+
+    <string name="action_settings">Interval țintă și unitate</string>
+    <string name="disclaimer">Afișează o valoare pe care aplicația oficială a calculat-o deja. Nu e dispozitiv medical: nu o folosi niciodată pentru decizii de tratament și confirmă întotdeauna cu aplicația oficială sau cu un glucometru.</string>
+
+    <string name="settings_title">Interval țintă</string>
+    <string name="settings_subtitle">Folosit doar pentru culoare și formulare. Aplicația nu alertează niciodată pe baza acestor valori — alarmele rămân la aplicația oficială.</string>
+    <string name="field_urgent_low">Scăzut urgent</string>
+    <string name="field_low">Scăzut</string>
+    <string name="field_high">Ridicat</string>
+    <string name="settings_units_note">Toate valorile în mg/dL.</string>
+    <string name="settings_display_unit">Unitate de afișare</string>
+    <string name="settings_invalid">Scăzut urgent trebuie să fie sub scăzut, iar scăzut sub ridicat. Toate trei trebuie să fie valori pe care un senzor le poate raporta.</string>
+    <string name="action_save">Salvează</string>
+    <string name="action_back">Înapoi</string>
+    <string name="action_reset">Revino la 55 / 70 / 180</string>
+
+    <string name="channel_status_name">Starea aplicației</string>
+    <string name="channel_status_description">Te anunță când CGM Glance nu mai primește citiri.</string>
+    <string name="notif_no_permission_title">Accesul la notificări e oprit</string>
+    <string name="notif_no_permission_text">CGM Glance nu poate citi glicemia fără el. Apasă pentru a rezolva.</string>
+    <string name="notif_not_receiving_title">Nu primesc citiri</string>
+    <string name="notif_not_receiving_text">Nu a sosit nimic de ceva vreme. Verifică dacă LinX rulează și e conectat la senzor.</string>
+</resources>

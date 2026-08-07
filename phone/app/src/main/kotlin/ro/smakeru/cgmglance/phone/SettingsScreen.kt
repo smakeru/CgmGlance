@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
@@ -64,24 +65,20 @@ fun SettingsScreen(
                 .padding(20.dp)
                 .verticalScroll(rememberScrollState()),
     ) {
-        Text("Target range", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(4.dp))
-        Text(
-            "Used for colour and wording only. This app never alerts on these values — " +
-                "alarms stay with the official app.",
-            style = MaterialTheme.typography.bodySmall,
-        )
+        Text(stringResource(R.string.settings_subtitle), style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(20.dp))
 
-        NumberField("Urgent low", urgentLow) { urgentLow = it }
-        NumberField("Low", low) { low = it }
-        NumberField("High", high) { high = it }
+        NumberField(stringResource(R.string.field_urgent_low), urgentLow) { urgentLow = it }
+        NumberField(stringResource(R.string.field_low), low) { low = it }
+        NumberField(stringResource(R.string.field_high), high) { high = it }
 
         Spacer(Modifier.height(4.dp))
-        Text("All values in mg/dL.", style = MaterialTheme.typography.bodySmall)
+        Text(stringResource(R.string.settings_units_note), style = MaterialTheme.typography.bodySmall)
 
         Spacer(Modifier.height(24.dp))
-        Text("Display unit", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.settings_display_unit), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             GlucoseUnit.entries.forEach { candidate ->
@@ -96,8 +93,7 @@ fun SettingsScreen(
         Spacer(Modifier.height(28.dp))
         if (parsed == null) {
             Text(
-                "Urgent low must be below low, and low below high. All three must be values a " +
-                    "sensor can report.",
+                stringResource(R.string.settings_invalid),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
             )
@@ -108,9 +104,9 @@ fun SettingsScreen(
             Button(
                 onClick = { parsed?.let { onSave(it, unit) } },
                 enabled = parsed != null,
-            ) { Text("Save") }
+            ) { Text(stringResource(R.string.action_save)) }
 
-            TextButton(onClick = onBack) { Text("Back") }
+            TextButton(onClick = onBack) { Text(stringResource(R.string.action_back)) }
         }
 
         Spacer(Modifier.height(20.dp))
@@ -121,7 +117,7 @@ fun SettingsScreen(
                 low = defaults.lowMgdl.toString()
                 high = defaults.highMgdl.toString()
             },
-        ) { Text("Reset to 55 / 70 / 180") }
+        ) { Text(stringResource(R.string.action_reset)) }
     }
 }
 

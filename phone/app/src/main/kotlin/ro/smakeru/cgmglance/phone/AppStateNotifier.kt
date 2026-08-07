@@ -27,12 +27,12 @@ class AppStateNotifier(
         val channel =
             NotificationChannel(
                 CHANNEL_ID,
-                "App status",
+                context.getString(R.string.channel_status_name),
                 // Low: it appears in the shade without interrupting anything. This is
                 // information about the app, not about the person's glucose.
                 NotificationManager.IMPORTANCE_LOW,
             ).apply {
-                description = "Tells you when CGM Glance has stopped receiving readings."
+                description = context.getString(R.string.channel_status_description)
                 enableVibration(false)
                 setSound(null, null)
             }
@@ -41,17 +41,14 @@ class AppStateNotifier(
 
     /** Shows or replaces the problem notification. */
     fun showProblem(health: PhoneHealth) {
-        val (title, text) =
+        val (titleRes, textRes) =
             when (health) {
                 PhoneHealth.NO_PERMISSION -> {
-                    "Notification access is off" to
-                        "CGM Glance cannot read glucose without it. Tap to fix."
+                    R.string.notif_no_permission_title to R.string.notif_no_permission_text
                 }
 
                 PhoneHealth.NOT_RECEIVING -> {
-                    "Not receiving readings" to
-                        "Nothing has arrived for a while. Check that LinX is running and " +
-                        "connected to the sensor."
+                    R.string.notif_not_receiving_title to R.string.notif_not_receiving_text
                 }
 
                 // Nothing else is worth interrupting for: a watch out of range reconnects on
@@ -60,6 +57,9 @@ class AppStateNotifier(
                     return
                 }
             }
+
+        val title = context.getString(titleRes)
+        val text = context.getString(textRes)
 
         val notification =
             NotificationCompat
