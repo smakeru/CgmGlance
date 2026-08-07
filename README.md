@@ -112,6 +112,18 @@ port is only advertised while the pairing screen is open on the watch.
 Both apps share the application id `ro.smakeru.cgmglance`, which the Data Layer requires. Their
 `versionCode` values must still differ, so the wear module is offset by one million.
 
+## Licence
+
+[GPL-3.0](LICENSE).
+
+Chosen to match the diabetes open-source ecosystem this app sits next to — xDrip+ and
+AndroidAPS are both GPL — and because a copyleft licence keeps any fork of code that displays
+glucose open to the people relying on it.
+
+If a provider SPI is ever extracted into its own module, relicensing that module under Apache-2.0
+would be worth considering, so a sensor vendor could implement it without licensing friction.
+Today there is no such module and the whole repository is GPL.
+
 ## A note on test data
 
 Development involves reading real glucose values off a real device. Those values are special

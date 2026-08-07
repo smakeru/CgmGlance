@@ -14,25 +14,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
 
+      # Also restores the Gradle and build caches between runs.
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
-      # `build` runs compilation, the unit tests and spotlessCheck in one pass.
+      # `build` runs compilation, the unit tests, Android lint and spotlessCheck in one pass.
       - name: Build, test and check formatting
         run: ./gradlew build --stacktrace
 
-      - name: Upload test reports on failure
+      - name: Upload reports on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: test-reports
-          path: '**/build/reports/tests/**'
+          name: reports
+          path: |
+            **/build/reports/tests/**
+            **/build/reports/lint-results-*.html
           retention-days: 7
