@@ -92,4 +92,15 @@ library the project needs was verified to build against 36.
 Play Data Safety complication. Declaring "no data collected" is a feature.
 
 **Versions resolved from the live repositories, not from memory.** The ecosystem moved further
-than expected — Kotlin 2.4, AGP 9.3, JUnit 6 — and guessing would have cost hours.
+than expected — Kotlin 2.4, AGP 9.3, JUnit 6 — and guessing would have cost hours. The same
+applied to the CI action versions, which were three majors behind before anyone had run them.
+
+## Licensing
+
+**GPL-3.0 for the whole repository.** Matches xDrip+ and AndroidAPS, the projects this one sits
+beside, and keeps any fork of code that displays glucose open to the people relying on it.
+
+Rejected, for now, the split the original design proposed — Apache-2.0 for a provider SPI so a
+vendor could implement it without friction. That split presupposes an SPI module, and the
+simplified five-module structure has none. Worth revisiting if one is ever extracted; adding a
+second licence to a repository that does not need one is complexity without a beneficiary.
