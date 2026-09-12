@@ -41,9 +41,11 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.PermissionController
+import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.delay
 import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
+import ro.smakeru.cgmglance.sync.SyncContract
 
 /**
  * The only screen. Answers one question: is this working, and if not, what do I do?
@@ -126,10 +128,17 @@ private fun StatusScreen(
     // machinery than the problem deserves.
     LaunchedEffect(Unit) {
         while (true) {
+            // Asks which reachable nodes advertise our capability, rather than which nodes are
+            // paired. A paired watch with no app installed — or one signed with a different
+            // certificate, which the Data Layer refuses silently — answers the second question
+            // with "connected" while receiving nothing, and that reads as a working sync.
             Wearable
-                .getNodeClient(context)
-                .connectedNodes
-                .addOnSuccessListener { nodes -> watchConnected = nodes.isNotEmpty() }
+                .getCapabilityClient(context)
+                .getCapability(SyncContract.CAPABILITY_WATCH, CapabilityClient.FILTER_REACHABLE)
+                .addOnSuccessListener { info -> watchConnected = info.nodes.isNotEmpty() }
+                // Treated as unreachable rather than left at its previous value: a failed
+                // lookup that kept saying "connected" would be the same lie in a new place.
+                .addOnFailureListener { watchConnected = false }
             // Health Connect permission can be revoked from outside this app with no callback,
             // so it is re-read on the same tick rather than trusted from startup.
             onRefreshHealth()

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  What this watch advertises to the phone over the Data Layer.
+
+  Google Play services reads this array and announces the capability automatically; there is no
+  code on the watch side. The phone asks for it instead of asking for connected nodes, because
+  connected nodes answers a different question — it reports the Wear pairing, so a watch with no
+  app installed, or one signed with a different certificate, still counts as connected while
+  receiving nothing.
+
+  The string must stay byte-for-byte identical to SyncContract.CAPABILITY_WATCH. Nothing checks
+  that at build time, and a mismatch makes the phone report the watch as unreachable forever.
+-->
+<resources>
+    <string-array name="android_wear_capabilities">
+        <item>cgm_glance_watch</item>
+    </string-array>
+</resources>

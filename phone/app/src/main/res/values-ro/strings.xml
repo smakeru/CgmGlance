@@ -11,7 +11,7 @@
     <string name="health_not_receiving_title">Nu primesc citiri</string>
     <string name="health_not_receiving_body">Nu a sosit nimic de ceva vreme. Verifică dacă LinX rulează și mai e conectat la senzor.</string>
     <string name="health_watch_title">Ceasul nu e accesibil</string>
-    <string name="health_watch_body">Citirile sosesc, dar ceasul e în afara razei sau oprit. Se va sincroniza singur când revine.</string>
+    <string name="health_watch_body">Citirile sosesc, dar nu pot ajunge la niciun ceas pe care rulează CGM Glance. Poate fi în afara razei sau oprit — se sincronizează singur când revine. Dacă rămâne așa, verifică dacă aplicația e instalată pe ceas și dacă provine din aceeași compilare ca asta.</string>
 
     <string name="action_open_notification_access">Deschide accesul la notificări</string>
 

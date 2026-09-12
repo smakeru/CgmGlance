@@ -24,6 +24,21 @@ object SyncContract {
      */
     const val SCHEMA_VERSION: Int = 1
 
+    /**
+     * Advertised by the watch, looked for by the phone.
+     *
+     * The Data Layer only pairs nodes sharing an application id *and* a signing certificate,
+     * and a mismatch fails silently — nothing is thrown and nothing arrives. Asking the node
+     * client for connected nodes cannot detect that: it answers about the Wear pairing, so a
+     * watch with no app installed, or one signed with a different key, still counts as
+     * connected. A capability is only visible across a link that actually works, which makes
+     * "is the watch reachable" answerable instead of merely plausible.
+     *
+     * Declared on the watch in `wear/app/src/main/res/values/wear.xml`, which must hold this
+     * exact string. Changing it here alone silently breaks the check.
+     */
+    const val CAPABILITY_WATCH: String = "cgm_glance_watch"
+
     /** Latest reading. Overwritten in place; only ever one of these. */
     const val PATH_LATEST: String = "/cgm/latest"
 
