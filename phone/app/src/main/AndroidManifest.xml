@@ -13,6 +13,22 @@
     -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!--
+      Write only. This app never reads anything back out of Health Connect: the glucose it holds
+      came from the CGM app, and reading it back would only create a second, lagging copy of a
+      number it already has.
+    -->
+    <uses-permission android:name="android.permission.health.WRITE_BLOOD_GLUCOSE" />
+
+    <!--
+      Up to Android 13 Health Connect is a separate APK, and package visibility rules hide it
+      unless it is named here. Without this the availability check reports "not installed" on a
+      phone where it is installed and working.
+    -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
+
     <application
         android:name=".CgmGlanceApplication"
         android:allowBackup="false"
@@ -35,7 +51,32 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!--
+              Health Connect requires somewhere to send the user when they ask why this app
+              wants their glucose. Up to Android 13 it looks for this action; the status screen
+              is the honest answer, since it states what is written and how often.
+            -->
+            <intent-filter>
+                <action android:name="androidx.health.connect.action.SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
         </activity>
+
+        <!--
+          The same destination, under the name Android 14 and later looks for. A separate alias
+          rather than another filter on the activity: the platform matches on the alias, and
+          adding the category to the launcher activity itself would change how it is launched.
+        -->
+        <activity-alias
+            android:name=".HealthPermissionsRationaleAlias"
+            android:exported="true"
+            android:targetActivity=".MainActivity"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+            </intent-filter>
+        </activity-alias>
 
         <!-- Fires when readings have been silent for longer than a working system ever is. -->
         <receiver

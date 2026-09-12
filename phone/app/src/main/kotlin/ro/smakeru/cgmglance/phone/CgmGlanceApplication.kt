@@ -36,6 +36,10 @@ class CgmGlanceApplication : Application() {
     lateinit var preferences: PhonePreferencesStore
         private set
 
+    /** Writes glucose out to Health Connect. Read by the status screen to report on itself. */
+    lateinit var healthExporter: HealthConnectExporter
+        private set
+
     override fun onCreate() {
         super.onCreate()
 
@@ -49,7 +53,14 @@ class CgmGlanceApplication : Application() {
                 persistence = ReadingHistoryStore(this, clock),
             )
         sender = WatchSyncSender(this)
-        statusSource = PhoneStatusSource(this, repository, clock)
+        healthExporter =
+            HealthConnectExporter(
+                context = this,
+                clock = clock,
+                preferences = preferences,
+                settings = { preferences.loadHealthExportSettings() },
+            )
+        statusSource = PhoneStatusSource(this, repository, clock, healthExporter)
         notifier = AppStateNotifier(this).apply { ensureChannel() }
         watchdog = SilenceWatchdog(this)
 
@@ -73,8 +84,15 @@ class CgmGlanceApplication : Application() {
     fun updatePreferences(
         thresholds: RangeThresholds,
         unit: GlucoseUnit,
+        healthExport: HealthExportSettings,
     ) {
         preferences.save(thresholds, unit)
+
+        // Not sent to the watch, and there is nothing to send: the watch neither writes health
+        // data nor displays anything about it. Keeping it out of the payload is what stops this
+        // feature from reaching a device it has no business on.
+        preferences.saveHealthExportSettings(healthExport)
+
         sendPreferencesToWatch()
     }
 
@@ -102,6 +120,12 @@ class CgmGlanceApplication : Application() {
             }
 
             val outcome = repository.record(reading)
+
+            // Offered before the watch decision, and deliberately not inside it. The sync policy
+            // suppresses readings the watch would gain nothing from; the health log wants a
+            // steady sample every fifteen minutes regardless of whether the number moved.
+            healthExporter.offer(reading)
+
             val payload = outcome.payload ?: return
             sender.sendLatest(payload, outcome.urgent)
             statusSource.lastSentMillis = clock.nowMillis()

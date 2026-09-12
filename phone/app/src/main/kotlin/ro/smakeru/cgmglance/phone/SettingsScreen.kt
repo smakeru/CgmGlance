@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,13 +43,16 @@ import ro.smakeru.cgmglance.domain.glucose.RangeThresholds
 fun SettingsScreen(
     initialThresholds: RangeThresholds,
     initialUnit: GlucoseUnit,
-    onSave: (RangeThresholds, GlucoseUnit) -> Unit,
+    initialHealthExport: HealthExportSettings,
+    onSave: (RangeThresholds, GlucoseUnit, HealthExportSettings) -> Unit,
     onBack: () -> Unit,
 ) {
     var urgentLow by remember { mutableStateOf(initialThresholds.urgentLowMgdl.toString()) }
     var low by remember { mutableStateOf(initialThresholds.lowMgdl.toString()) }
     var high by remember { mutableStateOf(initialThresholds.highMgdl.toString()) }
     var unit by remember { mutableStateOf(initialUnit) }
+    var healthEnabled by remember { mutableStateOf(initialHealthExport.enabled) }
+    var healthInterval by remember { mutableStateOf(initialHealthExport.intervalMinutes.toString()) }
 
     // The domain refuses an inconsistent set outright rather than reordering it, so the button
     // is simply disabled until the three numbers make sense together.
@@ -57,6 +62,16 @@ fun SettingsScreen(
             lowMgdl = low.toIntOrNull() ?: -1,
             highMgdl = high.toIntOrNull() ?: -1,
         )
+
+    // Validated the same way, and for the same reason: Save stays disabled rather than quietly
+    // storing an interval this build will not honour. Only checked while the export is on —
+    // a stale number in a disabled field must not block saving the target range.
+    val parsedHealth =
+        HealthExportSettings.create(
+            enabled = healthEnabled,
+            intervalMinutes = healthInterval.toIntOrNull() ?: -1,
+        )
+    val healthValid = !healthEnabled || parsedHealth != null
 
     Column(
         modifier =
@@ -91,6 +106,47 @@ fun SettingsScreen(
         }
 
         Spacer(Modifier.height(28.dp))
+        Text(stringResource(R.string.settings_health_title), style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text(stringResource(R.string.settings_health_subtitle), style = MaterialTheme.typography.bodySmall)
+        Spacer(Modifier.height(8.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(checked = healthEnabled, onCheckedChange = { healthEnabled = it })
+            Spacer(Modifier.width(4.dp))
+            Text(stringResource(R.string.settings_health_enabled))
+        }
+
+        // Hidden rather than disabled when the export is off: a greyed field inviting a number
+        // that will not be used is just a question the user has to work out the answer to.
+        if (healthEnabled) {
+            Spacer(Modifier.height(8.dp))
+            NumberField(stringResource(R.string.settings_health_interval), healthInterval) {
+                healthInterval = it
+            }
+            Text(
+                stringResource(
+                    R.string.settings_health_interval_note,
+                    HealthExportSettings.MIN_INTERVAL_MINUTES,
+                    HealthExportSettings.MAX_INTERVAL_MINUTES,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+
+        Spacer(Modifier.height(28.dp))
+        if (!healthValid) {
+            Text(
+                stringResource(
+                    R.string.settings_health_invalid,
+                    HealthExportSettings.MIN_INTERVAL_MINUTES,
+                    HealthExportSettings.MAX_INTERVAL_MINUTES,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+            Spacer(Modifier.height(12.dp))
+        }
         if (parsed == null) {
             Text(
                 stringResource(R.string.settings_invalid),
@@ -102,8 +158,22 @@ fun SettingsScreen(
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(
-                onClick = { parsed?.let { onSave(it, unit) } },
-                enabled = parsed != null,
+                onClick = {
+                    parsed?.let { thresholds ->
+                        // With the export off the interval field is not shown, so whatever is
+                        // in it may be stale. Fall back to the stored value rather than writing
+                        // a number the user cannot currently see.
+                        val health =
+                            parsedHealth
+                                ?: HealthExportSettings.create(
+                                    enabled = healthEnabled,
+                                    intervalMinutes = initialHealthExport.intervalMinutes,
+                                )
+                                ?: HealthExportSettings.default
+                        onSave(thresholds, unit, health)
+                    }
+                },
+                enabled = parsed != null && healthValid,
             ) { Text(stringResource(R.string.action_save)) }
 
             TextButton(onClick = onBack) { Text(stringResource(R.string.action_back)) }

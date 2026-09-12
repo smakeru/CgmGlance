@@ -28,8 +28,8 @@ android {
         applicationId = "ro.smakeru.cgmglance"
         minSdk = libs.versions.minSdkPhone.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
 
     signingConfigs {
@@ -57,6 +57,10 @@ android {
 
     buildFeatures {
         compose = true
+
+        // So the screen can show the version it was actually built from, rather than a string
+        // someone has to remember to keep in step with `versionName` above.
+        buildConfig = true
     }
 
     // Kotlin's jvmTarget follows targetCompatibility under built-in Kotlin, so setting it
@@ -76,6 +80,10 @@ dependencies {
 
     // The only channel to the watch, and the project's only Play Services dependency.
     implementation(libs.play.services.wearable)
+
+    // Writes glucose out to Samsung Health, by way of Health Connect. Phone only: the watch
+    // module must stay untouched by this.
+    implementation(libs.androidx.health.connect)
 
     implementation(platform(libs.compose.bom))
     implementation(libs.androidx.activity.compose)

@@ -65,4 +65,25 @@
     <string name="notif_no_permission_text">CGM Glance nu poate citi glicemia fără el. Apasă pentru a rezolva.</string>
     <string name="notif_not_receiving_title">Nu primesc citiri</string>
     <string name="notif_not_receiving_text">Nu a sosit nimic de ceva vreme. Verifică dacă LinX rulează și e conectat la senzor.</string>
+
+    <!-- Deliberately identical to the English one: a build identifier, not prose. -->
+    <string name="version_label">Version %1$s</string>
+
+    <string name="health_export_title">Health Connect</string>
+    <string name="health_export_disabled">Oprit. Pornește-l din &#8222;Interval țintă și unitate&#8221; ca să scrii citirile în Health Connect.</string>
+    <string name="health_export_working">Scriu o citire la fiecare %1$d minute în Health Connect. Samsung Health le preia de acolo, dacă ai activat legătura în setările lui.</string>
+    <string name="health_export_waiting">Configurat. Următoarea citire care intră la rând va fi scrisă, apoi câte una la %1$d minute.</string>
+    <string name="health_export_needs_setup">Permite-i CGM Glance să scrie glicemia în Health Connect. Samsung Health o citește apoi de acolo.</string>
+    <string name="health_export_unavailable">Health Connect nu e disponibil pe acest telefon. Instalează-l, apoi activează legătura cu Health Connect din Samsung Health.</string>
+    <string name="health_export_update_required">Health Connect trebuie actualizat înainte să poată primi citiri.</string>
+    <string name="health_export_failing">Ultima scriere a eșuat. Citirile ajung în continuare la ceas.</string>
+    <string name="health_export_last_write">Ultima scriere %1$s</string>
+    <string name="action_grant_health_permission">Permite scrierea glicemiei</string>
+
+    <string name="settings_health_title">Health Connect</string>
+    <string name="settings_health_subtitle">Îți scrie citirile în Health Connect, de unde le preia Samsung Health. Nu se citește nimic înapoi.</string>
+    <string name="settings_health_enabled">Trimite datele în Health Connect</string>
+    <string name="settings_health_interval">Trimite la fiecare (minute)</string>
+    <string name="settings_health_interval_note">Între %1$d și %2$d minute. Implicit 15.</string>
+    <string name="settings_health_invalid">Intervalul trebuie să fie între %1$d și %2$d minute.</string>
 </resources>

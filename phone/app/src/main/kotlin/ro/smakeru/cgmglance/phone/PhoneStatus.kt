@@ -40,6 +40,15 @@ data class PhoneStatus(
     val watchConnected: Boolean,
     val lastSentMillis: Long?,
     val usedFallbackParser: Boolean,
+    /**
+     * How the Health Connect export is doing.
+     *
+     * Deliberately absent from [health] below. That verdict answers "is glucose reaching the
+     * watch", which is this app's reason to exist; an export that has stopped is worth showing,
+     * but turning the main card red over it would report a working app as broken. Defaulted so
+     * that tests about the core verdict need not describe an integration they are not testing.
+     */
+    val healthExport: HealthExportStatus = HealthExportStatus(HealthExportState.UNAVAILABLE),
 ) {
     val health: PhoneHealth
         get() =
