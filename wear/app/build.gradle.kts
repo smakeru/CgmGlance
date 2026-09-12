@@ -35,8 +35,8 @@ android {
         // release number without ever colliding.
         // TODO: confirm the expected ordering against Play's multi-APK rules before the
         //  first upload; the offset direction matters there and cannot be changed later.
-        versionCode = 1_000_001
-        versionName = "0.1.0"
+        versionCode = 1_000_002
+        versionName = "1.1"
     }
 
     signingConfigs {
