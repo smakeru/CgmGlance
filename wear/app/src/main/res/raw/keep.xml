@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Protects the capability declaration from the resource shrinker.
+
+  `android_wear_capabilities` is never referenced from code — Play services reads it out of the
+  package at runtime — so the shrinker correctly concludes nothing uses it and strips it from
+  release builds. Nothing fails at build time and nothing throws at runtime: the watch simply
+  stops advertising the capability, the phone's reachability check never finds it, and the
+  status screen reports a working watch as unreachable forever.
+
+  Caught by dumping the resources of a release APK and finding the array absent while the debug
+  APK still had it. Worth repeating that check if this file is ever touched.
+-->
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@array/android_wear_capabilities" />
