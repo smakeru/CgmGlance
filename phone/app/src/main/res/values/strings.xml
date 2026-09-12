@@ -13,7 +13,7 @@
     <string name="health_not_receiving_title">Not receiving readings</string>
     <string name="health_not_receiving_body">Nothing has arrived recently. Check that LinX is running and still connected to the sensor.</string>
     <string name="health_watch_title">Watch not reachable</string>
-    <string name="health_watch_body">Readings are arriving, but the watch is out of range or switched off. It will catch up on its own once it reconnects.</string>
+    <string name="health_watch_body">Readings are arriving, but no watch running CGM Glance can be reached. It may be out of range or switched off — it will catch up on its own once it reconnects. If it stays like this, check the watch app is installed and came from the same build as this one.</string>
 
     <string name="action_open_notification_access">Open notification access</string>
 
