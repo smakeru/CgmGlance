@@ -48,9 +48,16 @@ class HealthExportSettings private constructor(
         /** Ceiling, past which the export stops being a record of the day at all. */
         const val MAX_INTERVAL_MINUTES: Int = 180
 
-        /** Enabled, every fifteen minutes. Writing still cannot happen without permission. */
+        /**
+         * Off, every fifteen minutes once switched on.
+         *
+         * Off by default because writing into a health record is the user's decision to make,
+         * not a side effect of installing a display mirror. The Health Connect permission is a
+         * second gate, but it is not a substitute for this one: a permission prompt the user
+         * did not ask for is already the app having decided on their behalf.
+         */
         val default: HealthExportSettings =
-            HealthExportSettings(enabled = true, intervalMinutes = DEFAULT_INTERVAL_MINUTES)
+            HealthExportSettings(enabled = false, intervalMinutes = DEFAULT_INTERVAL_MINUTES)
 
         /**
          * Builds settings, or returns `null` when the interval is outside what can be honoured.
