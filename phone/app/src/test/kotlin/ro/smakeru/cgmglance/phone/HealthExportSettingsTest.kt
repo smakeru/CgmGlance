@@ -2,14 +2,15 @@ package ro.smakeru.cgmglance.phone
 
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class HealthExportSettingsTest {
     @Test
-    fun `the default is on, every fifteen minutes`() {
-        assertTrue(HealthExportSettings.default.enabled)
+    fun `the default is off, at fifteen minutes`() {
+        // Writing into a health record is opted into, never inherited from installing the app.
+        assertFalse(HealthExportSettings.default.enabled)
         assertEquals(15, HealthExportSettings.default.intervalMinutes)
     }
 
