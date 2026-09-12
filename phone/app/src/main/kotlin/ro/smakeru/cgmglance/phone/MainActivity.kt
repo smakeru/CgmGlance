@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.health.connect.client.PermissionController
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.delay
 import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
@@ -68,8 +70,9 @@ class MainActivity : ComponentActivity() {
                         SettingsScreen(
                             initialThresholds = app.preferences.loadThresholds(),
                             initialUnit = app.preferences.loadUnit(),
-                            onSave = { thresholds, unit ->
-                                app.updatePreferences(thresholds, unit)
+                            initialHealthExport = app.preferences.loadHealthExportSettings(),
+                            onSave = { thresholds, unit, healthExport ->
+                                app.updatePreferences(thresholds, unit, healthExport)
                                 showSettings = false
                             },
                             onBack = { showSettings = false },
@@ -79,6 +82,7 @@ class MainActivity : ComponentActivity() {
                             source = app.statusSource,
                             onGrantPermission = { openNotificationAccessSettings() },
                             onOpenSettings = { showSettings = true },
+                            onRefreshHealth = { app.healthExporter.refresh() },
                         )
                     }
                 }
@@ -111,6 +115,7 @@ private fun StatusScreen(
     source: PhoneStatusSource,
     onGrantPermission: () -> Unit,
     onOpenSettings: () -> Unit,
+    onRefreshHealth: () -> Unit,
 ) {
     var watchConnected by remember { mutableStateOf(false) }
     var status by remember { mutableStateOf(source.snapshot(watchConnected = false)) }
@@ -125,6 +130,9 @@ private fun StatusScreen(
                 .getNodeClient(context)
                 .connectedNodes
                 .addOnSuccessListener { nodes -> watchConnected = nodes.isNotEmpty() }
+            // Health Connect permission can be revoked from outside this app with no callback,
+            // so it is re-read on the same tick rather than trusted from startup.
+            onRefreshHealth()
             status = source.snapshot(watchConnected)
             delay(REFRESH_INTERVAL_MILLIS)
         }
@@ -139,7 +147,19 @@ private fun StatusScreen(
                     .padding(20.dp)
                     .verticalScroll(rememberScrollState()),
         ) {
-            Text(text = stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Text(text = stringResource(R.string.app_name), style = MaterialTheme.typography.headlineMedium)
+                // Read from BuildConfig rather than typed here, so it cannot drift from the
+                // `versionName` the APK was actually built with.
+                Text(
+                    text = stringResource(R.string.version_label, BuildConfig.VERSION_NAME),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             Spacer(Modifier.height(16.dp))
 
             HealthCard(status, onGrantPermission)
@@ -164,6 +184,9 @@ private fun StatusScreen(
                 stringResource(R.string.detail_watch),
                 stringResource(if (status.watchConnected) R.string.value_connected else R.string.value_not_reachable),
             )
+
+            Spacer(Modifier.height(24.dp))
+            HealthConnectCard(status.healthExport)
 
             Spacer(Modifier.height(16.dp))
             TextButton(onClick = onOpenSettings) { Text(stringResource(R.string.action_settings)) }
@@ -221,6 +244,116 @@ private fun AttentionCard() {
         }
     }
 }
+
+/**
+ * How the Health Connect export is doing, and the one button that fixes the common case.
+ *
+ * Kept visually separate from the main health card above. That card answers "is glucose reaching
+ * the watch"; this one is about a secondary export, and letting it colour the main verdict would
+ * report a perfectly working app as broken because a log entry did not land.
+ */
+@Composable
+private fun HealthConnectCard(export: HealthExportStatus) {
+    // Health Connect owns its own permission UI; this contract launches it and hands back the
+    // result. The result is discarded because the next status tick re-reads the real grant,
+    // which is also what catches a permission revoked from outside the app.
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = PermissionController.createRequestPermissionResultContract(),
+            onResult = { },
+        )
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = colorForExport(export.state)),
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                stringResource(R.string.health_export_title),
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.Black,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                exportBodyText(export),
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Black,
+            )
+
+            if (export.state == HealthExportState.WORKING && export.lastWriteMillis != null) {
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    stringResource(R.string.health_export_last_write, agoText(export.lastWriteMillis)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Black,
+                )
+            }
+
+            // Shown verbatim. These failures are device and provider specific, and the user is
+            // the one who has to repeat them when a value does not appear in Samsung Health.
+            if (export.state == HealthExportState.FAILING && export.lastErrorMessage != null) {
+                Spacer(Modifier.height(6.dp))
+                Text(
+                    export.lastErrorMessage,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Black,
+                )
+            }
+
+            if (export.state == HealthExportState.NEEDS_SETUP) {
+                Spacer(Modifier.height(12.dp))
+                Button(onClick = { permissionLauncher.launch(setOf(HealthConnectExporter.WRITE_GLUCOSE)) }) {
+                    Text(stringResource(R.string.action_grant_health_permission))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun agoText(millis: Long): String {
+    val minutes = ((System.currentTimeMillis() - millis) / 60_000L).toInt()
+    return if (minutes <= 0) {
+        stringResource(R.string.age_just_now)
+    } else {
+        pluralStringResource(R.plurals.age_minutes_ago, minutes, minutes)
+    }
+}
+
+/**
+ * The one line explaining the current state.
+ *
+ * The two states that describe the cadence quote the interval the user actually chose, rather
+ * than a fixed fifteen: a screen that insists on 15 while settings say 30 is a bug report
+ * waiting to happen.
+ */
+@Composable
+private fun exportBodyText(export: HealthExportStatus): String =
+    when (export.state) {
+        HealthExportState.DISABLED -> stringResource(R.string.health_export_disabled)
+        HealthExportState.UNAVAILABLE -> stringResource(R.string.health_export_unavailable)
+        HealthExportState.PROVIDER_UPDATE_REQUIRED -> stringResource(R.string.health_export_update_required)
+        HealthExportState.NEEDS_SETUP -> stringResource(R.string.health_export_needs_setup)
+        HealthExportState.FAILING -> stringResource(R.string.health_export_failing)
+        HealthExportState.WAITING -> stringResource(R.string.health_export_waiting, export.intervalMinutes)
+        HealthExportState.WORKING -> stringResource(R.string.health_export_working, export.intervalMinutes)
+    }
+
+private fun colorForExport(state: HealthExportState): Color =
+    when (state) {
+        HealthExportState.WORKING -> COLOR_OK
+
+        HealthExportState.FAILING -> COLOR_PROBLEM
+
+        // Grey, not amber: switched off on purpose is not a warning.
+        HealthExportState.DISABLED -> COLOR_NEUTRAL
+
+        HealthExportState.UNAVAILABLE,
+        HealthExportState.PROVIDER_UPDATE_REQUIRED,
+        HealthExportState.NEEDS_SETUP,
+        HealthExportState.WAITING,
+        -> COLOR_ATTENTION
+    }
 
 @Composable
 private fun DetailRow(
@@ -290,3 +423,4 @@ private const val REFRESH_INTERVAL_MILLIS = 5_000L
 private val COLOR_OK = Color(0xFFA5D6A7)
 private val COLOR_ATTENTION = Color(0xFFFFE082)
 private val COLOR_PROBLEM = Color(0xFFEF9A9A)
+private val COLOR_NEUTRAL = Color(0xFFE0E0E0)

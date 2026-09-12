@@ -53,8 +53,52 @@ class PhonePreferencesStore(
             .commit()
     }
 
+    /**
+     * Whether to export, and how often.
+     *
+     * A stored interval outside the permitted bounds falls back to the whole default rather than
+     * being clamped. The bounds can tighten in a later version, and quietly honouring a value
+     * this build considers unsafe would be worse than returning to a cadence known to be sane.
+     */
+    fun loadHealthExportSettings(): HealthExportSettings {
+        val defaults = HealthExportSettings.default
+        return HealthExportSettings.create(
+            enabled = prefs.getBoolean(KEY_HEALTH_ENABLED, defaults.enabled),
+            intervalMinutes = prefs.getInt(KEY_HEALTH_INTERVAL, defaults.intervalMinutes),
+        ) ?: defaults
+    }
+
+    /** `commit`, for the same reason [save] uses it: this runs from a user action, not a hot path. */
+    fun saveHealthExportSettings(settings: HealthExportSettings) {
+        prefs
+            .edit()
+            .putBoolean(KEY_HEALTH_ENABLED, settings.enabled)
+            .putInt(KEY_HEALTH_INTERVAL, settings.intervalMinutes)
+            .commit()
+    }
+
+    /**
+     * Reading timestamp of the last value exported to Health Connect, or `null` if none.
+     *
+     * Persisted rather than held in memory so that a restart — which on this app can happen
+     * whenever Android reclaims it — resumes the fifteen minute cadence instead of writing
+     * again straight away.
+     */
+    fun loadLastHealthWriteMillis(): Long? = prefs.getLong(KEY_LAST_HEALTH_WRITE, 0L).takeIf { it > 0L }
+
+    /**
+     * `apply` rather than `commit`: this runs on the write path, and the cost of losing it in a
+     * crash is one extra glucose record, not a wrong one.
+     */
+    fun saveLastHealthWriteMillis(millis: Long) {
+        prefs.edit().putLong(KEY_LAST_HEALTH_WRITE, millis).apply()
+    }
+
     private companion object {
         const val FILE_NAME = "cgm_glance_prefs"
+        const val KEY_LAST_HEALTH_WRITE = "lastHealthWriteMillis"
+        const val KEY_HEALTH_ENABLED = "healthExportEnabled"
+        const val KEY_HEALTH_INTERVAL = "healthExportIntervalMinutes"
         const val KEY_URGENT_LOW = "urgentLowMgdl"
         const val KEY_LOW = "lowMgdl"
         const val KEY_HIGH = "highMgdl"

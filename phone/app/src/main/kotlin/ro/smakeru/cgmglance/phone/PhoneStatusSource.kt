@@ -16,6 +16,7 @@ class PhoneStatusSource(
     private val context: Context,
     private val repository: PhoneGlucoseRepository,
     private val clock: Clock,
+    private val healthExporter: GlucoseExporter,
     private val freshnessPolicy: FreshnessPolicy = FreshnessPolicy.default,
 ) {
     @Volatile
@@ -34,6 +35,7 @@ class PhoneStatusSource(
             watchConnected = watchConnected,
             lastSentMillis = lastSentMillis,
             usedFallbackParser = usedFallbackParser,
+            healthExport = healthExporter.status(),
         )
     }
 

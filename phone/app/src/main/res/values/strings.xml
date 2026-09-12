@@ -66,4 +66,39 @@
     <string name="notif_no_permission_text">CGM Glance cannot read glucose without it. Tap to fix.</string>
     <string name="notif_not_receiving_title">Not receiving readings</string>
     <string name="notif_not_receiving_text">Nothing has arrived for a while. Check that LinX is running and connected to the sensor.</string>
+
+    <!--
+      Shown beside the app name. The value comes from BuildConfig, never typed in.
+      Left untranslated on purpose: it is a build identifier, and it should read the same when
+      someone quotes it back in a bug report regardless of their phone's language.
+    -->
+    <string name="version_label">Version %1$s</string>
+
+    <!--
+      Health Connect export. The wording never claims a reading is *in* Samsung Health: the app
+      writes to Health Connect and cannot see whether Samsung Health then picked it up.
+    -->
+    <!--
+      Named for what this app actually writes to. Samsung Health is downstream of Health Connect
+      and is mentioned as the consumer, never as the destination: claiming to write to Samsung
+      Health would make a sync the user has not enabled look like this app's fault.
+    -->
+    <string name="health_export_title">Health Connect</string>
+    <string name="health_export_disabled">Off. Turn it on under &#8220;Target range and unit&#8221; to write readings to Health Connect.</string>
+    <string name="health_export_working">Writing one reading every %1$d minutes to Health Connect. Samsung Health reads them from there, if you have enabled that link in its settings.</string>
+    <string name="health_export_waiting">Set up. The next reading due will be written, then one every %1$d minutes.</string>
+    <string name="health_export_needs_setup">Allow CGM Glance to write glucose to Health Connect. Samsung Health then reads it from there.</string>
+    <string name="health_export_unavailable">Health Connect is not available on this phone. Install it, then turn on the Health Connect link inside Samsung Health.</string>
+    <string name="health_export_update_required">Health Connect needs updating before it can accept readings.</string>
+    <string name="health_export_failing">The last write failed. Readings are still reaching the watch.</string>
+    <string name="health_export_last_write">Last written %1$s</string>
+    <string name="action_grant_health_permission">Allow writing glucose</string>
+
+    <!-- Health Connect section of the settings screen. -->
+    <string name="settings_health_title">Health Connect</string>
+    <string name="settings_health_subtitle">Writes your readings to Health Connect, which Samsung Health reads from. Nothing is ever read back.</string>
+    <string name="settings_health_enabled">Send data to Health Connect</string>
+    <string name="settings_health_interval">Send every (minutes)</string>
+    <string name="settings_health_interval_note">Between %1$d and %2$d minutes. The default is 15.</string>
+    <string name="settings_health_invalid">The interval must be between %1$d and %2$d minutes.</string>
 </resources>

@@ -25,6 +25,9 @@ activityCompose = "1.13.0"
 composeBom = "2026.06.01"
 concurrentFutures = "1.3.0"
 datastore = "1.2.1"
+# Stable line. 1.2.0 is still alpha, and the write path here is the one part of the app that
+# must not break on a library's own churn.
+healthConnect = "1.1.0"
 playServicesWearable = "20.0.1"
 wearCompose = "1.6.2"
 wearProtolayout = "1.4.2"
@@ -53,6 +56,10 @@ compose-ui = { module = "androidx.compose.ui:ui" }
 androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures", version.ref = "concurrentFutures" }
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+
+# Phone only. The watch never writes health data, and adding this to the wear module would
+# put an unused dependency on a device with far less room for it.
+androidx-health-connect = { module = "androidx.health.connect:connect-client", version.ref = "healthConnect" }
 
 play-services-wearable = { module = "com.google.android.gms:play-services-wearable", version.ref = "playServicesWearable" }
 
