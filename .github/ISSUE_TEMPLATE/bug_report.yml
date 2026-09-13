@@ -1,0 +1,88 @@
+name: Something stopped working
+description: The value is missing, stale, wrong, or never reaches the watch.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before anything else, please read
+        [No support, and no promise to maintain](https://github.com/smakeru/CgmGlance/blob/main/README.md#no-support-and-no-promise-to-maintain).
+        This is a personal project with one maintainer and no commitment to fix things.
+
+        **Never paste real glucose readings, screenshots of them, or anything identifying you.**
+        Those are special category health data. Describe the shape of the problem instead —
+        "the value froze at a plausible number for two hours" says everything a real value would.
+
+  - type: input
+    id: vendor-app
+    attributes:
+      label: Vendor app and version
+      description: >
+        The app that owns the sensor, with its exact version — its Settings or About screen shows
+        it. This is the single most useful field: the glucose is parsed out of that app's
+        notification, so a version change there is the most common cause of breakage.
+      placeholder: LinX 2.5.0
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: CGM Glance version
+      description: Shown at the top of the phone app, beside its name.
+      placeholder: Version 1.1
+    validations:
+      required: true
+
+  - type: input
+    id: phone
+    attributes:
+      label: Phone and Android version
+      placeholder: Galaxy S25 Ultra, Android 16
+    validations:
+      required: true
+
+  - type: input
+    id: watch
+    attributes:
+      label: Watch and Wear OS version
+      description: Leave blank if the problem is on the phone only.
+      placeholder: Galaxy Watch 8, Wear OS 6
+
+  - type: dropdown
+    id: status-screen
+    attributes:
+      label: What does the phone's status screen say?
+      description: >
+        The coloured card at the top. It is the app's own diagnosis, and it usually names the
+        cause faster than any description can.
+      options:
+        - Working
+        - Notification access is off
+        - Waiting for the first reading
+        - Not receiving readings
+        - Watch not reachable
+        - Something else, described below
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: fallback
+    attributes:
+      label: Does it warn that the vendor layout has changed?
+      description: >
+        A second card appears when the parser has fallen back to reading by position. If it is
+        there, the vendor almost certainly changed their notification.
+      options:
+        - label: Yes, that warning is showing
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: >
+        What you expected, what you got instead, and whether it is constant or intermittent. If
+        it stopped after something specific — a vendor update, a phone update, a reinstall — say
+        so; that is usually the answer.
+    validations:
+      required: true

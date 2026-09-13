@@ -1,0 +1,15 @@
+# Blank issues stay enabled on purpose. The form covers the one failure this project actually
+# sees — the vendor changing their notification layout — and forcing everything else through it
+# would make a question about the architecture harder to ask than it should be.
+blank_issues_enabled: true
+
+contact_links:
+  - name: Adding a different sensor
+    url: https://github.com/smakeru/CgmGlance/blob/main/docs/adding-a-provider.md
+    about: >
+      Support for another CGM is a fork or a pull request, not a request. This is the recipe.
+  - name: Why there are no alarms
+    url: https://github.com/smakeru/CgmGlance/blob/main/README.md#non-goals
+    about: >
+      Asked often, declined twice, and the reasoning is written down. Please read it before
+      opening an issue about it.

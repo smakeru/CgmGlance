@@ -27,6 +27,21 @@ Watch 8. Not published anywhere, no releases, personal use.
 | Health export | Health Connect, off by default ([below](#health-connect-export)) |
 | Tests | 141, all passing |
 
+### No support, and no promise to maintain
+
+Published because it may be useful to someone with the same sensor, not as a product. There is no
+support, no release schedule, and no commitment that it will keep working or be fixed if it
+stops. It is built for one phone and one watch, and tested on those.
+
+The part most likely to break is not this code: the glucose is read out of the vendor's
+notification layout, and a vendor update can change that at any time, without warning. The app
+detects when it has fallen back to positional parsing and says so on the status screen — treat
+that as notice that it needs attention, not as something that will be handled for you.
+
+If you rely on this, keep the official app as your source of truth, and be prepared to fix the
+parser yourself. It is GPL-3.0: [forking](docs/adding-a-provider.md) is the expected response to
+a need this repository does not meet.
+
 ## Not a medical device
 
 This app mirrors a value the official app has already computed. It is not certified, not
