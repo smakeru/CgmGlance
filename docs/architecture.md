@@ -18,15 +18,25 @@ LinX notification
   → RemoteViewsTextExtractor            inflates the vendor layout, walks the tree
   → LinxNotificationParser              tv_glucose / tv_unit, positional fallback
   → PhoneGlucoseRepository              2h history, repost collapsing, trend fit
-  → SyncDecisionPolicy                  decides whether the watch needs to hear
-  → WatchSyncSender                     DataClient, setUrgent on state change
-  ═══ Bluetooth ═══
-  → WearDataListenerService             stores, then pushes the surfaces
-  → WatchGlucoseStore                   SharedPreferences, read by three services
-  → complication · tile · watch app
+  │
+  ├─→ SyncDecisionPolicy                decides whether the watch needs to hear
+  │   → WatchSyncSender                 DataClient, setUrgent on state change
+  │   ═══ Bluetooth ═══
+  │   → WearDataListenerService          stores, then pushes the surfaces
+  │   → WatchGlucoseStore                SharedPreferences, read by three services
+  │   → complication · tile · watch app
+  │
+  └─→ HealthExportPolicy                one reading per interval, default 15 min
+      → HealthConnectExporter           BloodGlucoseRecord, off unless opted in
+      → Health Connect → Samsung Health  (the user's own sync, not ours)
 ```
 
-Every link is verified on a real Galaxy S25 Ultra and Galaxy Watch 8.
+The two branches are independent on purpose. The sync policy suppresses readings the watch would
+gain nothing from; a health log wants a steady sample whether or not the number moved, so the
+export is offered every reading and decides for itself.
+
+Every link is verified on a real Galaxy S25 Ultra and Galaxy Watch 8, the export included —
+readings reach Health Connect and appear in Samsung Health.
 
 ## Modules
 
@@ -35,7 +45,7 @@ Every link is verified on a real Galaxy S25 Ultra and Galaxy Watch 8.
 | `:core:domain` | plain JVM | The safety-critical logic: units, plausibility, freshness, trend, sync policy. No Android dependency, on purpose — it must be testable in milliseconds and behave identically on both devices. |
 | `:core:sync-contract` | plain JVM | The wire format between two separately-updated APKs. Plain JVM so version-skew rules can be tested without a device. |
 | `:provider:linx` | Android library | Reads the vendor's notification. Its parsing logic is plain Kotlin and testable against captured layouts; only the `RemoteViews` extraction touches Android. |
-| `:phone:app` | Android app | Acquisition, history, sync, status screen. |
+| `:phone:app` | Android app | Acquisition, history, sync, status screen, and the Health Connect export. The export lives here rather than in a module of its own: it is one policy and one writer, and the watch must not carry either. |
 | `:wear:app` | Android app | Complication, tile, watch app. |
 
 `:core:domain` being a `kotlin-jvm` module rather than an Android library is enforced by its
@@ -111,6 +121,7 @@ already seen.
 | --- | --- | --- |
 | Phone | `ReadingHistoryStore` — 2h of readings | Without it the trend blanks for seven minutes after every process death, which on Samsung is a weekly event. Verified by rebooting the phone. |
 | Phone | `PhonePreferencesStore` — range and unit | The user's clinical choice, unlike freshness. |
+| Phone | `PhonePreferencesStore` — health export settings and last write | The interval is measured from the last exported *reading*, so it has to outlive the process; without persisting it, every restart would write immediately and the cadence would be whatever the restart rate happened to be. |
 | Watch | `WatchGlucoseStore` — latest payload and prefs | Read by three independent, system-driven lifecycles, so it is a file rather than an object any one of them owns. |
 
 `SharedPreferences` rather than DataStore on the watch, contrary to the original design: the

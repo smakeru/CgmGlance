@@ -24,7 +24,8 @@ Watch 8. Not published anywhere, no releases, personal use.
 | Providers | LinX / MicroTech AiDEX X ([contract](docs/providers/linx.md)) |
 | Watch surfaces | Complication (SHORT_TEXT, LONG_TEXT, RANGED_VALUE), Tile, app |
 | Phone | status screen, target range settings, silence watchdog |
-| Tests | 101, all passing |
+| Health export | Health Connect, off by default ([below](#health-connect-export)) |
+| Tests | 141, all passing |
 
 ## Not a medical device
 
@@ -32,6 +33,33 @@ This app mirrors a value the official app has already computed. It is not certif
 validated, and must not be used for treatment decisions. Always confirm with the official app or
 a blood glucose meter. It deliberately produces **no alarms and no vibration** for glucose
 values — see [Non-goals](#non-goals).
+
+## Health Connect export
+
+Optionally writes each reading to Health Connect, from where Samsung Health — or anything else
+the user has linked — picks it up. **Off by default**; switched on under *Target range and unit*,
+and it additionally needs the Health Connect write permission, granted from the status screen.
+
+| | |
+| --- | --- |
+| What is written | `BloodGlucoseRecord`, mg/dL, specimen source *interstitial fluid* |
+| How often | one reading per interval — 15 minutes by default, 5 to 180 allowed |
+| Read back | never; the app holds the value already |
+| Permission | `android.permission.health.WRITE_BLOOD_GLUCOSE`, write only |
+
+**Why not Samsung's own SDK.** The Samsung Health Data SDK can insert into Samsung Health
+directly, but only for apps Samsung has approved as partners: developer mode waives the signature
+check, not the partnership, and the write path is gated behind an access code issued on approval,
+with no exemption for personal use. Health Connect needs no such agreement. The export sits behind
+a `GlucoseExporter` interface so a Samsung implementation can drop in if that ever changes.
+
+**What a successful write means.** That the record reached *Health Connect*. Whether Samsung
+Health then ingests it depends on the user having enabled the Health Connect link inside Samsung
+Health and granted it permission to read glucose. This app cannot observe that, and the wording in
+the UI never claims it.
+
+This is not the cloud sync listed under [Non-goals](#non-goals): it is a local write to the
+platform's own health store, on the user's explicit request, with no account and no network.
 
 ## Non-goals
 
@@ -53,7 +81,9 @@ Alarms belong to the app that owns the sensor connection.
 
 | | |
 | --- | --- |
+| [Changelog](CHANGELOG.md) | what changed per version |
 | [Architecture](docs/architecture.md) | the chain, the three ideas that shape it, wire format, battery |
+| [Decision log](docs/decisions.md) | what was chosen, what was rejected, and why |
 | [LinX provider contract](docs/providers/linx.md) | what the vendor exposes, the exact layout, breakage log |
 | [Adding a provider](docs/adding-a-provider.md) | recipe for a new sensor |
 
@@ -82,6 +112,22 @@ Both APKs must be built on the same machine, or signed with the same key. The We
 only pairs nodes that share an application id **and** a signing certificate; a mismatch produces
 no error at all — the watch simply never receives anything.
 
+Debug keystores are generated **per machine**, so debug builds from two different computers do
+not pair with each other, and replacing one side alone silently breaks the link. To pin one key
+across machines and across build types, put a `keystore.properties` in the repository root — it
+is gitignored, along with the keystore itself:
+
+```properties
+storeFile=/path/to/cgmglance-signing.keystore
+storePassword=…
+keyAlias=…
+keyPassword=…
+```
+
+Release builds are then signed with it; without the file they are produced unsigned, so a
+checkout with no key still builds. A certificate change cannot be applied as an update — Android
+rejects it with `INSTALL_FAILED_UPDATE_INCOMPATIBLE`, and both apps have to be uninstalled first.
+
 ```bash
 adb install -r phone/app/build/outputs/apk/debug/app-debug.apk
 ```
@@ -106,7 +152,7 @@ port is only advertised while the pairing screen is open on the watch.
 | `:core:domain` | Pure JVM | Units, plausibility, freshness, trend, sync policy. No Android dependency, by design. |
 | `:core:sync-contract` | Pure JVM | The wire format between the two APKs, with its version-skew rules. |
 | `:provider:linx` | Android library | Reads the vendor notification. Parsing logic is plain Kotlin. |
-| `:phone:app` | Android app | Acquisition, history, sync, status and settings screens. |
+| `:phone:app` | Android app | Acquisition, history, sync, health export, status and settings screens. |
 | `:wear:app` | Android app | Complication, tile, watch app. |
 
 Both apps share the application id `ro.smakeru.cgmglance`, which the Data Layer requires. Their

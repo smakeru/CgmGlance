@@ -80,6 +80,52 @@ one line, which keeps the set of apps we can even see auditable at a glance.
 **Wear minSdk 30, phone 26.** Wear OS 2 would mean a second tiles rendering path and a device
 matrix that cannot realistically be tested, for hardware that is end-of-life.
 
+**Watch reachability is a capability lookup, not a connected-node count.** `NodeClient` reports
+the Wear *pairing*, so a watch with no app installed — or one signed with a different certificate,
+which the Data Layer refuses silently — counts as connected. The status screen said the watch was
+fine while nothing arrived, found on a real device on 2026-09-12. A capability is only visible
+across a link that works, so it answers the question actually being displayed.
+
+**The capability array is pinned against the resource shrinker.** Nothing references it from
+code — Play services reads it out of the package — so R8 stripped it from release builds with no
+error and no exception, and the watch silently stopped advertising it. Held by
+`wear/app/src/main/res/raw/keep.xml`. Worth re-checking by dumping a release APK's resources if
+that file is ever touched.
+
+## Health export
+
+**Health Connect, not Samsung's Health Data SDK.** The SDK can insert into Samsung Health
+directly, which would remove a hop, but only for apps Samsung has approved as partners. Developer
+mode waives the *signature* check, not the partnership: writing is gated behind an access code
+issued on approval, with no exemption for personal use, and partner applications have been closed
+for stretches. Health Connect requires no agreement and Samsung Health syncs from it. Verified end
+to end on 2026-09-12.
+
+**The export is isolated behind `GlucoseExporter`.** Not symmetry for its own sake — the interface
+exists so a Samsung Data SDK implementation can replace the Health Connect one if that
+partnership ever lands, without touching acquisition, history or the watch path.
+
+**Write only, never read back.** The glucose already came from the CGM app. Reading it back would
+create a second, lagging copy of a number this app already holds, and would mean asking for a
+permission nothing needs.
+
+**Off by default.** Writing into a health record is the user's decision, not a side effect of
+installing a display mirror. The Health Connect permission is a second gate but not a substitute
+for the first: a permission prompt the user never asked for is the app having already decided.
+
+**The interval is floored at five minutes.** The sensor reports about once a minute, so an
+unbounded field lets a mistyped `1` put roughly 1,400 entries a day into a log meant for
+measurements, burying anything entered by hand. Rejected rather than clamped, so the settings
+screen can say why Save is disabled instead of silently storing something else.
+
+**Spacing is measured between reading timestamps, not wall clock, and persisted.** Wall clock
+would drift with restarts and with readings that arrive late in a burst after the CGM app
+reconnects.
+
+**The wording never claims a value is *in* Samsung Health.** A successful write means the record
+reached Health Connect. Whether Samsung Health then ingested it depends on the user's own sync
+settings, is not observable from here, and is not claimed.
+
 ## Toolchain
 
 **AGP 9 compiles Kotlin itself.** `org.jetbrains.kotlin.plugin.compose` is still required and
