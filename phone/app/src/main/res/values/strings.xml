@@ -13,7 +13,9 @@
     <string name="health_not_receiving_title">Not receiving readings</string>
     <string name="health_not_receiving_body">Nothing has arrived recently. Check that LinX is running and still connected to the sensor.</string>
     <string name="health_watch_title">Watch not reachable</string>
-    <string name="health_watch_body">Readings are arriving, but no watch running CGM Glance can be reached. It may be out of range or switched off — it will catch up on its own once it reconnects. If it stays like this, check the watch app is installed and came from the same build as this one.</string>
+    <string name="health_watch_body">Readings are arriving, but the watch is out of range or switched off. It will catch up on its own once it reconnects.</string>
+    <string name="health_watch_missing_title">No watch app found</string>
+    <string name="health_watch_missing_body">Readings are arriving, but no watch is running a compatible copy of CGM Glance, so none of this is reaching your wrist. Install the watch APK — and make sure both it and the phone app came from the same build. Two apps signed with different keys never pair, and the system reports no error when they don\'t.</string>
 
     <string name="action_open_notification_access">Open notification access</string>
 
@@ -31,6 +33,7 @@
     <string name="value_not_granted">Not granted</string>
     <string name="value_connected">Connected</string>
     <string name="value_not_reachable">Not reachable</string>
+    <string name="value_watch_no_app">App not found</string>
     <string name="value_none_yet">None yet</string>
     <string name="value_not_yet">Not yet</string>
 

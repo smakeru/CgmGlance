@@ -73,7 +73,10 @@ class SilenceWatchdogReceiver : BroadcastReceiver() {
         intent: Intent,
     ) {
         val application = context.applicationContext as? CgmGlanceApplication ?: return
-        val status = application.statusSource.snapshot(watchConnected = true)
+        // Asserted rather than looked up. This receiver only ever acts on NO_PERMISSION and
+        // NOT_RECEIVING, and the watch verdicts outrank neither; claiming the link is fine keeps
+        // a watch on a charger from masking the glucose problem this alarm exists to report.
+        val status = application.statusSource.snapshot(WatchLink.CONNECTED)
 
         Log.i(TAG, "watchdog fired, health=${status.health}")
 

@@ -119,8 +119,10 @@ private fun StatusScreen(
     onOpenSettings: () -> Unit,
     onRefreshHealth: () -> Unit,
 ) {
-    var watchConnected by remember { mutableStateOf(false) }
-    var status by remember { mutableStateOf(source.snapshot(watchConnected = false)) }
+    // Starts at UNREACHABLE rather than NO_COMPATIBLE_APP: before the first lookup returns,
+    // nothing is known, and the weaker claim is the one that is not yet wrong.
+    var watchLink by remember { mutableStateOf(WatchLink.UNREACHABLE) }
+    var status by remember { mutableStateOf(source.snapshot(WatchLink.UNREACHABLE)) }
     val context = LocalContext.current
 
     // Polled rather than observed. Nothing here changes faster than the eye, the screen is only
@@ -128,21 +130,35 @@ private fun StatusScreen(
     // machinery than the problem deserves.
     LaunchedEffect(Unit) {
         while (true) {
-            // Asks which reachable nodes advertise our capability, rather than which nodes are
-            // paired. A paired watch with no app installed — or one signed with a different
-            // certificate, which the Data Layer refuses silently — answers the second question
-            // with "connected" while receiving nothing, and that reads as a working sync.
-            Wearable
-                .getCapabilityClient(context)
-                .getCapability(SyncContract.CAPABILITY_WATCH, CapabilityClient.FILTER_REACHABLE)
-                .addOnSuccessListener { info -> watchConnected = info.nodes.isNotEmpty() }
-                // Treated as unreachable rather than left at its previous value: a failed
-                // lookup that kept saying "connected" would be the same lie in a new place.
-                .addOnFailureListener { watchConnected = false }
+            // Asked twice on purpose. FILTER_REACHABLE answers "can I talk to it now";
+            // FILTER_ALL answers "does a compatible watch app exist at all, anywhere". Only
+            // together do they separate a watch that is merely away from one that was never
+            // going to work — a node count reports both as the same thing, and sends someone
+            // with a missing or mismatched watch app off to wait for a reconnection that will
+            // never come.
+            val capabilities = Wearable.getCapabilityClient(context)
+            capabilities
+                .getCapability(SyncContract.CAPABILITY_WATCH, CapabilityClient.FILTER_ALL)
+                .addOnSuccessListener { all ->
+                    capabilities
+                        .getCapability(SyncContract.CAPABILITY_WATCH, CapabilityClient.FILTER_REACHABLE)
+                        .addOnSuccessListener { reachable ->
+                            watchLink =
+                                when {
+                                    reachable.nodes.isNotEmpty() -> WatchLink.CONNECTED
+                                    all.nodes.isNotEmpty() -> WatchLink.UNREACHABLE
+                                    else -> WatchLink.NO_COMPATIBLE_APP
+                                }
+                        }
+                        // A lookup that failed is not evidence about the watch app, so it
+                        // reports the weaker of the two claims rather than accusing the user
+                        // of a bad install.
+                        .addOnFailureListener { watchLink = WatchLink.UNREACHABLE }
+                }.addOnFailureListener { watchLink = WatchLink.UNREACHABLE }
             // Health Connect permission can be revoked from outside this app with no callback,
             // so it is re-read on the same tick rather than trusted from startup.
             onRefreshHealth()
-            status = source.snapshot(watchConnected)
+            status = source.snapshot(watchLink)
             delay(REFRESH_INTERVAL_MILLIS)
         }
     }
@@ -191,7 +207,13 @@ private fun StatusScreen(
             DetailRow(stringResource(R.string.detail_sent), describeLastSent(status))
             DetailRow(
                 stringResource(R.string.detail_watch),
-                stringResource(if (status.watchConnected) R.string.value_connected else R.string.value_not_reachable),
+                stringResource(
+                    when (status.watchLink) {
+                        WatchLink.CONNECTED -> R.string.value_connected
+                        WatchLink.UNREACHABLE -> R.string.value_not_reachable
+                        WatchLink.NO_COMPATIBLE_APP -> R.string.value_watch_no_app
+                    },
+                ),
             )
 
             Spacer(Modifier.height(24.dp))
@@ -386,12 +408,18 @@ private fun textsFor(health: PhoneHealth): Pair<Int, Int> =
         PhoneHealth.WAITING_FOR_FIRST_READING -> R.string.health_waiting_title to R.string.health_waiting_body
         PhoneHealth.NOT_RECEIVING -> R.string.health_not_receiving_title to R.string.health_not_receiving_body
         PhoneHealth.WATCH_UNREACHABLE -> R.string.health_watch_title to R.string.health_watch_body
+        PhoneHealth.WATCH_APP_MISSING -> R.string.health_watch_missing_title to R.string.health_watch_missing_body
     }
 
 private fun colorFor(health: PhoneHealth): Color =
     when (health) {
         PhoneHealth.OK -> COLOR_OK
+
         PhoneHealth.WAITING_FOR_FIRST_READING, PhoneHealth.WATCH_UNREACHABLE -> COLOR_ATTENTION
+
+        // Red, unlike plain unreachability: this one does not resolve by waiting.
+        PhoneHealth.WATCH_APP_MISSING -> COLOR_PROBLEM
+
         PhoneHealth.NO_PERMISSION, PhoneHealth.NOT_RECEIVING -> COLOR_PROBLEM
     }
 

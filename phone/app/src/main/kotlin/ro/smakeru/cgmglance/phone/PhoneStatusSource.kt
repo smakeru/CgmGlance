@@ -25,14 +25,14 @@ class PhoneStatusSource(
     @Volatile
     var usedFallbackParser: Boolean = false
 
-    fun snapshot(watchConnected: Boolean): PhoneStatus {
+    fun snapshot(watchLink: WatchLink): PhoneStatus {
         val latest = repository.latest
         return PhoneStatus(
             permissionGranted = isNotificationAccessGranted(),
             lastReading = latest,
             freshness = freshnessPolicy.evaluate(latest, clock),
             ageMinutes = freshnessPolicy.ageMillis(latest, clock)?.let { it / 60_000L },
-            watchConnected = watchConnected,
+            watchLink = watchLink,
             lastSentMillis = lastSentMillis,
             usedFallbackParser = usedFallbackParser,
             healthExport = healthExporter.status(),

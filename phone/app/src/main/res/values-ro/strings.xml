@@ -11,7 +11,9 @@
     <string name="health_not_receiving_title">Nu primesc citiri</string>
     <string name="health_not_receiving_body">Nu a sosit nimic de ceva vreme. Verifică dacă LinX rulează și mai e conectat la senzor.</string>
     <string name="health_watch_title">Ceasul nu e accesibil</string>
-    <string name="health_watch_body">Citirile sosesc, dar nu pot ajunge la niciun ceas pe care rulează CGM Glance. Poate fi în afara razei sau oprit — se sincronizează singur când revine. Dacă rămâne așa, verifică dacă aplicația e instalată pe ceas și dacă provine din aceeași compilare ca asta.</string>
+    <string name="health_watch_body">Citirile sosesc, dar ceasul e în afara razei sau oprit. Se sincronizează singur când revine.</string>
+    <string name="health_watch_missing_title">Nu găsesc aplicația pe ceas</string>
+    <string name="health_watch_missing_body">Citirile sosesc, dar niciun ceas nu rulează o copie compatibilă de CGM Glance, deci nimic nu ajunge la încheietură. Instalează APK-ul de ceas — și asigură-te că el și aplicația de telefon provin din aceeași compilare. Două aplicații semnate cu chei diferite nu se perechează niciodată, iar sistemul nu raportează nicio eroare când se întâmplă asta.</string>
 
     <string name="action_open_notification_access">Deschide accesul la notificări</string>
 
@@ -28,6 +30,7 @@
     <string name="value_not_granted">Neacordat</string>
     <string name="value_connected">Conectat</string>
     <string name="value_not_reachable">Inaccesibil</string>
+    <string name="value_watch_no_app">Aplicația lipsește</string>
     <string name="value_none_yet">Încă niciuna</string>
     <string name="value_not_yet">Încă nu</string>
 

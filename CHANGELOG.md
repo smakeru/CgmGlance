@@ -34,6 +34,12 @@ Phone `versionCode` 2, wear `versionCode` 1000002.
 - **Build version shown beside the app name**, read from `BuildConfig` so it cannot drift from
   `versionName`.
 
+- **"No watch app found" as a distinct verdict** from "watch not reachable". The two need
+  opposite responses — one resolves itself when the watch comes back in range, the other never
+  does — and reporting both as unreachable sent anyone with a missing or differently-signed
+  watch app off to wait for a reconnection that was never coming. Matters most for a fresh
+  install from source, where the two APKs are the easiest thing to get half-right.
+
 ### Fixed
 
 - **The watch was reported as reachable when it could not receive anything.** The status screen

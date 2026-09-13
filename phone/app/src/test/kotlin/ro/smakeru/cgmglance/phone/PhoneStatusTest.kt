@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import ro.smakeru.cgmglance.domain.glucose.GlucoseReading
 import ro.smakeru.cgmglance.domain.glucose.ReadingFreshness
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class PhoneStatusTest {
     private val reading = requireNotNull(GlucoseReading.create(112, 1_785_738_000_000L))
@@ -12,14 +13,14 @@ class PhoneStatusTest {
         permissionGranted: Boolean = true,
         lastReading: GlucoseReading? = reading,
         freshness: ReadingFreshness = ReadingFreshness.FRESH,
-        watchConnected: Boolean = true,
+        watchLink: WatchLink = WatchLink.CONNECTED,
         usedFallbackParser: Boolean = false,
     ) = PhoneStatus(
         permissionGranted = permissionGranted,
         lastReading = lastReading,
         freshness = freshness,
         ageMinutes = 1,
-        watchConnected = watchConnected,
+        watchLink = watchLink,
         lastSentMillis = 1_785_738_000_000L,
         usedFallbackParser = usedFallbackParser,
     )
@@ -38,7 +39,7 @@ class PhoneStatusTest {
                 permissionGranted = false,
                 lastReading = null,
                 freshness = ReadingFreshness.NO_DATA,
-                watchConnected = false,
+                watchLink = WatchLink.UNREACHABLE,
             )
 
         assertEquals(PhoneHealth.NO_PERMISSION, broken.health)
@@ -69,8 +70,50 @@ class PhoneStatusTest {
     }
 
     @Test
-    fun `a disconnected watch is reported last`() {
-        assertEquals(PhoneHealth.WATCH_UNREACHABLE, status(watchConnected = false).health)
+    fun `a watch that is merely away is reported last`() {
+        assertEquals(
+            PhoneHealth.WATCH_UNREACHABLE,
+            status(watchLink = WatchLink.UNREACHABLE).health,
+        )
+    }
+
+    @Test
+    fun `a missing watch app is a different verdict from an absent watch`() {
+        // The two need opposite responses. "Out of range" resolves itself and the user should
+        // wait; a watch app that is missing or signed with a different key never will, and
+        // telling them to wait would be telling them to wait forever.
+        assertEquals(
+            PhoneHealth.WATCH_APP_MISSING,
+            status(watchLink = WatchLink.NO_COMPATIBLE_APP).health,
+        )
+    }
+
+    @Test
+    fun `a missing watch app outranks a watch merely being away`() {
+        // Only one verdict can be shown, and it must be the actionable one.
+        val missing = status(watchLink = WatchLink.NO_COMPATIBLE_APP).health
+        val away = status(watchLink = WatchLink.UNREACHABLE).health
+        assertEquals(PhoneHealth.WATCH_APP_MISSING, missing)
+        assertEquals(PhoneHealth.WATCH_UNREACHABLE, away)
+        assertTrue(PhoneHealth.WATCH_APP_MISSING.ordinal < PhoneHealth.WATCH_UNREACHABLE.ordinal)
+    }
+
+    @Test
+    fun `no glucose outranks any watch problem`() {
+        // A watch complaint must never hide the fact that readings have stopped: the watch is
+        // the display, and an empty display is the lesser failure.
+        val silent =
+            status(
+                freshness = ReadingFreshness.STALE,
+                watchLink = WatchLink.NO_COMPATIBLE_APP,
+            )
+
+        assertEquals(PhoneHealth.NOT_RECEIVING, silent.health)
+    }
+
+    @Test
+    fun `a connected watch with everything else fine is ok`() {
+        assertEquals(PhoneHealth.OK, status(watchLink = WatchLink.CONNECTED).health)
     }
 
     @Test

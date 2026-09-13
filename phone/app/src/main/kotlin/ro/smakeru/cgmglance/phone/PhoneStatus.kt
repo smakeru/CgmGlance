@@ -23,8 +23,48 @@ enum class PhoneHealth {
     /** Readings stopped arriving. Usually the CGM app was killed or the sensor dropped out. */
     NOT_RECEIVING,
 
+    /**
+     * No watch anywhere is running a compatible copy of this app.
+     *
+     * Ranked above [WATCH_UNREACHABLE] because the two need opposite responses: this one will
+     * never resolve on its own, and telling the user to wait for it would be telling them to
+     * wait forever.
+     */
+    WATCH_APP_MISSING,
+
     /** Everything works here, but the watch is out of range or switched off. */
     WATCH_UNREACHABLE,
+}
+
+/**
+ * What is known about the watch end of the link.
+ *
+ * Derived from a capability lookup rather than a node count. The distinction that matters is
+ * between a watch that has the app and is merely away, and no compatible watch at all — the
+ * first resolves itself, the second never does. A node count cannot tell them apart, and
+ * reporting "unreachable" for a watch that was never going to work sends the user to wait
+ * instead of to reinstall.
+ */
+enum class WatchLink {
+    /** A watch running this app is reachable now. */
+    CONNECTED,
+
+    /**
+     * Cannot reach one right now.
+     *
+     * Also what a failed lookup reports. That is deliberate: failing to ask is not evidence the
+     * app is missing, and "cannot reach it" is the weaker, safer claim of the two.
+     */
+    UNREACHABLE,
+
+    /**
+     * The lookup succeeded and found no watch advertising the capability — anywhere, reachable
+     * or not.
+     *
+     * In practice: the watch app is not installed, or it is signed with a different certificate,
+     * which the Data Layer refuses silently.
+     */
+    NO_COMPATIBLE_APP,
 }
 
 /**
@@ -37,7 +77,7 @@ data class PhoneStatus(
     val lastReading: GlucoseReading?,
     val freshness: ReadingFreshness,
     val ageMinutes: Long?,
-    val watchConnected: Boolean,
+    val watchLink: WatchLink,
     val lastSentMillis: Long?,
     val usedFallbackParser: Boolean,
     /**
@@ -67,7 +107,13 @@ data class PhoneStatus(
                     PhoneHealth.NOT_RECEIVING
                 }
 
-                !watchConnected -> {
+                // Ranked above plain unreachability: a missing or mismatched watch app is the
+                // one of the two the user has to act on, and it will not fix itself.
+                watchLink == WatchLink.NO_COMPATIBLE_APP -> {
+                    PhoneHealth.WATCH_APP_MISSING
+                }
+
+                watchLink == WatchLink.UNREACHABLE -> {
                     PhoneHealth.WATCH_UNREACHABLE
                 }
 
