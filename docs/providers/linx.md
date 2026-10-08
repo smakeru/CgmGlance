@@ -12,7 +12,7 @@ Asia, Wellion AiDEX in Austria and Germany, and GlucoRx in the UK. Assume more n
 | --- | --- |
 | Package (mg/dL build) | `com.microtech.aidexx.mgdl` |
 | Package (mmol/L build) | `com.microtech.aidexx` |
-| Verified against | versionName 2.5.0, versionCode 2501 |
+| Verified against | versionName 2.6.1, versionCode 2612 |
 | Sensor cadence | 1 minute claimed; see [Cadence](#cadence) for what actually happens |
 | Source | closed, no SDK, no public repository |
 
@@ -130,6 +130,36 @@ adb shell cmd notification allow_listener \
 The trailing `0` (user id) is required on Samsung; without it the command reports success and
 changes nothing.
 
+## The vendor's watch app
+
+Since 2.6.0 the vendor also ships a Wear OS app, under the same package name. It is documented
+here because it looks like a second source of readings and is not one.
+
+What it does, verified on a Galaxy Watch 8 with the phone's Bluetooth switched off:
+
+- it talks to the sensor **directly**, independently of the phone, through a foreground service
+  (`com.microtechmd.wear.service.MyForegroundService`) on a notification channel the vendor
+  named *CGM Direct Connection*;
+- readings keep arriving and its own screen keeps updating — observed going 181 → 174, each
+  labelled *just now* — while the phone received nothing at all.
+
+So the watch holds a live value. It has no way to hand it over:
+
+| Route | Finding |
+| --- | --- |
+| Complication | None declared. `cmd package query-services -a android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST` returns only this app's own provider. |
+| Tile | None declared. Same check with `androidx.wear.tiles.action.BIND_TILE_PROVIDER`. |
+| Notification | Ongoing, but `contentView` and `bigContentView` are both null and the text is the fixed string `Connecting to CGM sensor directly` — unchanged across the whole session while the app itself displayed fresh values. Nothing to parse. |
+| Logs | A state line carries `glucoseTime`, which does advance with each reading, but `glucose` stays `0.0`, and the displayed value appears nowhere in the app's output. A reader could learn *when* a reading arrived, never *what* it was — and reading another process's log needs `READ_LOGS`, which an ordinary app cannot hold. |
+| Components | `HelloActivity`, `BootCompleteReceiver`, `MyForegroundService`, `WearCommListenerService`, plus androidx startup and WorkManager. No content provider, no broadcast, and the Data Layer is scoped to the package. |
+
+This is the sandbox working as designed, not an oversight to route around. The phone path exists
+only because the vendor happens to render the number into a notification, which the system then
+shows to listeners; on the watch it renders the number nowhere outside its own process.
+
+When the phone is unreachable, this app's surfaces therefore degrade as designed, and the only
+alternative would be speaking to the sensor over BLE — a [non-goal](../../README.md#non-goals).
+
 ## Breakage log
 
 Append here whenever the vendor changes something. This section is the point of the document.
@@ -137,6 +167,8 @@ Append here whenever the vendor changes something. This section is the point of 
 | Date | App version | What changed | What we did |
 | --- | --- | --- | --- |
 | 2026-08-02 | 2.5.0 | Baseline. Named views present, parser on the primary path. | — |
+| 2026-09-18 | 2.6.0 | Vendor shipped a Wear OS app and a phone widget. Named views unchanged, parser still on the primary path over 58 consecutive readings. Nothing cleaner exposed: still no broadcast, no data provider, no bindable service, no Health Connect. | — |
+| 2026-10-08 | 2.6.1 | Phone-only release; the wear APK stayed at 2.6.0. Declared components and requested permissions identical to 2.6.0. Parser on the primary path over 56 consecutive readings. | — |
 
 ## What to check first when it breaks
 
