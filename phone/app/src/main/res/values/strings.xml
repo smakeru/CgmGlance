@@ -55,7 +55,7 @@
     <string name="settings_source_title">Source for watch and Health Connect</string>
     <string name="settings_source_data_note">Glucose only · trend calculated by CGM Glance</string>
     <string name="settings_source_note">LinX is selected by default and has priority while both sensors run. Sources never switch automatically. Select Dexcom ONE+ here when you are ready. Histories stay separate. If the new source has no reading yet, the watch keeps the previous value with its original age until a reading arrives.</string>
-    <string name="settings_dexcom_note">Enable Quick Glance in Dexcom ONE+ and grant notification access to CGM Glance — Dexcom ONE+. This integration is awaiting real-device validation. Glucose must include an explicit unit; ambiguous notifications are refused.</string>
+    <string name="settings_dexcom_note">Enable Quick Glance in Dexcom ONE+ and grant notification access to CGM Glance — Dexcom ONE+. Glucose must include an explicit unit; ambiguous notifications are refused.</string>
     <string name="settings_subtitle">Used for colour and wording only. This app never alerts on these values — alarms stay with the official app.</string>
     <string name="field_urgent_low">Urgent low</string>
     <string name="field_low">Low</string>

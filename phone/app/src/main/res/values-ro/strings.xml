@@ -55,7 +55,7 @@
     <string name="settings_source_title">Sursa pentru ceas și Health Connect</string>
     <string name="settings_source_data_note">Preluăm doar glicemia · trend calculat de CGM Glance</string>
     <string name="settings_source_note">LinX este selectat implicit și are prioritate când rulează ambii senzori. Sursa nu se schimbă automat. Selectează aici Dexcom ONE+ când ești gata. Istoricele rămân separate. Dacă noua sursă nu are încă o citire, ceasul păstrează valoarea anterioară cu vârsta ei originală până sosește una.</string>
-    <string name="settings_dexcom_note">Activează Quick Glance în Dexcom ONE+ și acordă acces la notificări pentru CGM Glance — Dexcom ONE+. Integrarea așteaptă validarea pe telefon. Glicemia trebuie să aibă unitatea explicită; notificările ambigue sunt refuzate.</string>
+    <string name="settings_dexcom_note">Activează Quick Glance în Dexcom ONE+ și acordă acces la notificări pentru CGM Glance — Dexcom ONE+. Glicemia trebuie să aibă unitatea explicită; notificările ambigue sunt refuzate.</string>
     <string name="settings_subtitle">Folosit doar pentru culoare și formulare. Aplicația nu alertează niciodată pe baza acestor valori — alarmele rămân la aplicația oficială.</string>
     <string name="field_urgent_low">Scăzut urgent</string>
     <string name="field_low">Scăzut</string>

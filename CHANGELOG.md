@@ -41,6 +41,9 @@ may still be updated first: a 1.1 watch ignores the new threshold, and a 1.2 wat
 
 - **In range is now green**, not white, on the tile, the watch app and the widget. Red for urgent
   low and very high, orange for low, yellow for high, grey once a reading is stale.
+- The LinX notification-access entry is renamed from "CGM Glance — read LinX glucose" to
+  **CGM Glance — LinX**, matching **CGM Glance — Dexcom ONE+**, so the two entries Android lists
+  read as parts of one app. An already granted permission is unaffected by the rename.
 - Settings and status wording cover both providers. Background readings do not export competing
   values or reset the selected source's silence watchdog.
 - Each source choice explains in small secondary text that only glucose is acquired and trend

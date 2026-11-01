@@ -170,7 +170,9 @@ rejects it with `INSTALL_FAILED_UPDATE_INCOMPATIBLE`, and both apps have to be u
 adb install -r phone/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Then grant notification access: **Settings → Apps → Special access → Notification access**.
+Then grant notification access: **Settings → Apps → Special access → Notification access**. The
+app appears there twice, once per sensor: **CGM Glance — LinX** and **CGM Glance — Dexcom ONE+**.
+Android grants this access per service, so enable the entry for each sensor you use.
 
 For the watch, enable wireless debugging on it and:
 
