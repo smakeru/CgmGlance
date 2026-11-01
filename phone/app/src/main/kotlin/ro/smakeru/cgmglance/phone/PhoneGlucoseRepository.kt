@@ -2,6 +2,7 @@ package ro.smakeru.cgmglance.phone
 
 import ro.smakeru.cgmglance.domain.glucose.GlucoseReading
 import ro.smakeru.cgmglance.domain.glucose.RangeThresholds
+import ro.smakeru.cgmglance.domain.glucose.TrendArrow
 import ro.smakeru.cgmglance.domain.glucose.TrendCalculator
 import ro.smakeru.cgmglance.domain.sync.LastSent
 import ro.smakeru.cgmglance.domain.sync.SyncDecision
@@ -84,6 +85,10 @@ class PhoneGlucoseRepository(
     val latest: GlucoseReading?
         get() = synchronized(lock) { history.lastOrNull() }
 
+    /** Derived without sending or adding a sample; used by phone widgets. */
+    val trend: TrendArrow
+        get() = synchronized(lock) { trendCalculator.calculate(history.toList(), clock) }
+
     /** Accepts a reading and reports whether the watch should hear about it. */
     fun record(reading: GlucoseReading): Outcome =
         synchronized(lock) {
@@ -99,20 +104,36 @@ class PhoneGlucoseRepository(
             val decision = syncPolicy.decide(reading, thresholds().classify(reading), lastSent)
             if (decision == SyncDecision.SKIP) return Outcome(payload = null, urgent = false)
 
-            lastSent = LastSent(reading.mgdl, reading.timestampMillis, thresholds().classify(reading))
-            sequence++
-
-            Outcome(
-                payload =
-                    LatestReadingPayload(
-                        reading = reading,
-                        trend = trendCalculator.calculate(history.toList(), clock),
-                        senderNowMillis = clock.nowMillis(),
-                        sequence = sequence,
-                    ),
-                urgent = decision == SyncDecision.SEND_URGENT,
-            )
+            payloadFor(reading, urgent = decision == SyncDecision.SEND_URGENT)
         }
+
+    /**
+     * A deliberate source change must reach the watch even if this source's last value was sent
+     * before. Do not record it again or restamp it: a cached reading retains its real age.
+     */
+    fun latestForSync(): Outcome =
+        synchronized(lock) {
+            val reading = history.lastOrNull() ?: return Outcome(payload = null, urgent = false)
+            payloadFor(reading, urgent = true)
+        }
+
+    private fun payloadFor(
+        reading: GlucoseReading,
+        urgent: Boolean,
+    ): Outcome {
+        lastSent = LastSent(reading.mgdl, reading.timestampMillis, thresholds().classify(reading))
+        sequence++
+        return Outcome(
+            payload =
+                LatestReadingPayload(
+                    reading = reading,
+                    trend = trendCalculator.calculate(history.toList(), clock),
+                    senderNowMillis = clock.nowMillis(),
+                    sequence = sequence,
+                ),
+            urgent = urgent,
+        )
+    }
 
     /**
      * Drops the previous entry when this one is the same measurement posted again.

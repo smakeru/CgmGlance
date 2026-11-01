@@ -21,11 +21,11 @@ Watch 8. Not published anywhere, no releases, personal use.
 
 | | |
 | --- | --- |
-| Providers | LinX / MicroTech AiDEX X ([contract](docs/providers/linx.md)) |
+| Providers | LinX / MicroTech AiDEX X ([validated contract](docs/providers/linx.md)); Dexcom ONE+ ([1.9.0 live acquisition checked; further validation pending](docs/providers/dexcom-one-plus.md)) |
 | Watch surfaces | Complication (SHORT_TEXT, LONG_TEXT, RANGED_VALUE), Tile, app |
-| Phone | status screen, target range settings, silence watchdog |
+| Phone | 1.2: source-labelled status, explicit source selection (LinX default), independent histories, target range settings, silence watchdog, configurable home-screen widgets |
 | Health export | Health Connect, off by default ([below](#health-connect-export)) |
-| Tests | 141, all passing |
+| Tests | JVM domain/sync policies, provider parsers and source-isolation tests; synthetic Dexcom inputs are not real-device validation |
 
 ### No support, and no promise to maintain
 
@@ -42,6 +42,26 @@ If you rely on this, keep the official app as your source of truth, and be prepa
 parser yourself. It is GPL-3.0: [forking](docs/adding-a-provider.md) is the expected response to
 a need this repository does not meet.
 
+## Phone 1.2: sources and home-screen widgets
+
+**LinX has priority by default**, even if Dexcom readings arrive first or last. Both feeds are
+collected into separate histories. The source for the watch and optional Health Connect export
+changes only when explicitly saved in **Settings**; a temporary LinX outage never switches it.
+
+Add one or more **CGM Glance** widgets from the launcher's widget picker. Configure each instance
+for LinX, Dexcom ONE+, or **Follow selected source**. Every widget labels its actual source and
+opens that source's official app when tapped. A fixed Dexcom widget does not change what reaches
+the watch, so it can be used beside a LinX widget during the overlap period. Units follow the
+phone settings. Age remains visible, and values/trends follow the shared freshness policy.
+Widget refresh timing is subject to Android background/Doze scheduling; this is not a medical
+alarm or a replacement for the official app.
+
+Dexcom requires its **Quick Glance** notification and separate notification access for
+**CGM Glance — Dexcom ONE+**. Basic mg/dL acquisition is checked on version 1.9.0, including its
+invisible U+2060 unit separator. Failure states, timestamps and sustained operation still need
+validation. Missing units and ambiguous layouts are rejected rather than guessed; see the
+[provider specification](docs/providers/dexcom-one-plus.md).
+
 ## Not a medical device
 
 This app mirrors a value the official app has already computed. It is not certified, not
@@ -52,7 +72,7 @@ values — see [Non-goals](#non-goals).
 ## Health Connect export
 
 Optionally writes each reading to Health Connect, from where Samsung Health — or anything else
-the user has linked — picks it up. **Off by default**; switched on under *Target range and unit*,
+the user has linked — picks it up. **Off by default**; switched on under *Settings*,
 and it additionally needs the Health Connect write permission, granted from the status screen.
 
 | | |
@@ -100,6 +120,8 @@ Alarms belong to the app that owns the sensor connection.
 | [Architecture](docs/architecture.md) | the chain, the three ideas that shape it, wire format, battery |
 | [Decision log](docs/decisions.md) | what was chosen, what was rejected, and why |
 | [LinX provider contract](docs/providers/linx.md) | what the vendor exposes, the exact layout, breakage log |
+| [Dexcom ONE+ provider](docs/providers/dexcom-one-plus.md) | provisional notification grammar, source priority, permissions and device-validation checklist |
+| [Phone widgets](docs/phone-widgets.md) | multiple source-specific widgets, app-launch taps and freshness limitations |
 | [Adding a provider](docs/adding-a-provider.md) | recipe for a new sensor |
 
 ## Building
@@ -166,12 +188,15 @@ port is only advertised while the pairing screen is open on the watch.
 | --- | --- | --- |
 | `:core:domain` | Pure JVM | Units, plausibility, freshness, trend, sync policy. No Android dependency, by design. |
 | `:core:sync-contract` | Pure JVM | The wire format between the two APKs, with its version-skew rules. |
-| `:provider:linx` | Android library | Reads the vendor notification. Parsing logic is plain Kotlin. |
+| `:provider:linx` | Android library | Reads the LinX notification. Parsing logic is plain Kotlin. |
+| `:provider:dexcom` | Android library | Provisional Dexcom ONE+ notification reader; strict parser, no sensor/Bluetooth access. |
 | `:phone:app` | Android app | Acquisition, history, sync, health export, status and settings screens. |
 | `:wear:app` | Android app | Complication, tile, watch app. |
 
-Both apps share the application id `ro.smakeru.cgmglance`, which the Data Layer requires. Their
-`versionCode` values must still differ, so the wear module is offset by one million.
+Both apps share the application id `ro.smakeru.cgmglance`, which the Data Layer requires. Wear
+version codes are offset by one million. Phone **1.2** (`versionCode` 3) deliberately keeps the
+existing watch **1.1** (`versionCode` 1000002) and sync schema unchanged: no watch update is needed
+for source selection or phone widgets. Both installed APKs must still use the same signing key.
 
 ## Licence
 

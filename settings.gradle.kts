@@ -27,6 +27,7 @@ include(":core:sync-contract")
 // Reads glucose out of the official LinX app. Its parsing logic is plain Kotlin so it can be
 // tested against captured layouts without a device; only the RemoteViews extraction is Android.
 include(":provider:linx")
+include(":provider:dexcom")
 
 // Acquires glucose from the official CGM app, validates it, and syncs it to the watch.
 include(":phone:app")

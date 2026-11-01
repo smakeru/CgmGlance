@@ -73,8 +73,9 @@ class MainActivity : ComponentActivity() {
                             initialThresholds = app.preferences.loadThresholds(),
                             initialUnit = app.preferences.loadUnit(),
                             initialHealthExport = app.preferences.loadHealthExportSettings(),
-                            onSave = { thresholds, unit, healthExport ->
-                                app.updatePreferences(thresholds, unit, healthExport)
+                            initialSource = app.preferences.loadSource(),
+                            onSave = { thresholds, unit, healthExport, glucoseSource ->
+                                app.updatePreferences(thresholds, unit, healthExport, glucoseSource)
                                 showSettings = false
                             },
                             onBack = { showSettings = false },
@@ -198,11 +199,14 @@ private fun StatusScreen(
             Text(text = stringResource(R.string.details_heading), style = MaterialTheme.typography.titleMedium)
             Spacer(Modifier.height(8.dp))
 
-            DetailRow(stringResource(R.string.detail_source), "LinX")
+            DetailRow(stringResource(R.string.detail_source), status.source.label)
             DetailRow(
                 stringResource(R.string.detail_permission),
                 stringResource(if (status.permissionGranted) R.string.value_granted else R.string.value_not_granted),
             )
+            status.parseFailure?.let { reason ->
+                DetailRow(stringResource(R.string.detail_parse_failure), reason)
+            }
             DetailRow(stringResource(R.string.detail_last_reading), describeReading(status))
             DetailRow(stringResource(R.string.detail_sent), describeLastSent(status))
             DetailRow(

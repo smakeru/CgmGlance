@@ -20,9 +20,14 @@ class ReadingHistoryStore(
     context: Context,
     private val clock: Clock,
     private val windowMillis: Long = PhoneGlucoseRepository.HISTORY_WINDOW_MILLIS,
+    source: GlucoseSource = GlucoseSource.LINX,
 ) : HistoryPersistence {
     private val prefs: SharedPreferences =
-        context.applicationContext.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
+        context.applicationContext.getSharedPreferences(
+            // Keep the old file for LinX: existing history must not migrate into Dexcom.
+            if (source == GlucoseSource.LINX) FILE_NAME else "${FILE_NAME}_${source.name}",
+            Context.MODE_PRIVATE,
+        )
 
     /**
      * Readings still inside the window, oldest first.

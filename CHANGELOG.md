@@ -1,10 +1,49 @@
 # Changelog
 
-Notable changes per released version. Both APKs share a `versionName`; their `versionCode`
-values differ by the one million offset described in the [README](README.md#modules).
+Notable changes per version. Phone and watch may be updated independently; phone 1.2 retains
+watch 1.1 and the same wire format. Wear version codes use the one million offset described in
+the [README](README.md#modules).
 
 Entries record what changed and, where it is not obvious, why — the reasoning belongs in
 [docs/decisions.md](docs/decisions.md), and this file links to it rather than repeating it.
+
+## 1.2 — unreleased
+
+Phone `versionCode` 3. Watch APK remains 1.1 (`versionCode` 1000002); no watch-side code or sync
+schema change. A phone-only update still requires the same signing certificate as the watch.
+
+### Added
+
+- **Dexcom ONE+ notification provider**, exact package `com.dexcom.d1plus`, with explicit units,
+  standard-extras and custom-view parsing, conservative ambiguity/error rejection and synthetic
+  tests. Basic live mg/dL acquisition checked with ONE+ 1.9.0; failure states and sustained
+  operation remain unvalidated. See the [contract and limitations](docs/providers/dexcom-one-plus.md).
+- **Phone-only source selection** for the watch and Health Connect. LinX is the default and
+  retains priority during overlap; sources never alternate based on notification order or
+  switch silently on a LinX outage. Dexcom is selected explicitly when ready.
+- **Independent histories and trends** for both sensors, preserving the existing LinX history
+  on upgrade. A source switch resends the selected cached reading without changing its age.
+- **Configurable home-screen widgets**, with multiple independent instances following LinX,
+  Dexcom ONE+ or the selected phone source. Each shows its source, glucose, trend and age;
+  tapping opens the matching official app. A Dexcom widget does not replace LinX on the watch.
+- **Source-aware phone diagnostics**, including the last notification-parser rejection and
+  notification permission for the selected provider's service.
+
+### Changed
+
+- Settings and status wording cover both providers. Background readings do not export competing
+  values or reset the selected source's silence watchdog.
+- Each source choice explains in small secondary text that only glucose is acquired and trend
+  is calculated by CGM Glance. The official Dexcom arrow remains intentionally unused: its
+  accessibility description is static, and exact matching of internal images is not a stable
+  data contract.
+
+### Fixed
+
+- ONE+ 1.9.0 inserts WORD JOINER (U+2060) in `mg/dL` and `mmol/L`. Normalise that invisible
+  character before parsing; previously Quick Glance was rejected with `UNIT_MISSING`.
+- Recognise the inspected Quick Glance value/unit IDs as the primary path; ignore non-reading
+  group summaries and foreground-service notices instead of reporting missing units for them.
 
 ## 1.1 — 2026-09-12
 

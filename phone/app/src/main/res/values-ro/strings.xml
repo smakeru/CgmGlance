@@ -5,11 +5,11 @@
     <string name="health_ok_title">Funcționează</string>
     <string name="health_ok_body">Citirile sosesc, iar ceasul o are pe cea mai recentă.</string>
     <string name="health_no_permission_title">Are nevoie de acces la notificări</string>
-    <string name="health_no_permission_body">Aplicația citește valoarea din notificarea LinX, deci are nevoie de permisiunea de a vedea notificări. Ignoră tot ce nu vine de la LinX.</string>
+    <string name="health_no_permission_body">Aplicația citește glicemia din notificările LinX sau Dexcom ONE+. Acordă acces la notificări pentru sursa selectată; celelalte aplicații sunt ignorate.</string>
     <string name="health_waiting_title">Aștept prima citire</string>
-    <string name="health_waiting_body">Permisiunea e acordată. Deschide LinX ca să-și reîmprospăteze notificarea; de obicei durează sub un minut.</string>
+    <string name="health_waiting_body">Permisiunea e acordată. Deschide aplicația CGM selectată ca să-și reîmprospăteze notificarea. Pentru Dexcom ONE+, activează Quick Glance.</string>
     <string name="health_not_receiving_title">Nu primesc citiri</string>
-    <string name="health_not_receiving_body">Nu a sosit nimic de ceva vreme. Verifică dacă LinX rulează și mai e conectat la senzor.</string>
+    <string name="health_not_receiving_body">Nu a sosit nimic de ceva vreme de la sursa selectată. Verifică dacă aplicația ei CGM rulează și e conectată la senzor.</string>
     <string name="health_watch_title">Ceasul nu e accesibil</string>
     <string name="health_watch_body">Citirile sosesc, dar ceasul e în afara razei sau oprit. Se sincronizează singur când revine.</string>
     <string name="health_watch_missing_title">Nu găsesc aplicația pe ceas</string>
@@ -18,10 +18,11 @@
     <string name="action_open_notification_access">Deschide accesul la notificări</string>
 
     <string name="fallback_title">Citire prin metoda de rezervă</string>
-    <string name="fallback_body">Layout-ul LinX s-a schimbat, deci valorile sunt găsite după poziție, nu după nume. Încă funcționează, dar are nevoie de o verificare înainte să nu mai prindă nici metoda de rezervă.</string>
+    <string name="fallback_body">Sursa selectată este citită prin parserul de rezervă. Verifică formatul notificării; integrarea Dexcom necesită încă validare pe telefon.</string>
 
     <string name="details_heading">Detalii</string>
     <string name="detail_source">Sursă</string>
+    <string name="detail_parse_failure">Ultima notificare refuzată</string>
     <string name="detail_permission">Acces la notificări</string>
     <string name="detail_last_reading">Ultima citire</string>
     <string name="detail_sent">Trimis la ceas</string>
@@ -47,10 +48,14 @@
     <string name="reading_with_age">%1$d %2$s, %3$s</string>
     <string name="sent_just_now">Chiar acum</string>
 
-    <string name="action_settings">Interval țintă și unitate</string>
+    <string name="action_settings">Setări</string>
     <string name="disclaimer">Afișează o valoare pe care aplicația oficială a calculat-o deja. Nu e dispozitiv medical: nu o folosi niciodată pentru decizii de tratament și confirmă întotdeauna cu aplicația oficială sau cu un glucometru.</string>
 
-    <string name="settings_title">Interval țintă</string>
+    <string name="settings_title">Setări</string>
+    <string name="settings_source_title">Sursa pentru ceas și Health Connect</string>
+    <string name="settings_source_data_note">Preluăm doar glicemia · trend calculat de CGM Glance</string>
+    <string name="settings_source_note">LinX este selectat implicit și are prioritate când rulează ambii senzori. Sursa nu se schimbă automat. Selectează aici Dexcom ONE+ când ești gata. Istoricele rămân separate. Dacă noua sursă nu are încă o citire, ceasul păstrează valoarea anterioară cu vârsta ei originală până sosește una.</string>
+    <string name="settings_dexcom_note">Activează Quick Glance în Dexcom ONE+ și acordă acces la notificări pentru CGM Glance — Dexcom ONE+. Integrarea așteaptă validarea pe telefon. Glicemia trebuie să aibă unitatea explicită; notificările ambigue sunt refuzate.</string>
     <string name="settings_subtitle">Folosit doar pentru culoare și formulare. Aplicația nu alertează niciodată pe baza acestor valori — alarmele rămân la aplicația oficială.</string>
     <string name="field_urgent_low">Scăzut urgent</string>
     <string name="field_low">Scăzut</string>
@@ -67,13 +72,13 @@
     <string name="notif_no_permission_title">Accesul la notificări e oprit</string>
     <string name="notif_no_permission_text">CGM Glance nu poate citi glicemia fără el. Apasă pentru a rezolva.</string>
     <string name="notif_not_receiving_title">Nu primesc citiri</string>
-    <string name="notif_not_receiving_text">Nu a sosit nimic de ceva vreme. Verifică dacă LinX rulează și e conectat la senzor.</string>
+    <string name="notif_not_receiving_text">Nu a sosit nimic de ceva vreme de la sursa CGM selectată. Verifică dacă aplicația ei rulează și e conectată la senzor.</string>
 
     <!-- Deliberately identical to the English one: a build identifier, not prose. -->
     <string name="version_label">Version %1$s</string>
 
     <string name="health_export_title">Health Connect</string>
-    <string name="health_export_disabled">Oprit. Pornește-l din &#8222;Interval țintă și unitate&#8221; ca să scrii citirile în Health Connect.</string>
+    <string name="health_export_disabled">Oprit. Pornește-l din &#8222;Setări&#8221; ca să scrii citirile în Health Connect.</string>
     <string name="health_export_working">Scriu o citire la fiecare %1$d minute în Health Connect. Samsung Health le preia de acolo, dacă ai activat legătura în setările lui.</string>
     <string name="health_export_waiting">Configurat. Următoarea citire care intră la rând va fi scrisă, apoi câte una la %1$d minute.</string>
     <string name="health_export_needs_setup">Permite-i CGM Glance să scrie glicemia în Health Connect. Samsung Health o citește apoi de acolo.</string>

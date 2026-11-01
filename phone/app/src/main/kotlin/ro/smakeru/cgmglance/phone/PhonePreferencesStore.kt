@@ -19,6 +19,12 @@ class PhonePreferencesStore(
     private val prefs =
         context.applicationContext.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE)
 
+    fun loadSource(): GlucoseSource = GlucoseSource.fromStored(prefs.getString(KEY_SOURCE, null))
+
+    fun saveSource(source: GlucoseSource) {
+        prefs.edit().putString(KEY_SOURCE, source.name).commit()
+    }
+
     fun loadThresholds(): RangeThresholds {
         val defaults = RangeThresholds.default
         return RangeThresholds.create(
@@ -103,5 +109,6 @@ class PhonePreferencesStore(
         const val KEY_LOW = "lowMgdl"
         const val KEY_HIGH = "highMgdl"
         const val KEY_UNIT = "unit"
+        const val KEY_SOURCE = "glucoseSource"
     }
 }

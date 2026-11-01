@@ -6,22 +6,20 @@ import ro.smakeru.cgmglance.domain.glucose.GlucoseReading
 import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
 import ro.smakeru.cgmglance.domain.glucose.RangeThresholds
 import ro.smakeru.cgmglance.domain.time.Clock
+import ro.smakeru.cgmglance.provider.dexcom.DexcomParseFailure
+import ro.smakeru.cgmglance.provider.dexcom.DexcomProviderBus
+import ro.smakeru.cgmglance.provider.dexcom.DexcomReadingSink
+import ro.smakeru.cgmglance.provider.linx.LinxParseFailure
 import ro.smakeru.cgmglance.provider.linx.LinxProviderBus
 import ro.smakeru.cgmglance.provider.linx.LinxReadingSink
 import ro.smakeru.cgmglance.sync.PrefsPayload
 
-/**
- * Wires the object graph by hand.
- *
- * No dependency injection framework: the graph is a handful of objects with no scopes and no
- * variants, and the two components the platform constructs for us — the notification listener
- * and, on the watch, the complication and tile services — would each need an escape hatch
- * anyway. Introduce Hilt when the graph outgrows this file, not before.
- */
+/** Wires the small object graph by hand, including the two Android-created provider services. */
 class CgmGlanceApplication : Application() {
     private val clock = Clock { System.currentTimeMillis() }
+    private val ingestionLock = Any()
 
-    private lateinit var repository: PhoneGlucoseRepository
+    private lateinit var sources: PhoneGlucoseSources
     private lateinit var sender: WatchSyncSender
 
     /** Read by the status screen and by the watchdog. Set up before anything can ask for it. */
@@ -44,13 +42,17 @@ class CgmGlanceApplication : Application() {
         super.onCreate()
 
         preferences = PhonePreferencesStore(this)
-        repository =
-            PhoneGlucoseRepository(
-                clock = clock,
-                // Read per reading rather than captured once, so an edit takes effect on the
-                // next value instead of at the next restart.
-                thresholds = { preferences.loadThresholds() },
-                persistence = ReadingHistoryStore(this, clock),
+        sources =
+            PhoneGlucoseSources(
+                repositories =
+                    GlucoseSource.entries.associateWith { source ->
+                        PhoneGlucoseRepository(
+                            clock = clock,
+                            thresholds = { preferences.loadThresholds() },
+                            persistence = ReadingHistoryStore(this, clock, source = source),
+                        )
+                    },
+                initialSource = preferences.loadSource(),
             )
         sender = WatchSyncSender(this)
         healthExporter =
@@ -60,44 +62,69 @@ class CgmGlanceApplication : Application() {
                 preferences = preferences,
                 settings = { preferences.loadHealthExportSettings() },
             )
-        statusSource = PhoneStatusSource(this, repository, clock, healthExporter)
+        statusSource = PhoneStatusSource(this, sources, clock, healthExporter)
         notifier = AppStateNotifier(this).apply { ensureChannel() }
         watchdog = SilenceWatchdog(this)
 
-        // Armed at startup as well as on every reading, so a phone that reboots into a broken
-        // state still reports it rather than waiting for a reading that will never come.
+        // A reboot into a broken state must still report silence.
         watchdog.arm()
-
         LinxProviderBus.sink = LinxSink()
-
-        // Sent once at start so a freshly installed watch can classify and format before the
-        // first reading arrives. Cheap, and it removes a class of "why is it grey" reports.
+        DexcomProviderBus.sink = DexcomSink()
         sendPreferencesToWatch()
     }
 
-    /**
-     * Persists the user's range and unit, then tells the watch.
-     *
-     * Both sides must agree: the watch classifies and formats locally, so a range saved here
-     * and not sent would leave the complication colouring against the old one.
-     */
+    /** Source is phone-only. The watch's range/unit payload and reading contract stay unchanged. */
     fun updatePreferences(
         thresholds: RangeThresholds,
         unit: GlucoseUnit,
         healthExport: HealthExportSettings,
-    ) {
+        source: GlucoseSource,
+    ) = synchronized(ingestionLock) {
         preferences.save(thresholds, unit)
-
-        // Not sent to the watch, and there is nothing to send: the watch neither writes health
-        // data nor displays anything about it. Keeping it out of the payload is what stops this
-        // feature from reaching a device it has no business on.
         preferences.saveHealthExportSettings(healthExport)
-
+        preferences.saveSource(source)
         sendPreferencesToWatch()
+
+        sources.select(source)?.let { outcome ->
+            // Changing selection is not a new reading and must not reset freshness or the
+            // Health Connect cadence. A pending warning belongs to the previous selection.
+            notifier.clear()
+            watchdog.arm()
+            sendOutcome(outcome)
+        }
+        GlucoseWidgetProvider.refresh(this)
     }
+
+    /** Read-only view for home-screen widgets; inspecting Dexcom never selects it for the watch. */
+    fun widgetSnapshot(source: GlucoseSource? = null): PhoneGlucoseSources.Snapshot = sources.snapshot(source)
 
     private fun sendPreferencesToWatch() {
         sender.sendPrefs(PrefsPayload(preferences.loadUnit(), preferences.loadThresholds()))
+    }
+
+    private fun acceptReading(
+        source: GlucoseSource,
+        reading: GlucoseReading,
+        usedFallback: Boolean,
+    ) = synchronized(ingestionLock) {
+        val outcome = sources.record(source, reading, usedFallback)
+        // Widgets can explicitly follow the other sensor even while LinX owns the watch feed.
+        GlucoseWidgetProvider.refresh(this)
+        if (outcome == null) return@synchronized
+        // Background readings do not reach this path: they must neither export competing
+        // values nor hide that the selected feed has stopped.
+        notifier.clear()
+        watchdog.arm()
+        if (usedFallback) Log.w(TAG, "${source.label}: parsed via fallback; verify vendor layout")
+        healthExporter.offer(reading)
+        sendOutcome(outcome)
+    }
+
+    private fun sendOutcome(outcome: PhoneGlucoseRepository.Outcome) {
+        val payload = outcome.payload ?: return
+        sender.sendLatest(payload, outcome.urgent)
+        statusSource.lastSentMillis = clock.nowMillis()
+        Log.i(TAG, "sent reading, source=${sources.snapshot().source}, trend=${payload.trend}")
     }
 
     private inner class LinxSink : LinxReadingSink {
@@ -105,32 +132,20 @@ class CgmGlanceApplication : Application() {
             reading: GlucoseReading,
             unit: GlucoseUnit,
             usedFallback: Boolean,
-        ) {
-            // A reading arrived, so whatever the notification was warning about is over, and
-            // the silence clock starts again.
-            notifier.clear()
-            watchdog.arm()
+        ) = acceptReading(GlucoseSource.LINX, reading, usedFallback)
 
-            statusSource.usedFallbackParser = usedFallback
-            if (usedFallback) {
-                // The named views are gone, so a vendor update has changed the layout. The app
-                // still works, but this is the signal that the parser needs attention before
-                // the fallback stops matching too.
-                Log.w(TAG, "parsed via positional fallback: vendor layout has changed")
-            }
+        override fun onParseFailure(reason: LinxParseFailure) = sources.recordFailure(GlucoseSource.LINX, reason.name)
+    }
 
-            val outcome = repository.record(reading)
+    private inner class DexcomSink : DexcomReadingSink {
+        override fun onReading(
+            reading: GlucoseReading,
+            unit: GlucoseUnit,
+            usedFallback: Boolean,
+        ) = acceptReading(GlucoseSource.DEXCOM_ONE_PLUS, reading, usedFallback)
 
-            // Offered before the watch decision, and deliberately not inside it. The sync policy
-            // suppresses readings the watch would gain nothing from; the health log wants a
-            // steady sample every fifteen minutes regardless of whether the number moved.
-            healthExporter.offer(reading)
-
-            val payload = outcome.payload ?: return
-            sender.sendLatest(payload, outcome.urgent)
-            statusSource.lastSentMillis = clock.nowMillis()
-            Log.i(TAG, "sent ${payload.reading.mgdl} trend=${payload.trend} urgent=${outcome.urgent}")
-        }
+        override fun onParseFailure(reason: DexcomParseFailure) =
+            sources.recordFailure(GlucoseSource.DEXCOM_ONE_PLUS, reason.name)
     }
 
     private companion object {

@@ -7,11 +7,11 @@
     <string name="health_ok_title">Working</string>
     <string name="health_ok_body">Readings are arriving and the watch has the latest one.</string>
     <string name="health_no_permission_title">Needs notification access</string>
-    <string name="health_no_permission_body">This app reads the value from the LinX notification, so it needs permission to see notifications. It ignores everything that is not from LinX.</string>
+    <string name="health_no_permission_body">This app reads glucose from LinX or Dexcom ONE+ notifications. Enable notification access for the selected source; other apps are ignored.</string>
     <string name="health_waiting_title">Waiting for the first reading</string>
-    <string name="health_waiting_body">Permission is granted. Open LinX so it refreshes its notification; this usually takes under a minute.</string>
+    <string name="health_waiting_body">Permission is granted. Open the selected CGM app so it refreshes its notification. For Dexcom ONE+, enable Quick Glance.</string>
     <string name="health_not_receiving_title">Not receiving readings</string>
-    <string name="health_not_receiving_body">Nothing has arrived recently. Check that LinX is running and still connected to the sensor.</string>
+    <string name="health_not_receiving_body">Nothing has arrived recently from the selected source. Check that its CGM app is running and connected to the sensor.</string>
     <string name="health_watch_title">Watch not reachable</string>
     <string name="health_watch_body">Readings are arriving, but the watch is out of range or switched off. It will catch up on its own once it reconnects.</string>
     <string name="health_watch_missing_title">No watch app found</string>
@@ -21,10 +21,11 @@
 
     <!-- Shown only while the parser is running on its positional fallback. -->
     <string name="fallback_title">Reading via fallback</string>
-    <string name="fallback_body">The LinX layout changed, so values are being found by position rather than by name. Still working, but it needs a look before the fallback stops matching too.</string>
+    <string name="fallback_body">The selected source is being read through its fallback parser. Verify its notification format; Dexcom support still needs validation on a real device.</string>
 
     <string name="details_heading">Details</string>
     <string name="detail_source">Source</string>
+    <string name="detail_parse_failure">Last rejected notification</string>
     <string name="detail_permission">Notification access</string>
     <string name="detail_last_reading">Last reading</string>
     <string name="detail_sent">Sent to watch</string>
@@ -46,11 +47,15 @@
     <string name="reading_with_age">%1$d %2$s, %3$s</string>
     <string name="sent_just_now">Just now</string>
 
-    <string name="action_settings">Target range and unit</string>
+    <string name="action_settings">Settings</string>
     <string name="disclaimer">Shows a value the official app has already computed. Not a medical device: never use it for treatment decisions, and always confirm with the official app or a meter.</string>
 
     <!-- Settings -->
-    <string name="settings_title">Target range</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_source_title">Source for watch and Health Connect</string>
+    <string name="settings_source_data_note">Glucose only · trend calculated by CGM Glance</string>
+    <string name="settings_source_note">LinX is selected by default and has priority while both sensors run. Sources never switch automatically. Select Dexcom ONE+ here when you are ready. Histories stay separate. If the new source has no reading yet, the watch keeps the previous value with its original age until a reading arrives.</string>
+    <string name="settings_dexcom_note">Enable Quick Glance in Dexcom ONE+ and grant notification access to CGM Glance — Dexcom ONE+. This integration is awaiting real-device validation. Glucose must include an explicit unit; ambiguous notifications are refused.</string>
     <string name="settings_subtitle">Used for colour and wording only. This app never alerts on these values — alarms stay with the official app.</string>
     <string name="field_urgent_low">Urgent low</string>
     <string name="field_low">Low</string>
@@ -68,7 +73,7 @@
     <string name="notif_no_permission_title">Notification access is off</string>
     <string name="notif_no_permission_text">CGM Glance cannot read glucose without it. Tap to fix.</string>
     <string name="notif_not_receiving_title">Not receiving readings</string>
-    <string name="notif_not_receiving_text">Nothing has arrived for a while. Check that LinX is running and connected to the sensor.</string>
+    <string name="notif_not_receiving_text">Nothing has arrived for a while from the selected CGM source. Check that its app is running and connected to the sensor.</string>
 
     <!--
       Shown beside the app name. The value comes from BuildConfig, never typed in.
@@ -87,7 +92,7 @@
       Health would make a sync the user has not enabled look like this app's fault.
     -->
     <string name="health_export_title">Health Connect</string>
-    <string name="health_export_disabled">Off. Turn it on under &#8220;Target range and unit&#8221; to write readings to Health Connect.</string>
+    <string name="health_export_disabled">Off. Turn it on under &#8220;Settings&#8221; to write readings to Health Connect.</string>
     <string name="health_export_working">Writing one reading every %1$d minutes to Health Connect. Samsung Health reads them from there, if you have enabled that link in its settings.</string>
     <string name="health_export_waiting">Set up. The next reading due will be written, then one every %1$d minutes.</string>
     <string name="health_export_needs_setup">Allow CGM Glance to write glucose to Health Connect. Samsung Health then reads it from there.</string>

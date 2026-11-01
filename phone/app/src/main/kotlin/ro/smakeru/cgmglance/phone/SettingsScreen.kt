@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -44,13 +45,15 @@ fun SettingsScreen(
     initialThresholds: RangeThresholds,
     initialUnit: GlucoseUnit,
     initialHealthExport: HealthExportSettings,
-    onSave: (RangeThresholds, GlucoseUnit, HealthExportSettings) -> Unit,
+    initialSource: GlucoseSource,
+    onSave: (RangeThresholds, GlucoseUnit, HealthExportSettings, GlucoseSource) -> Unit,
     onBack: () -> Unit,
 ) {
     var urgentLow by remember { mutableStateOf(initialThresholds.urgentLowMgdl.toString()) }
     var low by remember { mutableStateOf(initialThresholds.lowMgdl.toString()) }
     var high by remember { mutableStateOf(initialThresholds.highMgdl.toString()) }
     var unit by remember { mutableStateOf(initialUnit) }
+    var source by remember { mutableStateOf(initialSource) }
     var healthEnabled by remember { mutableStateOf(initialHealthExport.enabled) }
     var healthInterval by remember { mutableStateOf(initialHealthExport.intervalMinutes.toString()) }
 
@@ -77,6 +80,7 @@ fun SettingsScreen(
         modifier =
             Modifier
                 .fillMaxSize()
+                .safeDrawingPadding()
                 .padding(20.dp)
                 .verticalScroll(rememberScrollState()),
     ) {
@@ -84,6 +88,27 @@ fun SettingsScreen(
         Spacer(Modifier.height(4.dp))
         Text(stringResource(R.string.settings_subtitle), style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(20.dp))
+
+        Text(stringResource(R.string.settings_source_title), style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text(stringResource(R.string.settings_source_note), style = MaterialTheme.typography.bodySmall)
+        GlucoseSource.entries.forEach { candidate ->
+            FilterChip(
+                selected = source == candidate,
+                onClick = { source = candidate },
+                label = { Text(candidate.label) },
+            )
+            Text(
+                stringResource(R.string.settings_source_data_note),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+        if (source == GlucoseSource.DEXCOM_ONE_PLUS) {
+            Text(stringResource(R.string.settings_dexcom_note), style = MaterialTheme.typography.bodySmall)
+        }
+        Spacer(Modifier.height(24.dp))
 
         NumberField(stringResource(R.string.field_urgent_low), urgentLow) { urgentLow = it }
         NumberField(stringResource(R.string.field_low), low) { low = it }
@@ -170,7 +195,7 @@ fun SettingsScreen(
                                     intervalMinutes = initialHealthExport.intervalMinutes,
                                 )
                                 ?: HealthExportSettings.default
-                        onSave(thresholds, unit, health)
+                        onSave(thresholds, unit, health, source)
                     }
                 },
                 enabled = parsed != null && healthValid,

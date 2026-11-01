@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Glucose</string>
+    <string name="widget_description">Glucose, calculated trend and reading age from LinX or Dexcom ONE+.</string>
+    <string name="widget_config_title">Widget source</string>
+    <string name="widget_config_description">Choose independently for this widget. Tap the widget to open the official source app, or CgmGlance if it is unavailable.</string>
+    <string name="widget_follow_selected">Follow the source selected for the watch</string>
+    <string name="widget_save">Save widget</string>
+    <string name="widget_cancel">Cancel</string>
+    <string name="widget_save_failed">Could not save. Please try again.</string>
+    <string name="widget_reading">Last reading · calculated trend</string>
+    <string name="widget_stale">Old reading · no trend</string>
+    <string name="widget_no_current_data">No current reading</string>
+    <!-- Chronometer substitutes its elapsed time (MM:SS or H:MM:SS), not a plural count. -->
+    <string name="widget_age_format" formatted="false">Age %s</string>
+    <string name="widget_stale_age_format" formatted="false">Old · age %s</string>
+    <string name="widget_expired_age_format" formatted="false">Expired · age %s</string>
+    <string name="widget_delay_notice">Android may delay freshness updates in the background. The age timer continues to run; check it before interpreting a value. This widget does not provide glucose alarms.</string>
+</resources>

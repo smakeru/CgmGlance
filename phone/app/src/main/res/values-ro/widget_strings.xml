@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Glicemie</string>
+    <string name="widget_description">Glicemie, trend calculat și vârsta citirii din LinX sau Dexcom ONE+.</string>
+    <string name="widget_config_title">Sursa widgetului</string>
+    <string name="widget_config_description">Alege separat pentru acest widget. Atingerea widgetului deschide aplicația oficială a sursei sau CgmGlance dacă aceasta nu este disponibilă.</string>
+    <string name="widget_follow_selected">Urmărește sursa selectată pentru ceas</string>
+    <string name="widget_save">Salvează widgetul</string>
+    <string name="widget_cancel">Renunță</string>
+    <string name="widget_save_failed">Nu s-a putut salva. Încearcă din nou.</string>
+    <string name="widget_reading">Ultima citire · trend calculat</string>
+    <string name="widget_stale">Citire veche · fără trend</string>
+    <string name="widget_no_current_data">Fără citire actuală</string>
+    <string name="widget_age_format" formatted="false">Vârstă %s</string>
+    <string name="widget_stale_age_format" formatted="false">Veche · vârstă %s</string>
+    <string name="widget_expired_age_format" formatted="false">Expirată · vârstă %s</string>
+    <string name="widget_delay_notice">Android poate întârzia actualizările de prospețime în fundal. Cronometrul vârstei continuă să ruleze; verifică-l înainte de a interpreta valoarea. Widgetul nu oferă alarme de glicemie.</string>
+</resources>

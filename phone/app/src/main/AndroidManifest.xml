@@ -12,6 +12,8 @@
       low, no vibration for a high. That boundary is what keeps this a display mirror.
     -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Restore widget age timers and expiry scheduling after the elapsed-realtime clock resets. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!--
       Write only. This app never reads anything back out of Health Connect: the glucose it holds
@@ -27,6 +29,10 @@
     -->
     <queries>
         <package android:name="com.google.android.apps.healthdata" />
+        <!-- Official CGM launch targets for the phone home-screen widgets. -->
+        <package android:name="com.microtech.aidexx.mgdl" />
+        <package android:name="com.microtech.aidexx" />
+        <package android:name="com.dexcom.d1plus" />
     </queries>
 
     <application
@@ -77,6 +83,32 @@
                 <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
             </intent-filter>
         </activity-alias>
+
+        <activity
+            android:name=".GlucoseWidgetConfigureActivity"
+            android:exported="true"
+            android:label="@string/widget_config_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".GlucoseWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/glucose_widget_info" />
+        </receiver>
 
         <!-- Fires when readings have been silent for longer than a working system ever is. -->
         <receiver

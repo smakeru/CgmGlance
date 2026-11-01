@@ -28,8 +28,8 @@ android {
         applicationId = "ro.smakeru.cgmglance"
         minSdk = libs.versions.minSdkPhone.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
     }
 
     signingConfigs {
@@ -77,6 +77,7 @@ dependencies {
 
     // Brings in the notification listener service and its manifest entry.
     implementation(project(":provider:linx"))
+    implementation(project(":provider:dexcom"))
 
     // The only channel to the watch, and the project's only Play Services dependency.
     implementation(libs.play.services.wearable)

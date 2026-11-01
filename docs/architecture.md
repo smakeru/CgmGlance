@@ -35,8 +35,33 @@ The two branches are independent on purpose. The sync policy suppresses readings
 gain nothing from; a health log wants a steady sample whether or not the number moved, so the
 export is offered every reading and decides for itself.
 
-Every link is verified on a real Galaxy S25 Ultra and Galaxy Watch 8, the export included —
-readings reach Health Connect and appear in Samsung Health.
+The **LinX chain above** was verified on a real Galaxy S25 Ultra and Galaxy Watch 8, the export
+included — readings reach Health Connect and appear in Samsung Health. This does **not** validate
+the new Dexcom ONE+ notification grammar or phone widgets.
+
+### Phone 1.2: two inputs, one selected output
+
+`DexcomNotificationListenerService` is a separate, per-service permission: it filters exact ONE+
+package `com.dexcom.d1plus` and passes standard-extras/custom-view text to a pure strict parser.
+The [provider contract](providers/dexcom-one-plus.md) records live mg/dL acquisition checked on
+ONE+ 1.9.0, including its U+2060 unit-format fix. Failure-state/sustained-operation validation
+and inspection for cleaner exported vendor contracts are still pending.
+
+`PhoneGlucoseSources` owns a repository per source. LinX remains selected by default, irrespective
+of callback order, temporary silence or Dexcom availability. Settings persist an explicit change
+to Dexcom. Only the selected source's accepted readings reach sync, health export and the silence
+watchdog; inactive-source readings only update their own history and widgets. Selection and
+outbound effects are serialised, so an in-flight old-source callback cannot win after a switch.
+
+Phone home-screen widgets independently choose a fixed source or follow the selected feed. Their
+read-only snapshots cannot change the watch source. Widget taps open the actual source's vendor
+app, and each instance carries its own configuration. Freshness follows the domain policy; alarm
+refreshes are inexact and subject to Android background scheduling. No glucose alarm is added.
+
+The phone sends exactly the same `LatestReadingPayload`; no source field or new schema is needed.
+Phone 1.2 works with the existing same-certificate watch 1.1. A cached source switch preserves the
+reading's timestamp; if the chosen source has no data yet, the old watch value simply ages under
+its existing policy until a reading arrives.
 
 ## Modules
 
@@ -45,7 +70,8 @@ readings reach Health Connect and appear in Samsung Health.
 | `:core:domain` | plain JVM | The safety-critical logic: units, plausibility, freshness, trend, sync policy. No Android dependency, on purpose — it must be testable in milliseconds and behave identically on both devices. |
 | `:core:sync-contract` | plain JVM | The wire format between two separately-updated APKs. Plain JVM so version-skew rules can be tested without a device. |
 | `:provider:linx` | Android library | Reads the vendor's notification. Its parsing logic is plain Kotlin and testable against captured layouts; only the `RemoteViews` extraction touches Android. |
-| `:phone:app` | Android app | Acquisition, history, sync, status screen, and the Health Connect export. The export lives here rather than in a module of its own: it is one policy and one writer, and the watch must not carry either. |
+| `:provider:dexcom` | Android library | ONE+ notification reader: 1.9.0 live mg/dL acquisition checked; invented-value format tests, further device validation pending. |
+| `:phone:app` | Android app | Acquisition, source selection, separate histories, sync, status screen, phone widgets, and the Health Connect export. The export lives here rather than in a module of its own: it is one policy and one writer, and the watch must not carry either. |
 | `:wear:app` | Android app | Complication, tile, watch app. |
 
 `:core:domain` being a `kotlin-jvm` module rather than an Android library is enforced by its
@@ -73,8 +99,10 @@ cannot substantiate.
 
 ### Trend
 
-The vendor publishes no arrow, so it is derived from our own history: a least-squares fit over
-the last 15 minutes, with the standard ±1 / ±2 / ±3 mg·dL⁻¹·min⁻¹ boundaries.
+LinX publishes no arrow in the observed notification. For both providers we derive our own arrow
+from each source's separate history: a least-squares fit over the last 15 minutes, with the
+standard ±1 / ±2 / ±3 mg·dL⁻¹·min⁻¹ boundaries. The Dexcom arrow is not copied from the vendor and
+must not be presented as its official trend.
 
 A two-point difference was rejected. Sensor noise of ±5–10 mg/dL across a two-minute gap produces
 an apparent 3 mg/dL per minute on its own, so the arrow would swing between extremes while
@@ -119,8 +147,8 @@ already seen.
 
 | Where | What | Why |
 | --- | --- | --- |
-| Phone | `ReadingHistoryStore` — 2h of readings | Without it the trend blanks for seven minutes after every process death, which on Samsung is a weekly event. Verified by rebooting the phone. |
-| Phone | `PhonePreferencesStore` — range and unit | The user's clinical choice, unlike freshness. |
+| Phone | `ReadingHistoryStore` — 2h of readings **per source** | Without it the trend blanks for seven minutes after every process death, which on Samsung is a weekly event. Verified by rebooting the phone. |
+| Phone | `PhonePreferencesStore` — range, unit and selected source | Range is the user's clinical choice, unlike freshness; source defaults to LinX and changes only explicitly. |
 | Phone | `PhonePreferencesStore` — health export settings and last write | The interval is measured from the last exported *reading*, so it has to outlive the process; without persisting it, every restart would write immediately and the cadence would be whatever the restart rate happened to be. |
 | Watch | `WatchGlucoseStore` — latest payload and prefs | Read by three independent, system-driven lifecycles, so it is a file rather than an object any one of them owns. |
 
@@ -150,8 +178,8 @@ None. The graph is a handful of objects with no scopes and no variants, and the 
 platform constructs for us — the notification listener, the complication and tile services —
 would each need an escape hatch from any framework anyway.
 
-`LinxProviderBus` is the one mutable global: `NotificationListenerService` is instantiated by the
-platform and cannot take anything through its constructor. One documented seam was judged smaller
-than a framework brought in for that single edge.
+`LinxProviderBus` and `DexcomProviderBus` connect the platform-created notification listeners to
+phone wiring. `NotificationListenerService` cannot take constructor dependencies. These small,
+provider-scoped seams keep acquisition independent of source selection and watch transport.
 
 Adopt Hilt when the graph outgrows `CgmGlanceApplication`, not before.

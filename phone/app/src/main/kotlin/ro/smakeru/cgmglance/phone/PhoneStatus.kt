@@ -89,6 +89,8 @@ data class PhoneStatus(
      * that tests about the core verdict need not describe an integration they are not testing.
      */
     val healthExport: HealthExportStatus = HealthExportStatus(HealthExportState.UNAVAILABLE),
+    val source: GlucoseSource = GlucoseSource.LINX,
+    val parseFailure: String? = null,
 ) {
     val health: PhoneHealth
         get() =
