@@ -1,7 +1,17 @@
 # CGM Glance
 
 Shows the glucose value your official CGM app already receives on any Wear OS watch face, as a
-standard Complication and Tile.
+standard Complication and Tile, and on your phone's home screen as a widget.
+
+Two sensors are supported, both implemented and in daily use:
+
+| Sensor | Official app | What is read |
+| --- | --- | --- |
+| **LinX** (MicroTech AiDEX X) | LinX | glucose and unit, from its ongoing notification |
+| **Dexcom ONE+** | Dexcom ONE+ | glucose and unit, from its Quick Glance notification |
+
+For both, the trend arrow is calculated by CGM Glance from that sensor's own history. Both can
+run at the same time; you choose which one feeds the watch.
 
 ```
       ┌─────────────┐
@@ -16,17 +26,23 @@ official app's responsibility.
 
 ## Status
 
-Working end to end on real hardware: Galaxy S25 Ultra with LinX 2.5.0, paired to a Galaxy
-Watch 8. Not published anywhere, no releases, personal use.
+Version **1.2**, working end to end on real hardware: Galaxy S25 Ultra paired to a Galaxy Watch 8.
+Not published on any store; personal use.
 
 | | |
 | --- | --- |
-| Providers | LinX / MicroTech AiDEX X ([validated contract](docs/providers/linx.md)); Dexcom ONE+ ([1.9.0 live acquisition checked; further validation pending](docs/providers/dexcom-one-plus.md)) |
+| Sensors | **LinX** ([contract](docs/providers/linx.md)) and **Dexcom ONE+** ([contract](docs/providers/dexcom-one-plus.md)), both implemented and running together on the devices above |
 | Watch surfaces | Complication (SHORT_TEXT, LONG_TEXT, RANGED_VALUE), Tile, app |
-| Phone | 1.2: source-labelled status, explicit source selection (LinX default), independent histories, target range settings with a very-high threshold, silence watchdog, range-coloured home-screen widgets |
+| Phone widget | Home-screen widget, several instances, each following LinX, Dexcom ONE+ or the selected source; tap opens that sensor's official app ([details](docs/phone-widgets.md)) |
+| Phone app | Source selection (LinX by default), separate history per sensor, target range with a very-high threshold, status screen, silence watchdog |
 | Range colours | Shared by widget, tile and watch app: red below urgent low and above very high (55 / 260 by default), orange low, green in range, yellow high, grey once stale |
 | Health export | Health Connect, off by default ([below](#health-connect-export)) |
-| Tests | JVM domain/sync policies, provider parsers and source-isolation tests; synthetic Dexcom inputs are not real-device validation |
+| Tests | 183 automated tests: domain and sync rules, both notification parsers, source isolation, watch surfaces |
+
+**Verified on the devices above:** LinX and Dexcom ONE+ 1.9.0 readings in mg/dL, both sensors in
+parallel with LinX kept on the watch, explicit switch to Dexcom, the coloured widget, watch sync.
+**Not yet verified:** mmol/L with a real sensor, Dexcom signal loss and sensor warm-up, the new
+watch colours seen on the wrist.
 
 ### No support, and no promise to maintain
 
@@ -43,7 +59,7 @@ If you rely on this, keep the official app as your source of truth, and be prepa
 parser yourself. It is GPL-3.0: [forking](docs/adding-a-provider.md) is the expected response to
 a need this repository does not meet.
 
-## Phone 1.2: sources and home-screen widgets
+## Two sensors and the phone widget
 
 **LinX has priority by default**, even if Dexcom readings arrive first or last. Both feeds are
 collected into separate histories. The source for the watch and optional Health Connect export
@@ -57,10 +73,12 @@ phone settings. Age remains visible, and values/trends follow the shared freshne
 Widget refresh timing is subject to Android background/Doze scheduling; this is not a medical
 alarm or a replacement for the official app.
 
+The widget is a blue tile. The number, its arrow, a thin bar on the left and a soft glow in the
+top-right corner take the range colour, the same colours as the watch.
+
 Dexcom requires its **Quick Glance** notification and separate notification access for
-**CGM Glance — Dexcom ONE+**. Basic mg/dL acquisition is checked on version 1.9.0, including its
-invisible U+2060 unit separator. Failure states, timestamps and sustained operation still need
-validation. Missing units and ambiguous layouts are rejected rather than guessed; see the
+**CGM Glance — Dexcom ONE+**. Readings are verified on Dexcom ONE+ 1.9.0 in mg/dL. Missing units
+and ambiguous layouts are rejected rather than guessed; see the
 [provider specification](docs/providers/dexcom-one-plus.md).
 
 ## Not a medical device
@@ -121,7 +139,7 @@ Alarms belong to the app that owns the sensor connection.
 | [Architecture](docs/architecture.md) | the chain, the three ideas that shape it, wire format, battery |
 | [Decision log](docs/decisions.md) | what was chosen, what was rejected, and why |
 | [LinX provider contract](docs/providers/linx.md) | what the vendor exposes, the exact layout, breakage log |
-| [Dexcom ONE+ provider](docs/providers/dexcom-one-plus.md) | provisional notification grammar, source priority, permissions and device-validation checklist |
+| [Dexcom ONE+ provider contract](docs/providers/dexcom-one-plus.md) | what the vendor exposes, the exact layout, source priority, what remains to verify, breakage log |
 | [Phone widgets](docs/phone-widgets.md) | multiple source-specific widgets, app-launch taps and freshness limitations |
 | [Adding a provider](docs/adding-a-provider.md) | recipe for a new sensor |
 
@@ -192,7 +210,7 @@ port is only advertised while the pairing screen is open on the watch.
 | `:core:domain` | Pure JVM | Units, plausibility, freshness, trend, sync policy. No Android dependency, by design. |
 | `:core:sync-contract` | Pure JVM | The wire format between the two APKs, with its version-skew rules. |
 | `:provider:linx` | Android library | Reads the LinX notification. Parsing logic is plain Kotlin. |
-| `:provider:dexcom` | Android library | Dexcom ONE+ notification reader; strict parser, no sensor/Bluetooth access. |
+| `:provider:dexcom` | Android library | Reads the Dexcom ONE+ notification. Parsing logic is plain Kotlin. |
 | `:phone:app` | Android app | Acquisition, history, sync, health export, status and settings screens, home-screen widgets. |
 | `:wear:app` | Android app | Complication, tile, watch app. |
 

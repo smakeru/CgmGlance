@@ -1,18 +1,18 @@
-# Dexcom ONE+ provider — live acquisition checked, failure-state validation pending
+# Provider: Dexcom ONE+
 
 ## Status and source
 
-Added in **1.2**. The provider is phone-only: the watch receives the same reading payload
-whichever source is selected.
+**Implemented in 1.2 and in daily use**, alongside LinX. The provider is phone-only: the watch
+receives the same reading payload whichever source is selected.
 
 The only supported vendor package is **`com.dexcom.d1plus`**, Dexcom ONE+. This is not the original
 Dexcom ONE (`com.dexcom.dexcomone`), G6, G7, Follow, or the third-party Glucose Watch app.
 
-**2026-11-01: basic live acquisition checked on ONE+ 1.9.0 (versionCode 17006), in mg/dL.**
-The actual Quick Glance layout and notification metadata were inspected on a Galaxy S25 Ultra.
-After the unit-normalisation fix, the phone accepted a reading, displayed the selected Dexcom
-source and submitted its payload to the connected watch. This does not prove visual watch
-rendering, multi-hour reliability, mmol/L operation, or the failure cases listed below.
+**Verified 2026-11-01 on ONE+ 1.9.0 (versionCode 17006), in mg/dL**, on a Galaxy S25 Ultra paired
+to a Galaxy Watch 8. The real Quick Glance layout was inspected; after the unit fix below, readings
+were accepted, shown on the phone and on the home-screen widget, and delivered to the watch. Both
+sensors ran in parallel for several hours with LinX kept on the watch, then the watch was switched
+to Dexcom. Not yet verified: mmol/L, and the failure cases listed below.
 
 Unit-test values/timestamps are invented. Fixtures preserve only the inspected resource IDs and
 formatting, never real glucose values or notification captures.
@@ -120,8 +120,9 @@ age until a new one arrives or its existing freshness policy hides it.
 - Check mg/dL and mmol/L, display locale, screen lock, rebind/restart and background restrictions.
 - Check sensor warmup, signal loss, brief sensor issue, expired sensor and LOW/HIGH.
 - Observe whether reposts can keep an old number apparently fresh; compare displayed sensor age.
-- Run both sensors together: LinX must retain the watch, while a Dexcom-specific widget remains
-  independent. Check source switching, separate trends, permissions and source-app widget taps.
+
+Done on 2026-11-01: both sensors together with LinX retaining the watch, a Dexcom widget beside a
+LinX widget, explicit switch to Dexcom, separate trends, and both notification permissions.
 
 ## Breakage log
 

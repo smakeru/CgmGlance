@@ -35,9 +35,10 @@ The two branches are independent on purpose. The sync policy suppresses readings
 gain nothing from; a health log wants a steady sample whether or not the number moved, so the
 export is offered every reading and decides for itself.
 
-The **LinX chain above** was verified on a real Galaxy S25 Ultra and Galaxy Watch 8, the export
-included — readings reach Health Connect and appear in Samsung Health. This does **not** validate
-the new Dexcom ONE+ notification grammar or phone widgets.
+The chain was verified on a real Galaxy S25 Ultra and Galaxy Watch 8, the export included —
+readings reach Health Connect and appear in Samsung Health. In 1.2 the same chain also runs from
+Dexcom ONE+, and the phone widget hangs off the repository beside the watch sync; both were
+verified on the same devices.
 
 ### Phone 1.2: two inputs, one selected output
 

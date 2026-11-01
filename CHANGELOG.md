@@ -15,10 +15,10 @@ may still be updated first: a 1.1 watch ignores the new threshold, and a 1.2 wat
 
 ### Added
 
-- **Dexcom ONE+ notification provider**, exact package `com.dexcom.d1plus`, with explicit units,
-  standard-extras and custom-view parsing, conservative ambiguity/error rejection and synthetic
-  tests. Basic live mg/dL acquisition checked with ONE+ 1.9.0; failure states and sustained
-  operation remain unvalidated. See the [contract and limitations](docs/providers/dexcom-one-plus.md).
+- **Dexcom ONE+ support**, alongside LinX. Reads the Quick Glance notification of the official
+  app (`com.dexcom.d1plus`), with an explicit unit always required. Verified on Dexcom ONE+ 1.9.0
+  in mg/dL, in parallel with LinX. Signal loss, warm-up and mmol/L are not yet verified. See the
+  [contract and limitations](docs/providers/dexcom-one-plus.md).
 - **Phone-only source selection** for the watch and Health Connect. LinX is the default and
   retains priority during overlap; sources never alternate based on notification order or
   switch silently on a LinX outage. Dexcom is selected explicitly when ready.
@@ -29,7 +29,6 @@ may still be updated first: a 1.1 watch ignores the new threshold, and a 1.2 wat
   tapping opens the matching official app. A Dexcom widget does not replace LinX on the watch.
 - **Source-aware phone diagnostics**, including the last notification-parser rejection and
   notification permission for the selected provider's service.
-
 - **Very high threshold**, 260 mg/dL by default and editable in settings. Above it the value is
   shown in the same red as an urgent low on the widget, tile and watch app. A custom high saved
   by 1.1 above 260 is kept, with very high placed just above it.

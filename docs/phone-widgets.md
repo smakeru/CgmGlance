@@ -68,10 +68,12 @@ Android Doze/OEM restrictions may delay the text/number/trend refresh. **The inc
 remain visible; do not assume a value is current because its last rendering is unchanged.**
 No glucose alarms, vibration, dosing or treatment advice are provided.
 
-## Device validation pending
+## Device validation
 
-The widget code and automated checks do not establish launcher behaviour. Validate multiple
-instances, resize/font scaling, source-app taps, language/unit changes, process death/reboot,
-Doze, aging/expiry, and the overlap period with both sensors. The Dexcom source itself remains
-[experimental](providers/dexcom-one-plus.md): basic 1.9.0 mg/dL acquisition is checked, while
-failure-state, timestamp and sustained-operation validation remain pending.
+**Verified 2026-11-01** on a Galaxy S25 Ultra with the Samsung launcher: a LinX widget and a
+Dexcom ONE+ widget side by side during the overlap period, the blue tile with range colour, live
+age, and the calculated trend arrow.
+
+Still to verify: resizing and large font sizes, behaviour after a reboot and under Doze, the
+expiry of an old reading on screen, mmol/L, and every range colour seen live (yellow is confirmed;
+the others are covered by automated tests).
