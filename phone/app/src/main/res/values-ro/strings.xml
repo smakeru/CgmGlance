@@ -60,12 +60,13 @@
     <string name="field_urgent_low">Scăzut urgent</string>
     <string name="field_low">Scăzut</string>
     <string name="field_high">Ridicat</string>
+    <string name="field_very_high">Foarte ridicat</string>
     <string name="settings_units_note">Toate valorile în mg/dL.</string>
     <string name="settings_display_unit">Unitate de afișare</string>
-    <string name="settings_invalid">Scăzut urgent trebuie să fie sub scăzut, iar scăzut sub ridicat. Toate trei trebuie să fie valori pe care un senzor le poate raporta.</string>
+    <string name="settings_invalid">Scăzut urgent trebuie să fie sub scăzut, scăzut sub ridicat, iar ridicat sub foarte ridicat. Toate patru trebuie să fie valori pe care un senzor le poate raporta.</string>
     <string name="action_save">Salvează</string>
     <string name="action_back">Înapoi</string>
-    <string name="action_reset">Revino la 55 / 70 / 180</string>
+    <string name="action_reset">Revino la 55 / 70 / 180 / 260</string>
 
     <string name="channel_status_name">Starea aplicației</string>
     <string name="channel_status_description">Te anunță când CGM Glance nu mai primește citiri.</string>

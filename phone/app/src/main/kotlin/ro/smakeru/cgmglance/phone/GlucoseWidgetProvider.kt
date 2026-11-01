@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.RemoteViews
 import ro.smakeru.cgmglance.domain.glucose.FreshnessPolicy
 import ro.smakeru.cgmglance.domain.glucose.GlucoseConversion
+import ro.smakeru.cgmglance.domain.glucose.GlucoseRangePalette
 import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
 import ro.smakeru.cgmglance.domain.glucose.ReadingFreshness
 import ro.smakeru.cgmglance.domain.glucose.TrendArrow
@@ -99,6 +100,7 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
             val elapsed = SystemClock.elapsedRealtime()
             val clock = Clock { now }
             val unit = app.preferences.loadUnit()
+            val thresholds = app.preferences.loadThresholds()
             var nextBoundary: Long? = null
 
             ids.forEach { id ->
@@ -131,6 +133,13 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
                     R.id.widget_trend,
                     if (freshness.allowsTrend) trendSymbol(snapshot.trend) else "",
                 )
+                // Same palette and thresholds as the watch, so the wrist and the home screen
+                // never disagree. An old reading is muted rather than coloured.
+                val color = GlucoseRangePalette.colorFor(reading?.let(thresholds::classify), freshness)
+                views.setTextColor(R.id.widget_value, color)
+                views.setTextColor(R.id.widget_trend, color)
+                views.setInt(R.id.widget_accent, "setColorFilter", color)
+                views.setInt(R.id.widget_root, "setBackgroundResource", backgroundFor(color))
                 views.setTextViewText(
                     R.id.widget_status,
                     appContext.getString(
@@ -236,6 +245,16 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
         private fun cancelRefresh(context: Context) {
             (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager).cancel(refreshIntent(context))
         }
+
+        /** One prepared background per palette colour; RemoteViews cannot recolour a gradient. */
+        private fun backgroundFor(color: Int): Int =
+            when (color) {
+                GlucoseRangePalette.URGENT -> R.drawable.widget_bg_urgent
+                GlucoseRangePalette.LOW -> R.drawable.widget_bg_low
+                GlucoseRangePalette.IN_RANGE -> R.drawable.widget_bg_in_range
+                GlucoseRangePalette.HIGH -> R.drawable.widget_bg_high
+                else -> R.drawable.widget_background
+            }
 
         private fun trendSymbol(trend: TrendArrow): String =
             when (trend) {

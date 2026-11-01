@@ -2,8 +2,8 @@
 
 ## Status and source
 
-Added for the **phone 1.2** release. The watch APK and sync schema are unchanged; phone 1.2 is
-intended to work with the existing, same-certificate watch 1.1.
+Added in **1.2**. The provider is phone-only: the watch receives the same reading payload
+whichever source is selected.
 
 The only supported vendor package is **`com.dexcom.d1plus`**, Dexcom ONE+. This is not the original
 Dexcom ONE (`com.dexcom.dexcomone`), G6, G7, Follow, or the third-party Glucose Watch app.

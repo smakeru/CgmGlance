@@ -1,69 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Range colour is carried by the number, the accent bar and a soft halo in the top-right corner.
+  The tile itself stays blue, so the value is legible on any wallpaper and colour never fills
+  the whole widget like an alert. The background is swapped per range by GlucoseWidgetProvider.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_vertical"
-    android:padding="6dp"
+    android:orientation="horizontal"
     android:background="@drawable/widget_background">
 
-    <TextView
-        android:id="@+id/widget_source"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:text="@string/widget_name"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp"
-        android:textStyle="bold" />
+    <ImageView
+        android:id="@+id/widget_accent"
+        android:layout_width="5dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_accent" />
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
         <TextView
-            android:id="@+id/widget_value"
-            android:layout_width="wrap_content"
+            android:id="@+id/widget_source"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="—"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF" />
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="@string/widget_name"
+            android:textColor="#B3FFFFFF"
+            android:textSize="12sp"
+            android:letterSpacing="0.04" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="bottom">
+
+            <TextView
+                android:id="@+id/widget_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="—"
+                android:textColor="#FFFFFF"
+                android:textSize="34sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_trend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:includeFontPadding="false"
+                android:textColor="#FFFFFF"
+                android:textSize="26sp" />
+
+            <TextView
+                android:id="@+id/widget_unit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginBottom="3dp"
+                android:textColor="#99FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <Chronometer
+            android:id="@+id/widget_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:format="@string/widget_age_format"
+            android:textColor="#99FFFFFF"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
         <TextView
-            android:id="@+id/widget_trend"
-            android:layout_width="wrap_content"
+            android:id="@+id/widget_status"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:textSize="22sp"
-            android:textColor="#FFFFFF" />
-        <TextView
-            android:id="@+id/widget_unit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:textSize="11sp"
-            android:textColor="#DEE5EF" />
+            android:layout_marginTop="2dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="@string/widget_no_current_data"
+            android:textColor="#99FFFFFF"
+            android:textSize="12sp" />
     </LinearLayout>
-
-    <Chronometer
-        android:id="@+id/widget_age"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:format="@string/widget_age_format"
-        android:textSize="11sp"
-        android:textColor="#DEE5EF"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/widget_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:text="@string/widget_no_current_data"
-        android:textSize="11sp"
-        android:textColor="#DEE5EF" />
 </LinearLayout>

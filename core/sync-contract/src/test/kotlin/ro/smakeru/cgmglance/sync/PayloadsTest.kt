@@ -98,11 +98,30 @@ class PayloadsTest {
 
     @Test
     fun `preferences round trip`() {
-        val custom = requireNotNull(RangeThresholds.create(50, 80, 140))
+        val custom = requireNotNull(RangeThresholds.create(50, 80, 140, 240))
         val decoded = PrefsPayload.from(MapPayloadReader(PrefsPayload(GlucoseUnit.MMOL_L, custom).toMap()))
 
         assertEquals(GlucoseUnit.MMOL_L, decoded.unit)
         assertEquals(custom, decoded.thresholds)
+        assertEquals(240, decoded.thresholds.veryHighMgdl)
+    }
+
+    @Test
+    fun `prefs from a 1_1 phone keep the user's range and gain a very high boundary`() {
+        // A 1.1 phone sends three thresholds. A custom high above 260 must survive.
+        val decoded =
+            PrefsPayload.from(
+                MapPayloadReader(
+                    mapOf(
+                        SyncContract.KEY_URGENT_LOW_MGDL to 55,
+                        SyncContract.KEY_LOW_MGDL to 70,
+                        SyncContract.KEY_HIGH_MGDL to 280,
+                    ),
+                ),
+            )
+
+        assertEquals(280, decoded.thresholds.highMgdl)
+        assertEquals(281, decoded.thresholds.veryHighMgdl)
     }
 
     @Test

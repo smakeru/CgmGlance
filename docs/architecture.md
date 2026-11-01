@@ -58,10 +58,17 @@ read-only snapshots cannot change the watch source. Widget taps open the actual 
 app, and each instance carries its own configuration. Freshness follows the domain policy; alarm
 refreshes are inexact and subject to Android background scheduling. No glucose alarm is added.
 
-The phone sends exactly the same `LatestReadingPayload`; no source field or new schema is needed.
-Phone 1.2 works with the existing same-certificate watch 1.1. A cached source switch preserves the
-reading's timestamp; if the chosen source has no data yet, the old watch value simply ages under
-its existing policy until a reading arrives.
+The phone sends exactly the same `LatestReadingPayload`; no source field is needed. A cached
+source switch preserves the reading's timestamp; if the chosen source has no data yet, the old
+watch value simply ages under its existing policy until a reading arrives.
+
+### Range colours, shared
+
+`GlucoseRangePalette` in `:core:domain` holds one ARGB colour per range, and the widget, tile
+and watch app all read it, so the home screen and the wrist cannot disagree. Thresholds now have a
+fourth boundary, very high (260 by default), coloured like urgent low. It travels as one added
+key, schema 2: a 1.1 watch ignores it, and a 1.2 watch paired with a 1.1 phone derives it from the
+high threshold rather than discarding a custom range.
 
 ## Modules
 

@@ -1,7 +1,7 @@
 # Phone home-screen widgets — 1.2
 
-These widgets run on the **Android phone launcher**, not on Wear OS. They do not require a watch
-APK update and do not change the complication or tile contract.
+These widgets run on the **Android phone launcher**, not on Wear OS. They share their range
+colours with the watch tile and app, through `GlucoseRangePalette`.
 
 ## Multiple independent instances
 
@@ -32,6 +32,23 @@ The same `FreshnessPolicy` used elsewhere applies:
 - 10–20 minutes: stale, no trend and explicit old-age wording;
 - 20 minutes or older: no numeric reading, explicit expired age;
 - no data or excessive future timestamp: no numeric reading/trend.
+
+Colour comes from the user's thresholds in settings, identical to the watch:
+
+| Range | Default | Colour |
+| --- | --- | --- |
+| Urgent low | below 55 | red |
+| Low | 55–69 | orange |
+| In range | 70–180 | green |
+| High | 181–260 | yellow |
+| Very high | above 260 | red |
+| Stale or no data | — | grey |
+
+The tile is a blue gradient. The number, its arrow, a thin accent bar on the left and a soft
+halo from the top-right corner carry the range colour; the tile never fills with it, so it reads
+on any wallpaper and never looks like an alert. A stale reading drops the halo and turns grey.
+Each range has its own prepared background, because RemoteViews cannot recolour a gradient.
+Colour is display only, never an alarm.
 
 Trend is CgmGlance's regression over **that source only**, not an extracted official arrow.
 The widget requests a compact 2×1 initial size and supports resizing; actual launcher dimensions

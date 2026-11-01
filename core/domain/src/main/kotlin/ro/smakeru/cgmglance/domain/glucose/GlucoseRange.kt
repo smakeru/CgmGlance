@@ -12,6 +12,14 @@ enum class GlucoseRange {
     LOW,
     IN_RANGE,
     HIGH,
+
+    /**
+     * Above the user's very-high boundary, 260 mg/dL by default.
+     *
+     * Shown with the same weight as [URGENT_LOW]: a glance at 320 must not read like a glance
+     * at 190. Colour only, like every other state here.
+     */
+    VERY_HIGH,
 }
 
 /**
@@ -27,12 +35,14 @@ class RangeThresholds private constructor(
     val urgentLowMgdl: Int,
     val lowMgdl: Int,
     val highMgdl: Int,
+    val veryHighMgdl: Int,
 ) {
-    /** Classifies a reading against these boundaries. Boundary values count as in range. */
+    /** Classifies a reading against these boundaries. Boundary values count as the calmer state. */
     fun classify(reading: GlucoseReading): GlucoseRange =
         when {
             reading.mgdl < urgentLowMgdl -> GlucoseRange.URGENT_LOW
             reading.mgdl < lowMgdl -> GlucoseRange.LOW
+            reading.mgdl > veryHighMgdl -> GlucoseRange.VERY_HIGH
             reading.mgdl > highMgdl -> GlucoseRange.HIGH
             else -> GlucoseRange.IN_RANGE
         }
@@ -43,12 +53,13 @@ class RangeThresholds private constructor(
                 other is RangeThresholds &&
                     urgentLowMgdl == other.urgentLowMgdl &&
                     lowMgdl == other.lowMgdl &&
-                    highMgdl == other.highMgdl
+                    highMgdl == other.highMgdl &&
+                    veryHighMgdl == other.veryHighMgdl
             )
 
-    override fun hashCode(): Int = (31 * urgentLowMgdl + lowMgdl) * 31 + highMgdl
+    override fun hashCode(): Int = ((31 * urgentLowMgdl + lowMgdl) * 31 + highMgdl) * 31 + veryHighMgdl
 
-    override fun toString(): String = "RangeThresholds($urgentLowMgdl/$lowMgdl/$highMgdl)"
+    override fun toString(): String = "RangeThresholds($urgentLowMgdl/$lowMgdl/$highMgdl/$veryHighMgdl)"
 
     companion object {
         /** Internationally used target range for time in range reporting. */
@@ -60,11 +71,23 @@ class RangeThresholds private constructor(
         /** Severe hypoglycaemia boundary, shown differently from an ordinary low. */
         const val DEFAULT_URGENT_LOW_MGDL: Int = 55
 
+        /** Severe hyperglycaemia boundary, shown with the same weight as an urgent low. */
+        const val DEFAULT_VERY_HIGH_MGDL: Int = 260
+
         /** The defaults, used until the user changes them. */
         val default: RangeThresholds =
             requireNotNull(
-                create(DEFAULT_URGENT_LOW_MGDL, DEFAULT_LOW_MGDL, DEFAULT_HIGH_MGDL),
+                create(DEFAULT_URGENT_LOW_MGDL, DEFAULT_LOW_MGDL, DEFAULT_HIGH_MGDL, DEFAULT_VERY_HIGH_MGDL),
             ) { "Built-in defaults must be valid" }
+
+        /**
+         * The very-high boundary to assume when none was stored or sent.
+         *
+         * Settings saved by 1.1, and prefs from a 1.1 phone, carry no very-high value. Taking 260
+         * unconditionally would invalidate a custom high of, say, 280, and the whole range would
+         * then fall back to the defaults. Staying above the user's own high keeps their range.
+         */
+        fun defaultVeryHighFor(highMgdl: Int): Int = maxOf(DEFAULT_VERY_HIGH_MGDL, highMgdl + 1)
 
         /**
          * Builds a threshold set, or returns `null` when the values are inconsistent or fall
@@ -78,15 +101,17 @@ class RangeThresholds private constructor(
             urgentLowMgdl: Int,
             lowMgdl: Int,
             highMgdl: Int,
+            veryHighMgdl: Int = defaultVeryHighFor(highMgdl),
         ): RangeThresholds? {
             val withinSensorRange =
-                listOf(urgentLowMgdl, lowMgdl, highMgdl).all {
+                listOf(urgentLowMgdl, lowMgdl, highMgdl, veryHighMgdl).all {
                     it >= GlucoseReading.MIN_PLAUSIBLE_MGDL && it <= GlucoseReading.MAX_PLAUSIBLE_MGDL
                 }
             if (!withinSensorRange) return null
             if (urgentLowMgdl >= lowMgdl) return null
             if (lowMgdl >= highMgdl) return null
-            return RangeThresholds(urgentLowMgdl, lowMgdl, highMgdl)
+            if (highMgdl >= veryHighMgdl) return null
+            return RangeThresholds(urgentLowMgdl, lowMgdl, highMgdl, veryHighMgdl)
         }
     }
 }

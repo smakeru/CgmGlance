@@ -27,10 +27,13 @@ class PhonePreferencesStore(
 
     fun loadThresholds(): RangeThresholds {
         val defaults = RangeThresholds.default
+        val high = prefs.getInt(KEY_HIGH, defaults.highMgdl)
         return RangeThresholds.create(
             urgentLowMgdl = prefs.getInt(KEY_URGENT_LOW, defaults.urgentLowMgdl),
             lowMgdl = prefs.getInt(KEY_LOW, defaults.lowMgdl),
-            highMgdl = prefs.getInt(KEY_HIGH, defaults.highMgdl),
+            highMgdl = high,
+            // Absent for anyone upgrading from 1.1; derived so their custom high is kept.
+            veryHighMgdl = prefs.getInt(KEY_VERY_HIGH, RangeThresholds.defaultVeryHighFor(high)),
         ) ?: defaults
     }
 
@@ -55,6 +58,7 @@ class PhonePreferencesStore(
             .putInt(KEY_URGENT_LOW, thresholds.urgentLowMgdl)
             .putInt(KEY_LOW, thresholds.lowMgdl)
             .putInt(KEY_HIGH, thresholds.highMgdl)
+            .putInt(KEY_VERY_HIGH, thresholds.veryHighMgdl)
             .putString(KEY_UNIT, unit.name)
             .commit()
     }
@@ -108,6 +112,7 @@ class PhonePreferencesStore(
         const val KEY_URGENT_LOW = "urgentLowMgdl"
         const val KEY_LOW = "lowMgdl"
         const val KEY_HIGH = "highMgdl"
+        const val KEY_VERY_HIGH = "veryHighMgdl"
         const val KEY_UNIT = "unit"
         const val KEY_SOURCE = "glucoseSource"
     }

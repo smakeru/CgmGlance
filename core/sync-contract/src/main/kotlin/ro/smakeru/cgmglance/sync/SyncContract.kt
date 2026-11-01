@@ -22,7 +22,7 @@ object SyncContract {
      * Incremented whenever a key is added. Readers use it for diagnostics only; they must
      * never refuse a payload merely because the number is higher than they know.
      */
-    const val SCHEMA_VERSION: Int = 1
+    const val SCHEMA_VERSION: Int = 2
 
     /**
      * Advertised by the watch, looked for by the phone.
@@ -79,4 +79,10 @@ object SyncContract {
     const val KEY_URGENT_LOW_MGDL: String = "urgentLowMgdl"
     const val KEY_LOW_MGDL: String = "lowMgdl"
     const val KEY_HIGH_MGDL: String = "highMgdl"
+
+    /**
+     * Added in schema 2. A 1.1 watch ignores it; a newer watch paired with a 1.1 phone derives
+     * it from the high threshold rather than discarding the user's whole range.
+     */
+    const val KEY_VERY_HIGH_MGDL: String = "veryHighMgdl"
 }

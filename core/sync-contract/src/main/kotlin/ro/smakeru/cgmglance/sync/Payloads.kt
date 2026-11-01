@@ -117,6 +117,7 @@ class PrefsPayload(
             SyncContract.KEY_URGENT_LOW_MGDL to thresholds.urgentLowMgdl,
             SyncContract.KEY_LOW_MGDL to thresholds.lowMgdl,
             SyncContract.KEY_HIGH_MGDL to thresholds.highMgdl,
+            SyncContract.KEY_VERY_HIGH_MGDL to thresholds.veryHighMgdl,
         )
 
     companion object {
@@ -135,11 +136,17 @@ class PrefsPayload(
                     ?: GlucoseUnit.MG_DL
 
             val defaults = RangeThresholds.default
+            val high = reader.getInt(SyncContract.KEY_HIGH_MGDL, defaults.highMgdl)
             val thresholds =
                 RangeThresholds.create(
                     urgentLowMgdl = reader.getInt(SyncContract.KEY_URGENT_LOW_MGDL, defaults.urgentLowMgdl),
                     lowMgdl = reader.getInt(SyncContract.KEY_LOW_MGDL, defaults.lowMgdl),
-                    highMgdl = reader.getInt(SyncContract.KEY_HIGH_MGDL, defaults.highMgdl),
+                    highMgdl = high,
+                    veryHighMgdl =
+                        reader.getInt(
+                            SyncContract.KEY_VERY_HIGH_MGDL,
+                            RangeThresholds.defaultVeryHighFor(high),
+                        ),
                 ) ?: defaults
 
             return PrefsPayload(unit, thresholds)

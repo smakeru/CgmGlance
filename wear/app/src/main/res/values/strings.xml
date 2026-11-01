@@ -31,6 +31,7 @@
     <string name="range_urgent_low">urgent low</string>
     <string name="range_low">low</string>
     <string name="range_high">high</string>
+    <string name="range_very_high">very high</string>
 
     <string name="trend_rising_rapidly">rising rapidly</string>
     <string name="trend_rising">rising</string>

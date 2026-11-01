@@ -60,12 +60,13 @@
     <string name="field_urgent_low">Urgent low</string>
     <string name="field_low">Low</string>
     <string name="field_high">High</string>
+    <string name="field_very_high">Very high</string>
     <string name="settings_units_note">All values in mg/dL.</string>
     <string name="settings_display_unit">Display unit</string>
-    <string name="settings_invalid">Urgent low must be below low, and low below high. All three must be values a sensor can report.</string>
+    <string name="settings_invalid">Urgent low must be below low, low below high, and high below very high. All four must be values a sensor can report.</string>
     <string name="action_save">Save</string>
     <string name="action_back">Back</string>
-    <string name="action_reset">Reset to 55 / 70 / 180</string>
+    <string name="action_reset">Reset to 55 / 70 / 180 / 260</string>
 
     <!-- Notifications about this app, never about glucose. -->
     <string name="channel_status_name">App status</string>

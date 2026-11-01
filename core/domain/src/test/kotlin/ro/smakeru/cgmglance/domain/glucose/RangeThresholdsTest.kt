@@ -15,6 +15,33 @@ class RangeThresholdsTest {
         assertEquals(55, RangeThresholds.default.urgentLowMgdl)
         assertEquals(70, RangeThresholds.default.lowMgdl)
         assertEquals(180, RangeThresholds.default.highMgdl)
+        assertEquals(260, RangeThresholds.default.veryHighMgdl)
+    }
+
+    @Test
+    fun `very high is separate from high and its boundary is the calmer state`() {
+        val thresholds = RangeThresholds.default
+
+        assertEquals(GlucoseRange.HIGH, thresholds.classify(reading(181)))
+        assertEquals(GlucoseRange.HIGH, thresholds.classify(reading(260)))
+        assertEquals(GlucoseRange.VERY_HIGH, thresholds.classify(reading(261)))
+    }
+
+    @Test
+    fun `a range saved before very high existed keeps the user's high`() {
+        // 1.1 stored three thresholds. A custom high above 260 must not invalidate the whole set.
+        val legacy = assertNotNull(RangeThresholds.create(urgentLowMgdl = 55, lowMgdl = 70, highMgdl = 280))
+
+        assertEquals(280, legacy.highMgdl)
+        assertEquals(281, legacy.veryHighMgdl)
+        assertEquals(260, assertNotNull(RangeThresholds.create(55, 70, 180)).veryHighMgdl)
+    }
+
+    @Test
+    fun `rejects a very high that is not above high`() {
+        assertNull(RangeThresholds.create(urgentLowMgdl = 55, lowMgdl = 70, highMgdl = 180, veryHighMgdl = 180))
+        assertNull(RangeThresholds.create(urgentLowMgdl = 55, lowMgdl = 70, highMgdl = 180, veryHighMgdl = 150))
+        assertNull(RangeThresholds.create(urgentLowMgdl = 55, lowMgdl = 70, highMgdl = 180, veryHighMgdl = 900))
     }
 
     @Test

@@ -25,8 +25,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import kotlinx.coroutines.delay
 import ro.smakeru.cgmglance.domain.glucose.FreshnessPolicy
-import ro.smakeru.cgmglance.domain.glucose.GlucoseRange
-import ro.smakeru.cgmglance.domain.glucose.ReadingFreshness
+import ro.smakeru.cgmglance.domain.glucose.GlucoseRangePalette
 import ro.smakeru.cgmglance.domain.glucose.TrendArrow
 import ro.smakeru.cgmglance.domain.time.Clock
 
@@ -125,21 +124,10 @@ private fun GlucoseScreen(
  * never say by accident.
  */
 private fun colorFor(display: GlucoseDisplay): Color =
-    when {
-        display.freshness == ReadingFreshness.STALE -> COLOR_MUTED
-        display.freshness == ReadingFreshness.NO_DATA -> COLOR_MUTED
-        display.range == GlucoseRange.URGENT_LOW -> COLOR_URGENT_LOW
-        display.range == GlucoseRange.LOW -> COLOR_LOW
-        display.range == GlucoseRange.HIGH -> COLOR_HIGH
-        else -> COLOR_IN_RANGE
-    }
+    Color(GlucoseRangePalette.colorFor(display.range, display.freshness))
 
 private const val REFRESH_INTERVAL_MILLIS = 10_000L
 private const val VALUE_SIZE_SP = 46
 private const val SECONDARY_SIZE_SP = 14
 
-private val COLOR_IN_RANGE = Color(0xFFFFFFFF)
-private val COLOR_LOW = Color(0xFFFFB74D)
-private val COLOR_URGENT_LOW = Color(0xFFFF5252)
-private val COLOR_HIGH = Color(0xFFFFD54F)
-private val COLOR_MUTED = Color(0xFF9E9E9E)
+private val COLOR_MUTED = Color(GlucoseRangePalette.MUTED)

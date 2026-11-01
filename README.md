@@ -23,7 +23,8 @@ Watch 8. Not published anywhere, no releases, personal use.
 | --- | --- |
 | Providers | LinX / MicroTech AiDEX X ([validated contract](docs/providers/linx.md)); Dexcom ONE+ ([1.9.0 live acquisition checked; further validation pending](docs/providers/dexcom-one-plus.md)) |
 | Watch surfaces | Complication (SHORT_TEXT, LONG_TEXT, RANGED_VALUE), Tile, app |
-| Phone | 1.2: source-labelled status, explicit source selection (LinX default), independent histories, target range settings, silence watchdog, configurable home-screen widgets |
+| Phone | 1.2: source-labelled status, explicit source selection (LinX default), independent histories, target range settings with a very-high threshold, silence watchdog, range-coloured home-screen widgets |
+| Range colours | Shared by widget, tile and watch app: red below urgent low and above very high (55 / 260 by default), orange low, green in range, yellow high, grey once stale |
 | Health export | Health Connect, off by default ([below](#health-connect-export)) |
 | Tests | JVM domain/sync policies, provider parsers and source-isolation tests; synthetic Dexcom inputs are not real-device validation |
 
@@ -189,14 +190,15 @@ port is only advertised while the pairing screen is open on the watch.
 | `:core:domain` | Pure JVM | Units, plausibility, freshness, trend, sync policy. No Android dependency, by design. |
 | `:core:sync-contract` | Pure JVM | The wire format between the two APKs, with its version-skew rules. |
 | `:provider:linx` | Android library | Reads the LinX notification. Parsing logic is plain Kotlin. |
-| `:provider:dexcom` | Android library | Provisional Dexcom ONE+ notification reader; strict parser, no sensor/Bluetooth access. |
-| `:phone:app` | Android app | Acquisition, history, sync, health export, status and settings screens. |
+| `:provider:dexcom` | Android library | Dexcom ONE+ notification reader; strict parser, no sensor/Bluetooth access. |
+| `:phone:app` | Android app | Acquisition, history, sync, health export, status and settings screens, home-screen widgets. |
 | `:wear:app` | Android app | Complication, tile, watch app. |
 
 Both apps share the application id `ro.smakeru.cgmglance`, which the Data Layer requires. Wear
-version codes are offset by one million. Phone **1.2** (`versionCode` 3) deliberately keeps the
-existing watch **1.1** (`versionCode` 1000002) and sync schema unchanged: no watch update is needed
-for source selection or phone widgets. Both installed APKs must still use the same signing key.
+version codes are offset by one million: phone **1.2** is `versionCode` 3, watch **1.2** is
+1000003. Sync schema 2 only adds the very-high threshold, so either APK can be updated first; a 1.1
+watch keeps working, it simply shows in range in white and has no very-high red. Both installed
+APKs must use the same signing key.
 
 ## Licence
 

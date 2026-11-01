@@ -1,16 +1,17 @@
 # Changelog
 
-Notable changes per version. Phone and watch may be updated independently; phone 1.2 retains
-watch 1.1 and the same wire format. Wear version codes use the one million offset described in
-the [README](README.md#modules).
+Notable changes per version. Phone and watch may be updated independently: the wire format only
+ever gains keys. Wear version codes use the one million offset described in the
+[README](README.md#modules).
 
 Entries record what changed and, where it is not obvious, why — the reasoning belongs in
 [docs/decisions.md](docs/decisions.md), and this file links to it rather than repeating it.
 
 ## 1.2 — unreleased
 
-Phone `versionCode` 3. Watch APK remains 1.1 (`versionCode` 1000002); no watch-side code or sync
-schema change. A phone-only update still requires the same signing certificate as the watch.
+Phone `versionCode` 3, wear `versionCode` 1000003. Sync schema 2 only adds a key, so either side
+may still be updated first: a 1.1 watch ignores the new threshold, and a 1.2 watch paired with a
+1.1 phone derives it. Both APKs must still share a signing certificate.
 
 ### Added
 
@@ -29,8 +30,17 @@ schema change. A phone-only update still requires the same signing certificate a
 - **Source-aware phone diagnostics**, including the last notification-parser rejection and
   notification permission for the selected provider's service.
 
+- **Very high threshold**, 260 mg/dL by default and editable in settings. Above it the value is
+  shown in the same red as an urgent low on the widget, tile and watch app. A custom high saved
+  by 1.1 above 260 is kept, with very high placed just above it.
+- **Range colours on the phone widget**, from one palette shared with the watch so the two never
+  disagree. The widget is redesigned: a blue gradient tile, with the range colour on the number, an accent
+  bar and a soft halo from the top-right corner.
+
 ### Changed
 
+- **In range is now green**, not white, on the tile, the watch app and the widget. Red for urgent
+  low and very high, orange for low, yellow for high, grey once a reading is stale.
 - Settings and status wording cover both providers. Background readings do not export competing
   values or reset the selected source's silence watchdog.
 - Each source choice explains in small secondary text that only glucose is acquired and trend

@@ -69,6 +69,8 @@ class WearTexts(
 
             GlucoseRange.HIGH -> context.getString(R.string.range_high)
 
+            GlucoseRange.VERY_HIGH -> context.getString(R.string.range_very_high)
+
             // In range needs no saying; a screen reader announcing "in range" on every glance
             // is noise the sighted display does not impose.
             else -> null

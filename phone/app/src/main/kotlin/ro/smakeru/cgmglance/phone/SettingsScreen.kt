@@ -52,18 +52,20 @@ fun SettingsScreen(
     var urgentLow by remember { mutableStateOf(initialThresholds.urgentLowMgdl.toString()) }
     var low by remember { mutableStateOf(initialThresholds.lowMgdl.toString()) }
     var high by remember { mutableStateOf(initialThresholds.highMgdl.toString()) }
+    var veryHigh by remember { mutableStateOf(initialThresholds.veryHighMgdl.toString()) }
     var unit by remember { mutableStateOf(initialUnit) }
     var source by remember { mutableStateOf(initialSource) }
     var healthEnabled by remember { mutableStateOf(initialHealthExport.enabled) }
     var healthInterval by remember { mutableStateOf(initialHealthExport.intervalMinutes.toString()) }
 
     // The domain refuses an inconsistent set outright rather than reordering it, so the button
-    // is simply disabled until the three numbers make sense together.
+    // is simply disabled until the four numbers make sense together.
     val parsed =
         RangeThresholds.create(
             urgentLowMgdl = urgentLow.toIntOrNull() ?: -1,
             lowMgdl = low.toIntOrNull() ?: -1,
             highMgdl = high.toIntOrNull() ?: -1,
+            veryHighMgdl = veryHigh.toIntOrNull() ?: -1,
         )
 
     // Validated the same way, and for the same reason: Save stays disabled rather than quietly
@@ -113,6 +115,7 @@ fun SettingsScreen(
         NumberField(stringResource(R.string.field_urgent_low), urgentLow) { urgentLow = it }
         NumberField(stringResource(R.string.field_low), low) { low = it }
         NumberField(stringResource(R.string.field_high), high) { high = it }
+        NumberField(stringResource(R.string.field_very_high), veryHigh) { veryHigh = it }
 
         Spacer(Modifier.height(4.dp))
         Text(stringResource(R.string.settings_units_note), style = MaterialTheme.typography.bodySmall)
@@ -211,6 +214,7 @@ fun SettingsScreen(
                 urgentLow = defaults.urgentLowMgdl.toString()
                 low = defaults.lowMgdl.toString()
                 high = defaults.highMgdl.toString()
+                veryHigh = defaults.veryHighMgdl.toString()
             },
         ) { Text(stringResource(R.string.action_reset)) }
     }

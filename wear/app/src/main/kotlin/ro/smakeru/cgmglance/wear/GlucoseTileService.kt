@@ -14,8 +14,7 @@ import androidx.wear.tiles.TileBuilders
 import androidx.wear.tiles.TileService
 import com.google.common.util.concurrent.ListenableFuture
 import ro.smakeru.cgmglance.domain.glucose.FreshnessPolicy
-import ro.smakeru.cgmglance.domain.glucose.GlucoseRange
-import ro.smakeru.cgmglance.domain.glucose.ReadingFreshness
+import ro.smakeru.cgmglance.domain.glucose.GlucoseRangePalette
 import ro.smakeru.cgmglance.domain.glucose.TrendArrow
 import ro.smakeru.cgmglance.domain.time.Clock
 
@@ -138,7 +137,7 @@ class GlucoseTileService : TileService() {
                     valueSize,
                     colorFor(display),
                 ),
-            ).addContent(text(display.unitLabel, SECONDARY_SIZE_SP, COLOR_MUTED))
+            ).addContent(text(display.unitLabel, SECONDARY_SIZE_SP, GlucoseRangePalette.MUTED))
             .build()
     }
 
@@ -165,15 +164,7 @@ class GlucoseTileService : TileService() {
      * would read as "you are high right now", which is the one message this app must never send
      * by accident.
      */
-    private fun colorFor(display: GlucoseDisplay): Int =
-        when {
-            display.freshness == ReadingFreshness.STALE -> COLOR_MUTED
-            display.freshness == ReadingFreshness.NO_DATA -> COLOR_MUTED
-            display.range == GlucoseRange.URGENT_LOW -> COLOR_URGENT_LOW
-            display.range == GlucoseRange.LOW -> COLOR_LOW
-            display.range == GlucoseRange.HIGH -> COLOR_HIGH
-            else -> COLOR_IN_RANGE
-        }
+    private fun colorFor(display: GlucoseDisplay): Int = GlucoseRangePalette.colorFor(display.range, display.freshness)
 
     private companion object {
         const val RESOURCES_VERSION = "1"
@@ -183,11 +174,5 @@ class GlucoseTileService : TileService() {
 
         const val VALUE_SIZE_RATIO = 0.28
         const val SECONDARY_SIZE_SP = 14f
-
-        const val COLOR_IN_RANGE = 0xFFFFFFFF.toInt()
-        const val COLOR_LOW = 0xFFFFB74D.toInt()
-        const val COLOR_URGENT_LOW = 0xFFFF5252.toInt()
-        const val COLOR_HIGH = 0xFFFFD54F.toInt()
-        const val COLOR_MUTED = 0xFF9E9E9E.toInt()
     }
 }
