@@ -1,6 +1,6 @@
-# Google Play Store Release & Testing Reference
+# Google Play Store Release, Automation & Testing Reference
 
-Acest document păstrează toate linkurile, configurațiile și pașii necesari pentru ducerea aplicației **CGM Glance** până la publicarea finală în **Producție (Google Play Store)**.
+Acest document păstrează toate linkurile, configurațiile, automatizările API și pașii necesari pentru ducerea aplicației **CGM Glance** până la publicarea finală în **Producție (Google Play Store)**.
 
 ---
 
@@ -21,39 +21,63 @@ Acest document păstrează toate linkurile, configurațiile și pașii necesari 
 
 ---
 
-## 2. Cheia de Semnare (Release Keystore)
+## 2. Chei Locale: Semnare (Keystore) & Google Play API (Service Account)
 
-> **IMPORTANT**: Nu șterge și nu pierde niciodată fișierul `.keystore`! Fără el nu se mai pot încărca actualizări pe Google Play. Fișierul este în afara repo-ului git (și ignorat în `.gitignore`).
+> **IMPORTANT**: Niciunul dintre aceste fișiere nu trebuie șters sau comis în Git (toate sunt excluse în `.gitignore`).
 
+### A. Cheia de Semnare Android (Release Keystore)
 - **Cale Keystore**: `D:/Viorel Stuff Claude/CgmGlance/cgmglance-release.keystore`
 - **Fișier configurare local**: `D:/MyProjects/AppsViorel/CgmGlance/keystore.properties` (exclus din Git)
 - **Key Alias**: `cgmglance`
 
+### B. Contul de Serviciu Google Play Developer API (Upload Automat)
+- **Proiect Google Cloud**: `cgm-glance-play`
+- **Service Account Email**: `play-publisher@cgm-glance-play.iam.gserviceaccount.com` (invitat cu drepturi de Admin/Release în Google Play Console -> *Users and permissions*)
+- **Fișier JSON local**: `D:/MyProjects/AppsViorel/CgmGlance/play-service-account.json` (copiat din `cgm-glance-play-f048dcdcf682.json`, ambele excluse în `.gitignore`)
+
 ---
 
-## 3. Reguli de Versiune (`versionCode`)
+## 3. Publicare și Verificare Automată (`scripts/publish_play.py`)
 
-Google Play cere ca fiecare pachet `.aab` încărcat să aibă un `versionCode` strict mai mare decât cel anterior, iar pachetul de ceas (**Wear OS**) are propria pistă dedicată:
+Nu mai este nevoie de încărcarea manuală a fișierelor `.aab` în browser. Scriptul `scripts/publish_play.py` comunică direct cu **Google Play Android Developer API v3**.
 
-- **Telefon (`:phone:app` în `phone/app/build.gradle.kts`)**:
-  - `versionCode = 5` (`versionName = "1.2"`) — Include cardul interactiv cu ghidul în 4 pași (`SetupGuideCard.kt`: *1. Instalare ceas*, *2. Cadran ceas*, *3. Card (Tile)*, *4. Widget telefon*) și butonul direct **Deschide în Google Play**.
-  - Pachet generat: `release/CgmGlance-phone-1.2-v5.aab` (și `release/CgmGlance-phone-1.2.aab`).
-- **Ceas Wear OS (`:wear:app` în `wear/app/build.gradle.kts`)**:
-  - `versionCode = 1_000_004` (`versionName = "1.2"`).
-  - Pachet generat: `release/CgmGlance-wear-1.2-v1000004.aab` (și `release/CgmGlance-wear-1.2.aab`).
-
-### Comenzi pentru generarea unei versiuni noi
+### Comenzi uzuale:
 ```powershell
-# 1. Telefon
-./gradlew :phone:app:bundleRelease
+# 1. Verifică statusul live al tuturor pistelor (telefon + ceas) în Google Play Console:
+python scripts/publish_play.py --status
 
-# 2. Ceas (Wear OS)
-./gradlew :wear:app:bundleRelease
+# 2. Crește automat versionCode (telefon + ceas), compilează .aab-urile semnate și le publică în Testare Internă:
+python scripts/publish_play.py --bump both --build --upload internal
+
+# 3. Publică doar o versiune nouă de telefon în Testare Internă:
+python scripts/publish_play.py --bump phone --target phone --build --upload internal
+
+# 4. Promovează versiunile deja încărcate (fără rebuild) în Testare Închisă (Alpha):
+python scripts/publish_play.py --bump none --target both --upload alpha
 ```
 
+### Reguli de Versiune (`versionCode`) și Piste Google Play:
+- **Telefon (`:phone:app` în `phone/app/build.gradle.kts`)**:
+  - Pista de testare internă în API: `internal`
+  - Pista de testare închisă în API: `alpha`
+  - Versiune curentă publicată: `versionCode = 5` (`versionName = "1.2"`, `status = completed` pe `internal` și `alpha`).
+- **Ceas Wear OS (`:wear:app` în `wear/app/build.gradle.kts`)**:
+  - Are offset de `1_000_000` față de telefon pentru a nu se ciocni niciodată codurile de versiune.
+  - Pista de testare internă în API: `wear:internal`
+  - Pista de testare închisă în API: `wear:alpha` (necesită activarea inițială din UI în *Testare închisă -> Alpha -> selector Wear OS*)
+  - Versiune curentă publicată: `versionCode = 1_000_004` (`versionName = "1.2"`, `status = completed` pe `wear:internal`).
+
 ---
 
-## 4. Configurații Aprobate în Google Play Console (Cont Personal)
+## 4. Regula de Sincronizare Telefon ↔ Ceas (Data Layer Signing)
+
+- Wear OS Data Layer (`DataClient` / `CapabilityClient`) permite sincronizarea între telefon și ceas **DOAR dacă ambele aplicații au același `applicationId` (`ro.smakeru.cgmglance`) ȘI aceeași semnătură criptografică**.
+- O aplicație instalată din Google Play (semnată de Play Store) **NU** se va sincroniza cu o aplicație instalată local din Android Studio / Gradle cu cheia de `debug`.
+- Când se trece la versiunea din Google Play, vechea aplicație de `debug` de pe ceas trebuie dezinstalată înainte de a instala aplicația de ceas din Google Play.
+
+---
+
+## 5. Configurații Aprobate în Google Play Console (Cont Personal)
 
 Pentru ca aplicația să nu fie blocată de restricțiile Google pentru organizații medicale:
 - **App category**: `Health & fitness`
@@ -65,23 +89,13 @@ Pentru ca aplicația să nu fie blocată de restricțiile Google pentru organiza
 
 ---
 
-## 5. Cum Trecem de la Testare la Producție (Cei 12 Testeri × 14 Zile)
+## 6. Cum Trecem de la Testare la Producție (Cei 12 Testeri × 14 Zile)
 
-### Diferența dintre cele două linkuri de testare:
 1. **Testare internă (`https://play.google.com/apps/internaltest/4701313260176212479`)**:
-   - Funcționează instantaneu pentru persoanele ale căror adrese Gmail sunt adăugate manual în lista de emailuri din *Testare internă*.
+   - Funcționează pentru persoanele ale căror adrese Gmail sunt adăugate în lista de emailuri din *Testare internă* (atât pe pista de telefon, cât și pe pista *Wear OS -> Testeri*).
    - **Nu** pornește cronometrul de 14 zile pentru deblocarea Producției.
 2. **Testare închisă - Alpha (`https://play.google.com/apps/testing/ro.smakeru.cgmglance`)**:
-   - Permite conectarea directă a Grupului Google **`cgm-glance-testers@googlegroups.com`** (`https://groups.google.com/g/cgm-glance-testers`).
-   - Oricine intră în grupul Google (fără să îți dea emailul în privat) și apasă pe linkul de testare poate instala aplicația de pe Google Play.
-   - **Pornește cronometrul oficial de 14 zile** când cel puțin 12 testeri au aplicația instalată.
-
-### Pașii în Play Console pentru a activa Grupul Google pe Testare Închisă:
-1. În Google Play Console, mergi în meniul din stânga la **Testare și lansare** -> **Testare** -> **Testare închisă (Closed testing)**.
-2. Pe pista **Alpha**, apasă pe **Gestionează pista (Manage track)**.
-3. Mergi pe tab-ul **Testeri (Testers)**:
-   - Bifează **Grupuri Google (Google Groups)**.
-   - Introdu adresa: `cgm-glance-testers@googlegroups.com` și apasă **Salvează**.
-4. Mergi pe tab-ul **Țări / regiuni (Countries / regions)** și asigură-te că sunt adăugate țările dorite (România sau toate țările).
-5. Apasă pe **Creează o versiune (Create new release)** (sau promovează versiunea din *Testare internă* în *Testare închisă -> Alpha* atât pentru telefon, cât și pentru pista **Wear OS**).
-6. După ce Google aprobă pista Alpha și cel puțin 12 persoane din grup instalează aplicația și o păstrează 14 zile, în pagina **Producție (Production)** se va activa butonul **Solicită acces la producție (Apply for production)**.
+   - Permite conectarea directă a Grupului Google **`cgm-glance-testers@googlegroups.com`** (`https://groups.google.com/g/cgm-glance-testers`) în tab-ul *Testeri* din *Testare închisă -> Alpha*.
+   - Oricine intră în grupul Google și apasă pe linkul de opt-in poate instala aplicația de pe Google Play.
+   - **Pornește cronometrul oficial de 14 zile** când cel puțin 12 testeri au aplicația instalată continuu timp de 14 zile.
+   - După cele 14 zile, în pagina **Producție (Production)** se deblochează butonul **Solicită acces la producție (Apply for production)**.
