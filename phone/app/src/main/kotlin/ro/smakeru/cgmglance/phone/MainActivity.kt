@@ -1,8 +1,10 @@
 package ro.smakeru.cgmglance.phone
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -84,6 +86,7 @@ class MainActivity : ComponentActivity() {
                         StatusScreen(
                             source = app.statusSource,
                             onGrantPermission = { openNotificationAccessSettings() },
+                            onOpenPlayStore = { openPlayStoreListing() },
                             onOpenSettings = { showSettings = true },
                             onRefreshHealth = { app.healthExporter.refresh() },
                         )
@@ -95,6 +98,23 @@ class MainActivity : ComponentActivity() {
 
     private fun openNotificationAccessSettings() {
         startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+    }
+
+    private fun openPlayStoreListing() {
+        val marketIntent =
+            Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")).apply {
+                setPackage("com.android.vending")
+            }
+        try {
+            startActivity(marketIntent)
+        } catch (_: ActivityNotFoundException) {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=$packageName"),
+                ),
+            )
+        }
     }
 
     /**
@@ -117,6 +137,7 @@ class MainActivity : ComponentActivity() {
 private fun StatusScreen(
     source: PhoneStatusSource,
     onGrantPermission: () -> Unit,
+    onOpenPlayStore: () -> Unit,
     onOpenSettings: () -> Unit,
     onRefreshHealth: () -> Unit,
 ) {
@@ -188,7 +209,7 @@ private fun StatusScreen(
             }
             Spacer(Modifier.height(16.dp))
 
-            HealthCard(status, onGrantPermission)
+            HealthCard(status, onGrantPermission, onOpenPlayStore)
 
             if (status.needsAttention) {
                 Spacer(Modifier.height(12.dp))
@@ -224,6 +245,9 @@ private fun StatusScreen(
             HealthConnectCard(status.healthExport)
 
             Spacer(Modifier.height(16.dp))
+            SetupGuideCard(onOpenPlayStore = onOpenPlayStore)
+
+            Spacer(Modifier.height(16.dp))
             TextButton(onClick = onOpenSettings) { Text(stringResource(R.string.action_settings)) }
 
             Spacer(Modifier.height(16.dp))
@@ -236,6 +260,7 @@ private fun StatusScreen(
 private fun HealthCard(
     status: PhoneStatus,
     onGrantPermission: () -> Unit,
+    onOpenPlayStore: () -> Unit,
 ) {
     val (titleRes, bodyRes) = textsFor(status.health)
 
@@ -252,6 +277,11 @@ private fun HealthCard(
                 Spacer(Modifier.height(16.dp))
                 Button(onClick = onGrantPermission) {
                     Text(stringResource(R.string.action_open_notification_access))
+                }
+            } else if (status.health == PhoneHealth.WATCH_APP_MISSING) {
+                Spacer(Modifier.height(16.dp))
+                Button(onClick = onOpenPlayStore) {
+                    Text(stringResource(R.string.action_open_play_store))
                 }
             }
         }

@@ -15,9 +15,10 @@
     <string name="health_watch_title">Watch not reachable</string>
     <string name="health_watch_body">Readings are arriving, but the watch is out of range or switched off. It will catch up on its own once it reconnects.</string>
     <string name="health_watch_missing_title">No watch app found</string>
-    <string name="health_watch_missing_body">Readings are arriving, but no watch is running a compatible copy of CGM Glance, so none of this is reaching your wrist. Install the watch APK — and make sure both it and the phone app came from the same build. Two apps signed with different keys never pair, and the system reports no error when they don\'t.</string>
+    <string name="health_watch_missing_body">Readings are arriving, but CGM Glance is not installed on your watch yet. Install it on your watch from Google Play (either from the "Available on more devices" menu on this phone, or under "Apps on your phone" in the watch\'s Play Store). If you installed from an APK, both phone and watch must come from the same build.</string>
 
     <string name="action_open_notification_access">Open notification access</string>
+    <string name="action_open_play_store">Open in Google Play</string>
 
     <!-- Shown only while the parser is running on its positional fallback. -->
     <string name="fallback_title">Reading via fallback</string>
@@ -110,4 +111,49 @@
     <string name="settings_health_interval">Send every (minutes)</string>
     <string name="settings_health_interval_note">Between %1$d and %2$d minutes. The default is 15.</string>
     <string name="settings_health_invalid">The interval must be between %1$d and %2$d minutes.</string>
+
+    <!-- Step-by-step setup guide for watch install, watch complication, watch tile, and phone widget. -->
+    <string name="guide_title">Watch &amp; phone setup guide</string>
+    <string name="guide_subtitle">How to install the app on your watch and display glucose on your watch face, tile, or phone screen.</string>
+
+    <string name="guide_tab_install">1. Watch install</string>
+    <string name="guide_tab_complication">2. Watch face</string>
+    <string name="guide_tab_tile">3. Watch tile</string>
+    <string name="guide_tab_widget">4. Phone widget</string>
+
+    <string name="guide_install_intro">Install the companion app on your Wear OS watch so readings can reach your wrist.</string>
+    <string name="guide_install_step1_title">Option A — From your phone\'s Google Play</string>
+    <string name="guide_install_step1_body">Tap "Open in Google Play" below, expand "Available on more devices" (next to Installed/Open), tick your watch, and tap Install.</string>
+    <string name="guide_install_step2_title">Option B — Directly from your watch</string>
+    <string name="guide_install_step2_body">Open the Google Play Store on your watch, scroll down to "Apps on your phone", select CGM Glance, and tap Install.</string>
+    <string name="guide_install_step3_title">Verify the connection</string>
+    <string name="guide_install_step3_body">Once installed, the Watch row in Details above changes to "Connected" and the latest reading is sent automatically.</string>
+    <string name="guide_install_tip">Tip: Keep Bluetooth and Wi-Fi enabled on your watch during installation so Google Play downloads the watch app quickly.</string>
+
+    <string name="guide_complication_intro">Always visible on your main watch face alongside the time.</string>
+    <string name="guide_complication_step1_title">Long-press the watch face</string>
+    <string name="guide_complication_step1_body">Press and hold your watch screen, then tap Customize (or edit it from the Galaxy Wearable / Pixel Watch app on your phone).</string>
+    <string name="guide_complication_step2_title">Swipe to Complications</string>
+    <string name="guide_complication_step2_body">Swipe left across the customization pages until the data slots on the watch face are highlighted.</string>
+    <string name="guide_complication_step3_title">Select CGM Glance → Glucose</string>
+    <string name="guide_complication_step3_body">Tap the slot where you want glucose to appear, scroll the list, and pick CGM Glance (Glucose).</string>
+    <string name="guide_complication_tip">Tip: Tapping the complication on your watch opens the full CGM Glance screen with the reading\'s exact age. If a built-in watch face only accepts icons, choose a face with a text slot.</string>
+
+    <string name="guide_tile_intro">A dedicated full-screen card with large numbers, one swipe away from your watch face.</string>
+    <string name="guide_tile_step1_title">Swipe left on your watch</string>
+    <string name="guide_tile_step1_body">From the watch face, swipe left through your existing tiles (or open the Tiles section in the Galaxy Wearable / Pixel Watch phone app).</string>
+    <string name="guide_tile_step2_title">Tap Add tile (+)</string>
+    <string name="guide_tile_step2_body">Long-press any tile or swipe all the way to the end and tap the + (Add tile) button.</string>
+    <string name="guide_tile_step3_title">Pick CGM Glance</string>
+    <string name="guide_tile_step3_body">Scroll to CGM Glance and tap it to add the tile. Drag it to the first position so it sits right next to your watch face.</string>
+    <string name="guide_tile_tip">Tip: The tile colours the reading by range (green, amber, red) and dims it automatically if data becomes stale.</string>
+
+    <string name="guide_widget_intro">Live glucose, calculated trend arrow, and reading age on your phone home screen.</string>
+    <string name="guide_widget_step1_title">Long-press your home screen</string>
+    <string name="guide_widget_step1_body">Touch and hold an empty space on your phone\'s home screen and tap Widgets.</string>
+    <string name="guide_widget_step2_title">Drag CGM Glance to the screen</string>
+    <string name="guide_widget_step2_body">Find CGM Glance in the widget list, then touch and hold the Glucose widget to place it where you want.</string>
+    <string name="guide_widget_step3_title">Choose the widget source</string>
+    <string name="guide_widget_step3_body">Pick whether the widget follows your watch source or stays pinned to LinX or Dexcom ONE+, then tap Save.</string>
+    <string name="guide_widget_tip">Tip: Tapping the widget opens the official sensor app. You can place two widgets side by side to compare two sensors at once.</string>
 </resources>
