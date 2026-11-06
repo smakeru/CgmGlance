@@ -38,6 +38,9 @@ release/
 *.keystore
 keystore.properties
 signing.properties
+play-service-account.json
+*service-account*.json
+cgm-glance-play-*.json
 
 # --- IDE -------------------------------------------------------------------
 .idea/
@@ -46,7 +49,9 @@ signing.properties
 *.iws
 .kotlin/
 
-# --- OS --------------------------------------------------------------------
+# --- OS & Python -----------------------------------------------------------
 .DS_Store
 Thumbs.db
 desktop.ini
+__pycache__/
+*.py[cod]

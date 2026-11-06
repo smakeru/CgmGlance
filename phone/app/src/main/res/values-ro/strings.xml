@@ -13,9 +13,10 @@
     <string name="health_watch_title">Ceasul nu e accesibil</string>
     <string name="health_watch_body">Citirile sosesc, dar ceasul e în afara razei sau oprit. Se sincronizează singur când revine.</string>
     <string name="health_watch_missing_title">Nu găsesc aplicația pe ceas</string>
-    <string name="health_watch_missing_body">Citirile sosesc, dar niciun ceas nu rulează o copie compatibilă de CGM Glance, deci nimic nu ajunge la încheietură. Instalează APK-ul de ceas — și asigură-te că el și aplicația de telefon provin din aceeași compilare. Două aplicații semnate cu chei diferite nu se perechează niciodată, iar sistemul nu raportează nicio eroare când se întâmplă asta.</string>
+    <string name="health_watch_missing_body">Citirile sosesc, dar CGM Glance nu este instalată încă pe ceas. Instaleaz-o pe ceas din Google Play (fie din meniul „Disponibilă pe mai multe dispozitive” de pe telefon, fie din Play Store pe ceas la secțiunea „Aplicații de pe telefon”). Dacă ai instalat din APK, telefonul și ceasul trebuie să provină din aceeași compilare.</string>
 
     <string name="action_open_notification_access">Deschide accesul la notificări</string>
+    <string name="action_open_play_store">Deschide în Google Play</string>
 
     <string name="fallback_title">Citire prin metoda de rezervă</string>
     <string name="fallback_body">Sursa selectată este citită prin parserul de rezervă. Verifică formatul notificării; integrarea Dexcom necesită încă validare pe telefon.</string>
@@ -95,4 +96,48 @@
     <string name="settings_health_interval">Trimite la fiecare (minute)</string>
     <string name="settings_health_interval_note">Între %1$d și %2$d minute. Implicit 15.</string>
     <string name="settings_health_invalid">Intervalul trebuie să fie între %1$d și %2$d minute.</string>
+
+    <string name="guide_title">Ghid ceas și telefon</string>
+    <string name="guide_subtitle">Cum instalezi aplicația pe ceas și cum afișezi glicemia pe cadran, cardul lateral (Tile) sau ecranul telefonului.</string>
+
+    <string name="guide_tab_install">1. Instalare ceas</string>
+    <string name="guide_tab_complication">2. Cadran ceas</string>
+    <string name="guide_tab_tile">3. Card (Tile)</string>
+    <string name="guide_tab_widget">4. Widget telefon</string>
+
+    <string name="guide_install_intro">Instalează aplicația pereche pe ceasul tău Wear OS pentru ca glicemia să ajungă la încheietură.</string>
+    <string name="guide_install_step1_title">Varianta A — De pe telefon, din Google Play</string>
+    <string name="guide_install_step1_body">Apasă pe „Deschide în Google Play” mai jos, apasă săgeata „Disponibilă pe mai multe dispozitive” (lângă Deschide/Instalat), bifează ceasul tău și apasă Instalează.</string>
+    <string name="guide_install_step2_title">Varianta B — Direct de pe ceas</string>
+    <string name="guide_install_step2_body">Deschide aplicația Google Play Store pe ceas, derulează jos la „Aplicații de pe telefon” (Apps on your phone), alege CGM Glance și apasă Instalează.</string>
+    <string name="guide_install_step3_title">Verifică conexiunea</string>
+    <string name="guide_install_step3_body">După instalare, rândul „Ceas” din Detalii trece automat pe „Conectat”, iar ultima citire este trimisă imediat la ceas.</string>
+    <string name="guide_install_tip">Sfat: Ține Bluetooth-ul și Wi-Fi-ul activate pe ceas în timpul instalării pentru ca Google Play să descarce rapid aplicația pe ceas.</string>
+
+    <string name="guide_complication_intro">Vizibilă permanent pe cadranul principal al ceasului, lângă oră.</string>
+    <string name="guide_complication_step1_title">Ține apăsat pe cadranul ceasului</string>
+    <string name="guide_complication_step1_body">Apasă lung pe ecranul ceasului și alege Personalizează / Customize (sau editează cadranul din aplicația Galaxy Wearable / Pixel Watch de pe telefon).</string>
+    <string name="guide_complication_step2_title">Glisează la Complicații</string>
+    <string name="guide_complication_step2_body">Glisează spre stânga prin opțiuni până ajungi la pagina Complicații (Complications), unde zonele de date apar conturate.</string>
+    <string name="guide_complication_step3_title">Alege CGM Glance → Glicemia</string>
+    <string name="guide_complication_step3_body">Atinge zona dorită de pe cadran, derulează lista și selectează CGM Glance (Glicemia).</string>
+    <string name="guide_complication_tip">Sfat: Atingerea complicației pe ceas deschide ecranul complet cu vârsta exactă a citirii. Dacă un cadran acceptă doar pictograme, alege un cadran cu slot de text.</string>
+
+    <string name="guide_tile_intro">Un ecran dedicat cu cifre mari și lizibile, la o singură glisare distanță de cadran.</string>
+    <string name="guide_tile_step1_title">Glisează spre stânga pe ceas</string>
+    <string name="guide_tile_step1_body">De pe cadranul ceasului, glisează spre stânga prin cardurile tale (sau intră la secțiunea Carduri / Tiles din aplicația Galaxy Wearable / Pixel Watch).</string>
+    <string name="guide_tile_step2_title">Apasă pe Adaugă un card (+)</string>
+    <string name="guide_tile_step2_body">Ține apăsat pe orice card sau glisează până la capătul listei și apasă butonul + (Adaugă un card / Add tile).</string>
+    <string name="guide_tile_step3_title">Selectează CGM Glance</string>
+    <string name="guide_tile_step3_body">Caută CGM Glance în listă și atinge-l. Îl poți muta pe prima poziție ca să fie imediat lângă cadranul ceasului.</string>
+    <string name="guide_tile_tip">Sfat: Cardul colorează glicemia după interval (verde, galben, roșu) și o trece automat pe gri când citirea devine prea veche.</string>
+
+    <string name="guide_widget_intro">Glicemia, săgeata de trend și vârsta citirii direct pe ecranul telefonului.</string>
+    <string name="guide_widget_step1_title">Ține apăsat pe ecranul telefonului</string>
+    <string name="guide_widget_step1_body">Apasă lung pe un spațiu liber de pe ecranul de pornire (Home screen) și alege Widgeturi (Widgets).</string>
+    <string name="guide_widget_step2_title">Trage widgetul CGM Glance pe ecran</string>
+    <string name="guide_widget_step2_body">Caută CGM Glance în listă, ține apăsat pe widgetul Glicemie și așază-l pe ecran.</string>
+    <string name="guide_widget_step3_title">Alege sursa widgetului</string>
+    <string name="guide_widget_step3_body">Selectează dacă widgetul urmărește sursa ceasului sau rămâne fixat pe LinX ori Dexcom ONE+, apoi apasă Salvează.</string>
+    <string name="guide_widget_tip">Sfat: Atingerea widgetului deschide aplicația oficială a senzorului. Poți pune două widgeturi în paralel dacă vrei să compari doi senzori.</string>
 </resources>
