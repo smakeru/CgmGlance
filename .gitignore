@@ -38,6 +38,9 @@ release/
 *.keystore
 keystore.properties
 signing.properties
+play-service-account.json
+*service-account*.json
+cgm-glance-play-*.json
 
 # --- IDE -------------------------------------------------------------------
 .idea/

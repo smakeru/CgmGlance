@@ -10,6 +10,7 @@ Acest document păstrează toate linkurile, configurațiile și pașii necesari 
 | :--- | :--- |
 | **Application ID (Package Name)** | `ro.smakeru.cgmglance` |
 | **Nume Dezvoltator (Play Store)** | `Viorel D` (`draganviorel25@gmail.com`) |
+| **Google Play Console (Publishing Overview)** | `https://play.google.com/console/u/0/developers/7918042599438566714/app/4972634000184074064/publishing` |
 | **Repository GitHub** | `https://github.com/smakeru/CgmGlance` |
 | **Privacy Policy (Public Gist URL)** | `https://gist.github.com/smakeru/9ded20f5b72e9ce082a2d601a36f2edd` |
 | **Grup Google pentru Testeri (Web)** | `https://groups.google.com/g/cgm-glance-testers` |
