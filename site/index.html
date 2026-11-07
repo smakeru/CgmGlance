@@ -18,7 +18,6 @@
       --bg-surface: #0a1713;
       --bg-card: rgba(14, 30, 24, 0.78);
       --bg-card-elevated: rgba(20, 42, 34, 0.88);
-      --bg-card-glass: rgba(10, 24, 19, 0.65);
       --border-subtle: rgba(52, 211, 153, 0.16);
       --border-medium: rgba(52, 211, 153, 0.28);
       --border-strong: rgba(74, 222, 128, 0.5);
@@ -61,7 +60,7 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-      padding-bottom: 70px; /* Space for mobile sticky bar */
+      padding-bottom: 74px; /* Space for mobile sticky bar */
     }
 
     @media (min-width: 769px) {
@@ -84,7 +83,7 @@
       width: 100%;
       max-width: 1140px;
       margin: 0 auto;
-      padding: 0 18px;
+      padding: 0 16px;
     }
 
     @media (min-width: 640px) {
@@ -100,7 +99,7 @@
       z-index: 100;
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-      background: rgba(6, 14, 11, 0.82);
+      background: rgba(6, 14, 11, 0.85);
       border-bottom: 1px solid var(--border-subtle);
       transition: all 0.2s ease;
     }
@@ -109,7 +108,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 64px;
+      height: 62px;
       gap: 12px;
     }
 
@@ -190,11 +189,11 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 13px 20px;
+      padding: 12px 20px;
       min-height: 48px;
       border-radius: 12px;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.94rem;
       letter-spacing: -0.01em;
       transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
       cursor: pointer;
@@ -202,14 +201,11 @@
       text-align: center;
       text-decoration: none;
       user-select: none;
+      box-sizing: border-box;
     }
 
     .btn:active {
       transform: scale(0.98);
-    }
-
-    .btn:hover {
-      text-decoration: none;
     }
 
     .btn-primary {
@@ -239,22 +235,23 @@
     }
 
     .btn-ghost {
-      background: transparent;
-      color: var(--accent-bright);
-      border: 1px solid transparent;
-      padding: 8px 14px;
-      min-height: 38px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-soft);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 16px;
+      min-height: 44px;
       font-size: 0.88rem;
     }
 
     .btn-ghost:hover {
       background: rgba(52, 211, 153, 0.1);
-      border-color: var(--border-subtle);
+      border-color: var(--border-medium);
+      color: #fff;
     }
 
     /* Hero */
     .hero {
-      padding: 36px 0 32px;
+      padding: 34px 0 28px;
       text-align: center;
       position: relative;
     }
@@ -270,7 +267,7 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 6px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .badge-pill {
@@ -294,7 +291,7 @@
     }
 
     .hero h1 {
-      font-size: clamp(1.85rem, 5.2vw, 3.4rem);
+      font-size: clamp(1.8rem, 5.2vw, 3.4rem);
       line-height: 1.18;
       font-weight: 800;
       max-width: 880px;
@@ -313,7 +310,7 @@
       font-size: clamp(0.96rem, 2.2vw, 1.18rem);
       color: var(--text-soft);
       max-width: 700px;
-      margin: 0 auto 28px;
+      margin: 0 auto 26px;
       line-height: 1.62;
     }
 
@@ -322,8 +319,8 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 10px;
-      margin-bottom: 32px;
+      gap: 8px;
+      margin-bottom: 28px;
     }
 
     .chip-item {
@@ -332,9 +329,9 @@
       gap: 6px;
       background: rgba(14, 30, 24, 0.6);
       border: 1px solid var(--border-subtle);
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 999px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-soft);
     }
 
@@ -342,12 +339,12 @@
       color: var(--text-main);
     }
 
-    /* 2-Step Install Box (High conversion on mobile) */
+    /* 2-Step Install Box */
     .install-box {
       background: linear-gradient(180deg, rgba(16, 38, 30, 0.95) 0%, rgba(10, 24, 19, 0.98) 100%);
       border: 1px solid var(--border-strong);
       border-radius: var(--radius-xl);
-      padding: 22px 16px;
+      padding: 20px 14px;
       max-width: 880px;
       margin: 0 auto 40px;
       box-shadow: var(--shadow-elevated);
@@ -358,7 +355,7 @@
 
     @media (min-width: 640px) {
       .install-box {
-        padding: 34px 30px;
+        padding: 32px 28px;
         margin-bottom: 56px;
       }
     }
@@ -375,11 +372,11 @@
 
     .install-header {
       text-align: center;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
 
     .install-header h2 {
-      font-size: clamp(1.28rem, 3vw, 1.65rem);
+      font-size: clamp(1.25rem, 3vw, 1.65rem);
       font-weight: 800;
       color: #fff;
       margin-bottom: 8px;
@@ -415,7 +412,7 @@
       background: rgba(6, 16, 12, 0.7);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: 20px 16px;
+      padding: 18px 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -498,7 +495,7 @@
 
     .section-title {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 26px;
     }
 
     @media (min-width: 768px) {
@@ -508,7 +505,7 @@
     }
 
     .section-title .section-tag {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.06em;
@@ -518,7 +515,7 @@
     }
 
     .section-title h2 {
-      font-size: clamp(1.45rem, 3.2vw, 2.2rem);
+      font-size: clamp(1.4rem, 3.2vw, 2.2rem);
       font-weight: 800;
       letter-spacing: -0.02em;
       margin-bottom: 10px;
@@ -558,7 +555,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-xl);
-      padding: 22px 18px;
+      padding: 20px 16px;
       text-align: center;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: var(--shadow-card);
@@ -573,8 +570,8 @@
     }
 
     .watch-img-wrap {
-      width: 190px;
-      height: 190px;
+      width: 180px;
+      height: 180px;
       margin: 0 auto 16px;
       border-radius: 50%;
       padding: 6px;
@@ -667,69 +664,76 @@
       transform: scale(1.02);
     }
 
-    /* Interactive Setup Guide (Horizontally scrollable tabs on mobile) */
+    /* ========================================================
+       Interactive Setup Guide (Mobile First & Flawless Touch)
+       ======================================================== */
     .guide-container {
       background: var(--bg-card);
       border: 1px solid var(--border-medium);
       border-radius: var(--radius-xl);
-      padding: 18px 14px;
+      padding: 16px 12px;
       max-width: 880px;
       margin: 0 auto;
       box-shadow: var(--shadow-card);
+      overflow: hidden;
     }
 
     @media (min-width: 640px) {
       .guide-container {
-        padding: 30px 28px;
+        padding: 28px 24px;
       }
     }
 
-    .guide-tabs-scroller {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      margin: -4px -6px 20px -6px;
-      padding: 4px 6px;
-    }
-
-    .guide-tabs-scroller::-webkit-scrollbar {
-      display: none;
-    }
-
+    /* 2x2 grid on mobile, 4 columns on tablet/desktop */
     .guide-tabs {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      min-width: max-content;
+      margin-bottom: 16px;
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 680px) {
       .guide-tabs {
-        display: grid;
         grid-template-columns: repeat(4, 1fr);
-        min-width: 0;
+        gap: 10px;
+        margin-bottom: 22px;
       }
     }
 
     .guide-tab {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-subtle);
       color: var(--text-soft);
-      padding: 10px 14px;
+      padding: 9px 8px;
       border-radius: var(--radius-md);
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      white-space: nowrap;
       text-align: center;
-      display: inline-flex;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 3px;
+      min-height: 50px;
+      user-select: none;
+      box-sizing: border-box;
+      line-height: 1.25;
+    }
+
+    @media (min-width: 680px) {
+      .guide-tab {
+        flex-direction: row;
+        padding: 11px 12px;
+        font-size: 0.86rem;
+        min-height: 46px;
+        gap: 6px;
+      }
     }
 
     .guide-tab:hover {
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
       color: #fff;
     }
 
@@ -737,12 +741,54 @@
       background: rgba(52, 211, 153, 0.18);
       border-color: var(--accent);
       color: #fff;
-      box-shadow: 0 4px 14px rgba(52, 211, 153, 0.2);
+      box-shadow: 0 4px 14px rgba(52, 211, 153, 0.25);
+    }
+
+    /* Header Bar inside Guide with Step Indicator and Dots */
+    .guide-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(6, 16, 12, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-md);
+      padding: 9px 14px;
+      margin-bottom: 14px;
+    }
+
+    .guide-indicator-pill {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent-bright);
+      letter-spacing: -0.01em;
+    }
+
+    .guide-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .guide-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .guide-dot.active {
+      width: 20px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
     }
 
     .guide-panel {
       display: none;
-      animation: fadeIn 0.25s ease;
+      animation: fadeIn 0.22s ease;
     }
 
     .guide-panel.active {
@@ -754,17 +800,18 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Step Rows with bulletproof word wrapping */
     .guide-step-row {
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      margin-bottom: 12px;
-      background: rgba(6, 16, 12, 0.6);
-      padding: 14px 14px;
+      margin-bottom: 10px;
+      background: rgba(6, 16, 12, 0.65);
+      padding: 12px 14px;
       border-radius: var(--radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      font-size: 0.89rem;
-      line-height: 1.55;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-sizing: border-box;
+      width: 100%;
     }
 
     @media (min-width: 640px) {
@@ -772,7 +819,6 @@
         gap: 16px;
         padding: 16px 18px;
         margin-bottom: 14px;
-        font-size: 0.93rem;
       }
     }
 
@@ -792,15 +838,68 @@
       box-shadow: 0 2px 6px rgba(52, 211, 153, 0.4);
     }
 
+    .guide-step-text {
+      flex: 1;
+      min-width: 0; /* Prevents flex children from stretching outside the box */
+      font-size: 0.89rem;
+      line-height: 1.58;
+      color: var(--text-soft);
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    @media (min-width: 640px) {
+      .guide-step-text {
+        font-size: 0.94rem;
+      }
+    }
+
+    .guide-step-text strong {
+      color: #fff;
+    }
+
     .guide-tip {
-      margin-top: 16px;
+      margin-top: 14px;
       padding: 12px 14px;
       border-radius: var(--radius-md);
       background: rgba(52, 211, 153, 0.08);
       border: 1px solid var(--border-subtle);
       font-size: 0.86rem;
       color: #a7f3d0;
-      line-height: 1.5;
+      line-height: 1.52;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Navigation buttons at bottom of each guide step */
+    .guide-nav-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    @media (min-width: 540px) {
+      .guide-nav-footer {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .guide-nav-btn {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 16px;
+      font-size: 0.88rem;
+    }
+
+    @media (min-width: 540px) {
+      .guide-nav-btn {
+        width: auto;
+      }
     }
 
     /* Features Grid */
@@ -870,7 +969,7 @@
       left: 0;
       right: 0;
       z-index: 999;
-      background: rgba(6, 14, 11, 0.94);
+      background: rgba(6, 14, 11, 0.95);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid var(--border-medium);
@@ -972,7 +1071,9 @@
       line-height: 1.55;
     }
 
-    /* Language Switch Display Logic */
+    /* ========================================================
+       Language Display Logic (Safe for inline text wrapping!)
+       ======================================================== */
     [data-lang="en"] {
       display: none !important;
     }
@@ -985,19 +1086,33 @@
       display: block !important;
     }
 
+    /* Standard inline spans must stay inline so text wraps properly */
+    span[data-lang="ro"],
     body.lang-en span[data-lang="en"],
+    strong[data-lang="ro"],
+    body.lang-en strong[data-lang="en"] {
+      display: inline !important;
+    }
+
+    /* Links with data-lang */
+    a[data-lang="ro"],
     body.lang-en a[data-lang="en"] {
       display: inline-flex !important;
     }
 
-    span[data-lang="ro"],
-    a[data-lang="ro"] {
-      display: inline-flex;
-    }
-
-    body.lang-en span[data-lang="ro"],
-    body.lang-en a[data-lang="ro"] {
-      display: none !important;
+    /* Buttons, badges, and tabs contain centered flex labels */
+    .btn span[data-lang="ro"],
+    .btn span[data-lang="en"],
+    .badge-pill span[data-lang="ro"],
+    .badge-pill span[data-lang="en"],
+    .step-pill span[data-lang="ro"],
+    .step-pill span[data-lang="en"],
+    .guide-tab span[data-lang="ro"],
+    .guide-tab span[data-lang="en"] {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
   </style>
 </head>
@@ -1254,41 +1369,50 @@
     </div>
   </section>
 
-  <!-- Interactive Setup Guide -->
-  <section class="section" style="background: rgba(8, 20, 16, 0.45); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+  <!-- Interactive Setup Guide (Fixed & Enhanced for Mobile!) -->
+  <section class="section" id="guideSection" style="background: rgba(8, 20, 16, 0.45); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
     <div class="container">
       <div class="section-title">
-        <span class="section-tag" data-lang="ro">Ghid de configurare</span>
-        <span class="section-tag" data-lang="en">Configuration walkthrough</span>
+        <span class="section-tag" data-lang="ro">Ghid de configurare pas cu pas</span>
+        <span class="section-tag" data-lang="en">Step-by-step setup walkthrough</span>
         <h2 data-lang="ro">🛠️ Ghid Pas cu Pas: Ceas &amp; Widget</h2>
         <h2 data-lang="en">🛠️ Step-by-Step: Watch &amp; Widget Setup</h2>
         <p data-lang="ro">
-          Ghidul de mai jos este integrat și direct în aplicația de telefon pentru a-l avea mereu la îndemână:
+          Alege pasul dorit sau urmează traseul complet pentru a configura ceasul și widget-urile în câteva minute:
         </p>
         <p data-lang="en">
-          This interactive walkthrough is also built right into the phone app so you always have it handy:
+          Select any step or follow the full walkthrough to configure your watch and home screen widgets in minutes:
         </p>
       </div>
 
-      <div class="guide-container">
-        <div class="guide-tabs-scroller">
-          <div class="guide-tabs">
-            <button class="guide-tab active" onclick="showTab(0)">
-              <span data-lang="ro">1. Instalare pe ceas</span>
-              <span data-lang="en">1. Watch install</span>
-            </button>
-            <button class="guide-tab" onclick="showTab(1)">
-              <span data-lang="ro">2. Cadran (Complicație)</span>
-              <span data-lang="en">2. Watch face</span>
-            </button>
-            <button class="guide-tab" onclick="showTab(2)">
-              <span data-lang="ro">3. Card (Tile)</span>
-              <span data-lang="en">3. Watch tile</span>
-            </button>
-            <button class="guide-tab" onclick="showTab(3)">
-              <span data-lang="ro">4. Widget pe telefon</span>
-              <span data-lang="en">4. Phone widget</span>
-            </button>
+      <div class="guide-container" id="guideContainer">
+        <!-- 2x2 Grid of Tabs on Mobile (Always 100% visible, no cut-off!) -->
+        <div class="guide-tabs">
+          <button class="guide-tab active" onclick="showTab(0, false)">
+            <span>⌚ <span data-lang="ro">1. Instalare pe ceas</span><span data-lang="en">1. Watch install</span></span>
+          </button>
+          <button class="guide-tab" onclick="showTab(1, false)">
+            <span>🎯 <span data-lang="ro">2. Cadran (Complicație)</span><span data-lang="en">2. Watch face</span></span>
+          </button>
+          <button class="guide-tab" onclick="showTab(2, false)">
+            <span>🗂️ <span data-lang="ro">3. Card (Tile)</span><span data-lang="en">3. Watch tile</span></span>
+          </button>
+          <button class="guide-tab" onclick="showTab(3, false)">
+            <span>📱 <span data-lang="ro">4. Widget pe telefon</span><span data-lang="en">4. Phone widget</span></span>
+          </button>
+        </div>
+
+        <!-- Step Indicator & Progress Dots -->
+        <div class="guide-header-bar">
+          <div class="guide-indicator-pill" id="guideIndicatorPill">
+            <span data-lang="ro">Pasul <strong id="stepNumRo">1</strong> din 4 • <span id="stepNameRo">Instalare pe ceas</span></span>
+            <span data-lang="en">Step <strong id="stepNumEn">1</strong> of 4 • <span id="stepNameEn">Watch install</span></span>
+          </div>
+          <div class="guide-dots" aria-hidden="true">
+            <span class="guide-dot active" onclick="showTab(0, true)"></span>
+            <span class="guide-dot" onclick="showTab(1, true)"></span>
+            <span class="guide-dot" onclick="showTab(2, true)"></span>
+            <span class="guide-dot" onclick="showTab(3, true)"></span>
           </div>
         </div>
 
@@ -1296,28 +1420,38 @@
         <div class="guide-panel active" id="tab-0">
           <div class="guide-step-row">
             <div class="guide-step-num">1</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">În pagina <strong>Google Play</strong> a aplicației pe telefon, apasă pe săgeata <strong>„▼”</strong> de lângă butonul <em>Instalează / Instalat</em> (sau pe <em>„Install on more devices”</em>) și bifează ceasul tău.</span>
               <span data-lang="en">On the <strong>Google Play</strong> store page on your phone, tap the <strong>"▼"</strong> arrow next to <em>Install / Installed</em> (or <em>"Install on more devices"</em>) and check your watch.</span>
             </div>
           </div>
           <div class="guide-step-row">
             <div class="guide-step-num">2</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">Alternativ, deschide aplicația <strong>Magazin Play</strong> direct pe ceas, derulează până jos la secțiunea <strong>„Aplicații de pe telefon”</strong> și apasă <strong>Instalează</strong> lângă <strong>CGM Glance</strong>.</span>
               <span data-lang="en">Alternatively, open the <strong>Play Store</strong> app directly on your watch, scroll down to <strong>"Apps on your phone"</strong>, and tap <strong>Install</strong> next to <strong>CGM Glance</strong>.</span>
             </div>
           </div>
           <div class="guide-step-row">
             <div class="guide-step-num">3</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">După instalare, deschide o dată <strong>CGM Glance</strong> pe ceas. Când telefonul și ceasul sunt conectate prin Bluetooth, statusul din aplicație va deveni <strong>„Gata / Ready”</strong>.</span>
               <span data-lang="en">Once installed, open <strong>CGM Glance</strong> once on your watch. With Bluetooth connected, the phone app status will automatically turn green (<strong>"Ready"</strong>).</span>
             </div>
           </div>
           <div class="guide-tip">
-            <span data-lang="ro">💡 <strong>Sfat:</strong> Asigură-te că pe ceas și pe telefon ești conectat cu același cont Google cu care ai intrat în grupul de testeri.</span>
-            <span data-lang="en">💡 <strong>Tip:</strong> Make sure your phone and watch are signed in with the same Google account that joined the tester group.</span>
+            💡 <strong><span data-lang="ro">Sfat important:</span><span data-lang="en">Important tip:</span></strong>
+            <span data-lang="ro"> Asigură-te că pe ceas și pe telefon ești conectat cu același cont Google cu care ai intrat în grupul de testeri.</span>
+            <span data-lang="en"> Make sure your phone and watch are signed in with the same Google account that joined the tester group.</span>
+          </div>
+          <!-- Bottom Navigation Walkthrough -->
+          <div class="guide-nav-footer">
+            <span style="font-size: 0.8rem; color: var(--text-muted);" data-lang="ro">Următorul pas: Afișare pe cadranul ceasului</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);" data-lang="en">Next step: Watch face complication</span>
+            <button class="btn btn-secondary guide-nav-btn" onclick="showTab(1, true)">
+              <span data-lang="ro">Continuă cu Pasul 2 (Cadran ceas) →</span>
+              <span data-lang="en">Continue to Step 2 (Watch face) →</span>
+            </button>
           </div>
         </div>
 
@@ -1325,28 +1459,40 @@
         <div class="guide-panel" id="tab-1">
           <div class="guide-step-row">
             <div class="guide-step-num">1</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">Ține apăsat lung pe <strong>cadranul ceasului</strong> și apasă pe <strong>Personalizează (Customize)</strong> — sau deschide aplicația <em>Galaxy Wearable / Watch</em> pe telefon.</span>
               <span data-lang="en">Long-press your <strong>watch face</strong> and tap <strong>Customize</strong> — or open the <em>Galaxy Wearable / Watch</em> companion app on your phone.</span>
             </div>
           </div>
           <div class="guide-step-row">
             <div class="guide-step-num">2</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">Glisează până la secțiunea <strong>Complicații (Complications)</strong> și atinge zona de pe cadran unde vrei să apară glicemia.</span>
               <span data-lang="en">Swipe to the <strong>Complications</strong> page and tap the slot where you want your glucose reading to appear.</span>
             </div>
           </div>
           <div class="guide-step-row">
             <div class="guide-step-num">3</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">Alege din listă <strong>CGM Glance → Glucose</strong> și apasă butonul fizic lateral pentru a salva cadranul.</span>
               <span data-lang="en">Select <strong>CGM Glance → Glucose</strong> from the list and press the watch side button to save.</span>
             </div>
           </div>
           <div class="guide-tip">
-            <span data-lang="ro">💡 <strong>Sfat:</strong> Sloturile mai late (de tip <em>Text lung</em> sau <em>Bară de progres</em>) afișează atât valoarea și săgeata de trend, cât și minutele de la citire.</span>
-            <span data-lang="en">💡 <strong>Tip:</strong> Wider complication slots (<em>Long text</em> or <em>Ranged value</em>) show the glucose value, trend arrow, and reading age together.</span>
+            💡 <strong><span data-lang="ro">Sfat:</span><span data-lang="en">Tip:</span></strong>
+            <span data-lang="ro"> Sloturile mai late (de tip <em>Text lung</em> sau <em>Bară de progres</em>) afișează atât valoarea și săgeata de trend, cât și minutele de la citire.</span>
+            <span data-lang="en"> Wider complication slots (<em>Long text</em> or <em>Ranged value</em>) show the glucose value, trend arrow, and reading age together.</span>
+          </div>
+          <!-- Bottom Navigation Walkthrough -->
+          <div class="guide-nav-footer">
+            <button class="btn btn-ghost guide-nav-btn" onclick="showTab(0, true)">
+              <span data-lang="ro">← Înapoi la Pasul 1</span>
+              <span data-lang="en">← Back to Step 1</span>
+            </button>
+            <button class="btn btn-secondary guide-nav-btn" onclick="showTab(2, true)">
+              <span data-lang="ro">Continuă cu Pasul 3 (Card Tile) →</span>
+              <span data-lang="en">Continue to Step 3 (Watch Tile) →</span>
+            </button>
           </div>
         </div>
 
@@ -1354,28 +1500,40 @@
         <div class="guide-panel" id="tab-2">
           <div class="guide-step-row">
             <div class="guide-step-num">1</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">De pe cadranul ceasului, glisează spre stânga (sau ține apăsat pe un card existent) până ajungi la <strong>Adaugă card (+ / Add tile)</strong>.</span>
               <span data-lang="en">From your watch face, swipe left through your tiles until you reach <strong>Add tile (+)</strong> (or long-press any existing tile).</span>
             </div>
           </div>
           <div class="guide-step-row">
             <div class="guide-step-num">2</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">Derulează lista de carduri disponibile și selectează <strong>CGM Glance</strong>.</span>
               <span data-lang="en">Scroll through the available tiles list and tap <strong>CGM Glance</strong>.</span>
             </div>
           </div>
           <div class="guide-step-row">
             <div class="guide-step-num">3</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">Aşează cardul imediat lângă cadranul ceasului, ca să vezi glicemia cu cifre mari dintr-o singură glisare!</span>
               <span data-lang="en">Place the tile right next to your watch face so your glucose is always one quick swipe away!</span>
             </div>
           </div>
           <div class="guide-tip">
-            <span data-lang="ro">💡 <strong>Sfat:</strong> Atinge valoarea de pe cardul Tile pentru a deschide direct aplicația completă pe ceas.</span>
-            <span data-lang="en">💡 <strong>Tip:</strong> Tap the reading on the tile anytime to open the full watch app screen.</span>
+            💡 <strong><span data-lang="ro">Sfat:</span><span data-lang="en">Tip:</span></strong>
+            <span data-lang="ro"> Atinge valoarea de pe cardul Tile pentru a deschide direct aplicația completă pe ceas.</span>
+            <span data-lang="en"> Tap the reading on the tile anytime to open the full watch app screen.</span>
+          </div>
+          <!-- Bottom Navigation Walkthrough -->
+          <div class="guide-nav-footer">
+            <button class="btn btn-ghost guide-nav-btn" onclick="showTab(1, true)">
+              <span data-lang="ro">← Înapoi la Pasul 2</span>
+              <span data-lang="en">← Back to Step 2</span>
+            </button>
+            <button class="btn btn-secondary guide-nav-btn" onclick="showTab(3, true)">
+              <span data-lang="ro">Continuă cu Pasul 4 (Widget telefon) →</span>
+              <span data-lang="en">Continue to Step 4 (Phone widget) →</span>
+            </button>
           </div>
         </div>
 
@@ -1383,28 +1541,40 @@
         <div class="guide-panel" id="tab-3">
           <div class="guide-step-row">
             <div class="guide-step-num">1</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">Ține apăsat lung pe o zonă liberă de pe <strong>ecranul principal al telefonului</strong> și alege <strong>Widget-uri (Widgets)</strong>.</span>
               <span data-lang="en">Long-press an empty area on your <strong>phone's home screen</strong> and tap <strong>Widgets</strong>.</span>
             </div>
           </div>
           <div class="guide-step-row">
             <div class="guide-step-num">2</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">Caută <strong>CGM Glance</strong> în listă și trage widget-ul în poziția dorită pe ecran.</span>
               <span data-lang="en">Find <strong>CGM Glance</strong> in the widget list and drag it onto your home screen.</span>
             </div>
           </div>
           <div class="guide-step-row">
             <div class="guide-step-num">3</div>
-            <div>
+            <div class="guide-step-text">
               <span data-lang="ro">Alege sursa senzorului (<em>Automat</em>, <em>SinoCare LinX</em> sau <em>Dexcom ONE+</em>) și apasă <strong>Salvează</strong>.</span>
               <span data-lang="en">Choose your sensor source (<em>Automatic</em>, <em>SinoCare LinX</em>, or <em>Dexcom ONE+</em>) and tap <strong>Save</strong>.</span>
             </div>
           </div>
           <div class="guide-tip">
-            <span data-lang="ro">💡 <strong>Sfat:</strong> Poți redimensiona liber widget-ul trăgând de margini — fontul și detaliile se adaptează automat la spațiul disponibil.</span>
-            <span data-lang="en">💡 <strong>Tip:</strong> Freely resize the widget by dragging its borders — typography and layout adapt automatically.</span>
+            💡 <strong><span data-lang="ro">Sfat:</span><span data-lang="en">Tip:</span></strong>
+            <span data-lang="ro"> Poți redimensiona liber widget-ul trăgând de margini — fontul și detaliile se adaptează automat la spațiul disponibil.</span>
+            <span data-lang="en"> Freely resize the widget by dragging its borders — typography and layout adapt automatically.</span>
+          </div>
+          <!-- Bottom Navigation Walkthrough -->
+          <div class="guide-nav-footer">
+            <button class="btn btn-ghost guide-nav-btn" onclick="showTab(2, true)">
+              <span data-lang="ro">← Înapoi la Pasul 3</span>
+              <span data-lang="en">← Back to Step 3</span>
+            </button>
+            <a href="#install" class="btn btn-primary guide-nav-btn">
+              <span data-lang="ro">📲 Mergi la Instalare Play Store ↑</span>
+              <span data-lang="en">📲 Go to Play Store Install ↑</span>
+            </a>
           </div>
         </div>
       </div>
@@ -1568,15 +1738,53 @@
       } catch(e) {}
     })();
 
-    // Tab switcher
-    function showTab(idx) {
+    // Tab switcher with smooth navigation and indicators
+    const stepNamesRo = [
+      "Instalare pe ceas",
+      "Cadran (Complicație)",
+      "Card Dedicat (Tile)",
+      "Widget pe telefon"
+    ];
+    const stepNamesEn = [
+      "Watch install",
+      "Watch face complication",
+      "Dedicated watch tile",
+      "Phone home widget"
+    ];
+
+    function showTab(idx, shouldScroll) {
       const tabs = document.querySelectorAll('.guide-tab');
       const panels = document.querySelectorAll('.guide-panel');
+      const dots = document.querySelectorAll('.guide-dot');
+
       tabs.forEach((t, i) => t.classList.toggle('active', i === idx));
       panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+
+      const stepNumRo = document.getElementById('stepNumRo');
+      const stepNumEn = document.getElementById('stepNumEn');
+      const stepNameRo = document.getElementById('stepNameRo');
+      const stepNameEn = document.getElementById('stepNameEn');
+
+      if (stepNumRo) stepNumRo.textContent = idx + 1;
+      if (stepNumEn) stepNumEn.textContent = idx + 1;
+      if (stepNameRo) stepNameRo.textContent = stepNamesRo[idx];
+      if (stepNameEn) stepNameEn.textContent = stepNamesEn[idx];
+
+      if (shouldScroll) {
+        const container = document.getElementById('guideContainer');
+        if (container) {
+          const rect = container.getBoundingClientRect();
+          // Scroll so the guide container is at the top of viewport nicely
+          if (rect.top < 60 || rect.bottom > window.innerHeight) {
+            const targetY = window.pageYOffset + rect.top - 70;
+            window.scrollTo({ top: targetY, behavior: 'smooth' });
+          }
+        }
+      }
     }
 
-    // Hide sticky bottom bar when near the install box or at the very top
+    // Hide sticky bottom bar when near the install box
     (function setupStickyBar() {
       const bar = document.getElementById('mobileStickyBar');
       const installBox = document.getElementById('install');
@@ -1584,7 +1792,6 @@
 
       window.addEventListener('scroll', function() {
         const rect = installBox.getBoundingClientRect();
-        // If install box is visible in viewport, hide sticky bar
         if (rect.top <= window.innerHeight && rect.bottom >= 0) {
           bar.style.transform = 'translateY(120%)';
         } else {
