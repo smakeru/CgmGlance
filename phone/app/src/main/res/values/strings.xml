@@ -51,7 +51,8 @@
     <string name="action_settings">Settings</string>
     <string name="quick_settings_title">Sensor &amp; display settings</string>
     <string name="quick_settings_sensor_label">Active sensor (tap to switch):</string>
-    <string name="action_open_full_settings">Open Settings (Thresholds, Unit &amp; Health Connect)  →</string>
+    <string name="action_open_full_settings">Advanced settings →</string>
+    <string name="quick_settings_details">Thresholds, unit &amp; Health Connect</string>
     <string name="action_back_top">← Back</string>
     <string name="disclaimer">Shows a value the official app has already computed. Not a medical device: never use it for treatment decisions, and always confirm with the official app or a meter.</string>
 

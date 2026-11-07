@@ -45,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.PermissionController
 import com.google.android.gms.wearable.CapabilityClient
@@ -314,7 +315,7 @@ private fun QuickSettingsCard(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp),
                         ) {
                             Text(
-                                text = if (selected) "✓ ${candidate.label}" else candidate.label,
+                                text = candidate.label,
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
                                 color = if (selected) Color.White else COLOR_BRAND_TEAL,
@@ -347,6 +348,14 @@ private fun QuickSettingsCard(
                     modifier = Modifier.padding(vertical = 4.dp),
                 )
             }
+            Spacer(Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.quick_settings_details),
+                style = MaterialTheme.typography.bodySmall,
+                color = COLOR_QUICK_SETTINGS_TEXT,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+            )
         }
     }
 }
