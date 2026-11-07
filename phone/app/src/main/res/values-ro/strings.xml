@@ -5,7 +5,7 @@
     <string name="health_ok_title">Funcționează</string>
     <string name="health_ok_body">Citirile sosesc, iar ceasul o are pe cea mai recentă.</string>
     <string name="health_no_permission_title">Are nevoie de acces la notificări</string>
-    <string name="health_no_permission_body">Aplicația citește glicemia din notificările LinX sau Dexcom ONE+. Acordă acces la notificări pentru sursa selectată; celelalte aplicații sunt ignorate.</string>
+    <string name="health_no_permission_body">Aplicația citește glicemia din notificările LinX sau Dexcom ONE+. Activează singura intrare CGM Glance din accesul la notificări, apoi alege senzorul din Setări. Dacă înainte de actualizare era activă doar vechea intrare Dexcom, acordă din nou acces o singură dată. Celelalte aplicații sunt ignorate.</string>
     <string name="health_waiting_title">Aștept prima citire</string>
     <string name="health_waiting_body">Permisiunea e acordată. Deschide aplicația CGM selectată ca să-și reîmprospăteze notificarea. Pentru Dexcom ONE+, activează Quick Glance.</string>
     <string name="health_not_receiving_title">Nu primesc citiri</string>
@@ -56,7 +56,7 @@
     <string name="settings_source_title">Sursa pentru ceas și Health Connect</string>
     <string name="settings_source_data_note">Preluăm doar glicemia · trend calculat de CGM Glance</string>
     <string name="settings_source_note">LinX este selectat implicit și are prioritate când rulează ambii senzori. Sursa nu se schimbă automat. Selectează aici Dexcom ONE+ când ești gata. Istoricele rămân separate. Dacă noua sursă nu are încă o citire, ceasul păstrează valoarea anterioară cu vârsta ei originală până sosește una.</string>
-    <string name="settings_dexcom_note">Activează Quick Glance în Dexcom ONE+ și acordă acces la notificări pentru CGM Glance — Dexcom ONE+. Glicemia trebuie să aibă unitatea explicită; notificările ambigue sunt refuzate.</string>
+    <string name="settings_dexcom_note">Activează Quick Glance în Dexcom ONE+ și acordă acces la notificări singurei intrări CGM Glance (comună cu LinX). Glicemia trebuie să aibă unitatea explicită; notificările ambigue sunt refuzate.</string>
     <string name="settings_subtitle">Folosit doar pentru culoare și formulare. Aplicația nu alertează niciodată pe baza acestor valori — alarmele rămân la aplicația oficială.</string>
     <string name="field_urgent_low">Scăzut urgent</string>
     <string name="field_low">Scăzut</string>

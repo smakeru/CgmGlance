@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!--
-      Shown in the system's notification access screen, where the user grants the permission.
-      Same "CGM Glance — <source>" pattern as the Dexcom reader, so the two entries read as parts
-      of one app. Not translated: a product name followed by a sensor name.
-    -->
-    <string name="linx_listener_label" translatable="false">CGM Glance — LinX</string>
-</resources>

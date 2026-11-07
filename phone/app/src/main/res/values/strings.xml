@@ -7,7 +7,7 @@
     <string name="health_ok_title">Working</string>
     <string name="health_ok_body">Readings are arriving and the watch has the latest one.</string>
     <string name="health_no_permission_title">Needs notification access</string>
-    <string name="health_no_permission_body">This app reads glucose from LinX or Dexcom ONE+ notifications. Enable notification access for the selected source; other apps are ignored.</string>
+    <string name="health_no_permission_body">This app reads glucose from LinX or Dexcom ONE+ notifications. Enable the single CGM Glance entry in notification access, then select your sensor in Settings. If only the old Dexcom entry was enabled before this update, grant access again once. Other apps are ignored.</string>
     <string name="health_waiting_title">Waiting for the first reading</string>
     <string name="health_waiting_body">Permission is granted. Open the selected CGM app so it refreshes its notification. For Dexcom ONE+, enable Quick Glance.</string>
     <string name="health_not_receiving_title">Not receiving readings</string>
@@ -56,7 +56,7 @@
     <string name="settings_source_title">Source for watch and Health Connect</string>
     <string name="settings_source_data_note">Glucose only · trend calculated by CGM Glance</string>
     <string name="settings_source_note">LinX is selected by default and has priority while both sensors run. Sources never switch automatically. Select Dexcom ONE+ here when you are ready. Histories stay separate. If the new source has no reading yet, the watch keeps the previous value with its original age until a reading arrives.</string>
-    <string name="settings_dexcom_note">Enable Quick Glance in Dexcom ONE+ and grant notification access to CGM Glance — Dexcom ONE+. Glucose must include an explicit unit; ambiguous notifications are refused.</string>
+    <string name="settings_dexcom_note">Enable Quick Glance in Dexcom ONE+ and grant notification access to the single CGM Glance entry (shared with LinX). Glucose must include an explicit unit; ambiguous notifications are refused.</string>
     <string name="settings_subtitle">Used for colour and wording only. This app never alerts on these values — alarms stay with the official app.</string>
     <string name="field_urgent_low">Urgent low</string>
     <string name="field_low">Low</string>

@@ -10,23 +10,4 @@
         <package android:name="com.microtech.aidexx" />
     </queries>
 
-    <application>
-
-        <!--
-          Exported because the system binds it; guarded by the system-only permission so no
-          other app can. The service itself drops everything that is not from a vendor package
-          before reading it.
-        -->
-        <service
-            android:name=".LinxNotificationListenerService"
-            android:exported="true"
-            android:label="@string/linx_listener_label"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
-
-    </application>
-
 </manifest>

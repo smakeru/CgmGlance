@@ -110,6 +110,17 @@
                 android:resource="@xml/glucose_widget_info" />
         </receiver>
 
+        <!-- One shared permission. Keep the legacy LinX component name so existing grants survive. -->
+        <service
+            android:name="ro.smakeru.cgmglance.provider.linx.LinxNotificationListenerService"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
         <!-- Fires when readings have been silent for longer than a working system ever is. -->
         <receiver
             android:name=".SilenceWatchdogReceiver"

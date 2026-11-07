@@ -42,8 +42,14 @@ verified on the same devices.
 
 ### Phone 1.2: two inputs, one selected output
 
-`DexcomNotificationListenerService` is a separate, per-service permission: it filters exact ONE+
-package `com.dexcom.d1plus` and passes standard-extras/custom-view text to a pure strict parser.
+Phone 1.2.1 uses a single `LinxNotificationListenerService` (its original component name is
+retained for existing LinX grants). It routes supported packages to `LinxNotificationReader` or
+`DexcomNotificationReader`; unrelated packages are ignored before content is inspected. One
+notification-access grant covers both providers, because Android can display the application
+label for every service and make two separate permission switches indistinguishable.
+
+The Dexcom reader filters exact ONE+ package `com.dexcom.d1plus` and passes
+standard-extras/custom-view text to a pure strict parser.
 The [provider contract](providers/dexcom-one-plus.md) records live mg/dL acquisition checked on
 ONE+ 1.9.0, including its U+2060 unit-format fix. Failure-state/sustained-operation validation
 and inspection for cleaner exported vendor contracts are still pending.

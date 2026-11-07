@@ -37,7 +37,7 @@ Not published on any store; personal use.
 | Phone app | Source selection (LinX by default), separate history per sensor, target range with a very-high threshold, status screen, silence watchdog |
 | Range colours | Shared by widget, tile and watch app: red below urgent low and above very high (55 / 260 by default), orange low, green in range, yellow high, grey once stale |
 | Health export | Health Connect, off by default ([below](#health-connect-export)) |
-| Tests | 183 automated tests: domain and sync rules, both notification parsers, source isolation, watch surfaces |
+| Tests | 196 automated tests: domain and sync rules, both notification parsers, shared notification access, source isolation, watch surfaces |
 
 **Verified on the devices above:** LinX and Dexcom ONE+ 1.9.0 readings in mg/dL, both sensors in
 parallel with LinX kept on the watch, explicit switch to Dexcom, the coloured widget, watch sync.
@@ -76,8 +76,8 @@ alarm or a replacement for the official app.
 The widget is a blue tile. The number, its arrow, a thin bar on the left and a soft glow in the
 top-right corner take the range colour, the same colours as the watch.
 
-Dexcom requires its **Quick Glance** notification and separate notification access for
-**CGM Glance — Dexcom ONE+**. Readings are verified on Dexcom ONE+ 1.9.0 in mg/dL. Missing units
+Dexcom requires its **Quick Glance** notification and notification access for the single
+**CGM Glance** entry, shared with LinX. Readings are verified on Dexcom ONE+ 1.9.0 in mg/dL. Missing units
 and ambiguous layouts are rejected rather than guessed; see the
 [provider specification](docs/providers/dexcom-one-plus.md).
 
@@ -189,8 +189,9 @@ adb install -r phone/app/build/outputs/apk/debug/app-debug.apk
 ```
 
 Then grant notification access: **Settings → Apps → Special access → Notification access**. The
-app appears there twice, once per sensor: **CGM Glance — LinX** and **CGM Glance — Dexcom ONE+**.
-Android grants this access per service, so enable the entry for each sensor you use.
+app appears once as **CGM Glance**. This one permission covers both sensors; select the source
+for the watch and Health Connect inside the app. On upgrade, an existing LinX grant is retained.
+If only the old Dexcom entry had access, enable the shared entry once after updating.
 
 For the watch, enable wireless debugging on it and:
 

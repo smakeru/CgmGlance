@@ -1,11 +1,12 @@
 package ro.smakeru.cgmglance.phone
 
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
+import android.os.Build
 import android.provider.Settings
 import ro.smakeru.cgmglance.domain.glucose.FreshnessPolicy
 import ro.smakeru.cgmglance.domain.time.Clock
-import ro.smakeru.cgmglance.provider.dexcom.DexcomNotificationListenerService
 import ro.smakeru.cgmglance.provider.linx.LinxNotificationListenerService
 
 /**
@@ -29,7 +30,7 @@ class PhoneStatusSource(
         val selected = sources.snapshot()
         val latest = selected.latest
         return PhoneStatus(
-            permissionGranted = isNotificationAccessGranted(selected.source),
+            permissionGranted = isNotificationAccessGranted(),
             lastReading = latest,
             freshness = freshnessPolicy.evaluate(latest, clock),
             ageMinutes = freshnessPolicy.ageMillis(latest, clock)?.let { it / 60_000L },
@@ -42,29 +43,17 @@ class PhoneStatusSource(
         )
     }
 
-    /**
-     * Whether the user has granted notification access.
-     *
-     * Read straight from the secure setting rather than through a support library: it is three
-     * lines, it cannot go stale behind a cache, and it is exactly what the system itself checks.
-     */
-    fun isNotificationAccessGranted(source: GlucoseSource = sources.snapshot().source): Boolean {
-        val enabled =
-            Settings.Secure.getString(context.contentResolver, ENABLED_LISTENERS)
-                ?: return false
-        // Android grants access per service, not per APK. LinX access alone cannot read Dexcom.
-        val service =
-            when (source) {
-                GlucoseSource.LINX -> LinxNotificationListenerService::class.java.name
-                GlucoseSource.DEXCOM_ONE_PLUS -> DexcomNotificationListenerService::class.java.name
-            }
-        return enabled.split(':').any { value ->
-            val component = ComponentName.unflattenFromString(value)
-            component?.packageName == context.packageName && component.className == service
+    /** Both readers share one listener; readings and diagnostics still follow the selected source. */
+    fun isNotificationAccessGranted(): Boolean {
+        val listener = ComponentName(context, LinxNotificationListenerService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            return context
+                .getSystemService(
+                    NotificationManager::class.java,
+                ).isNotificationListenerAccessGranted(listener)
         }
-    }
-
-    private companion object {
-        const val ENABLED_LISTENERS = "enabled_notification_listeners"
+        // The public NotificationManager query was added in API 27; Android 8.0 remains supported.
+        val enabled = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
+        return enabled?.split(':')?.any { ComponentName.unflattenFromString(it) == listener } == true
     }
 }

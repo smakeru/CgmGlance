@@ -14,7 +14,7 @@ import ro.smakeru.cgmglance.provider.linx.LinxProviderBus
 import ro.smakeru.cgmglance.provider.linx.LinxReadingSink
 import ro.smakeru.cgmglance.sync.PrefsPayload
 
-/** Wires the small object graph by hand, including the two Android-created provider services. */
+/** Wires the small object graph, including both readers behind one Android-created listener. */
 class CgmGlanceApplication : Application() {
     private val clock = Clock { System.currentTimeMillis() }
     private val ingestionLock = Any()

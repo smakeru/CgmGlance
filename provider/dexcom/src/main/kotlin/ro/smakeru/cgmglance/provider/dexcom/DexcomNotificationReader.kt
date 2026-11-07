@@ -1,8 +1,7 @@
 package ro.smakeru.cgmglance.provider.dexcom
 
 import android.app.Notification
-import android.content.ComponentName
-import android.service.notification.NotificationListenerService
+import android.content.Context
 import android.service.notification.StatusBarNotification
 import android.util.Log
 
@@ -12,11 +11,13 @@ import android.util.Log
  * No ongoing flag requirement: alerts and ordinary updates receive the same strict parser.
  * No notification text, glucose values or unrelated package names are logged.
  */
-class DexcomNotificationListenerService : NotificationListenerService() {
+class DexcomNotificationReader(
+    context: Context,
+) {
     private val parser = DexcomNotificationParser()
-    private val extractor by lazy { RemoteViewsTextExtractor(applicationContext) }
+    private val extractor = RemoteViewsTextExtractor(context.applicationContext)
 
-    override fun onNotificationPosted(sbn: StatusBarNotification?) {
+    fun onNotificationPosted(sbn: StatusBarNotification?) {
         if (sbn?.packageName != DexcomNotificationParser.SUPPORTED_PACKAGE) return
         val notification = sbn.notification ?: return
         // Samsung adds a summary and Dexcom posts a separate foreground-service notice. Neither
@@ -67,14 +68,6 @@ class DexcomNotificationListenerService : NotificationListenerService() {
                 DexcomProviderBus.sink?.onParseFailure(result.reason)
             }
         }
-    }
-
-    override fun onListenerConnected() {
-        runCatching { activeNotifications }.getOrNull()?.forEach { onNotificationPosted(it) }
-    }
-
-    override fun onListenerDisconnected() {
-        requestRebind(ComponentName(this, DexcomNotificationListenerService::class.java))
     }
 
     private companion object {

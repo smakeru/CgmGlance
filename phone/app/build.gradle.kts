@@ -28,8 +28,8 @@ android {
         applicationId = "ro.smakeru.cgmglance"
         minSdk = libs.versions.minSdkPhone.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 5
-        versionName = "1.2"
+        versionCode = 6
+        versionName = "1.2.1"
     }
 
     signingConfigs {
@@ -63,6 +63,10 @@ android {
         buildConfig = true
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
     // Kotlin's jvmTarget follows targetCompatibility under built-in Kotlin, so setting it
     // separately is unnecessary and would only create a second place to keep in sync.
     compileOptions {
@@ -94,6 +98,9 @@ dependencies {
     testImplementation(libs.kotlin.test)
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit4)
+    testRuntimeOnly(libs.junit.vintage.engine)
 }
 
 tasks.withType<Test>().configureEach {

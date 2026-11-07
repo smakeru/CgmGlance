@@ -445,7 +445,7 @@ private fun textsFor(health: PhoneHealth): Pair<Int, Int> =
         PhoneHealth.WATCH_APP_MISSING -> R.string.health_watch_missing_title to R.string.health_watch_missing_body
     }
 
-private fun colorFor(health: PhoneHealth): Color =
+internal fun colorFor(health: PhoneHealth): Color =
     when (health) {
         PhoneHealth.OK -> COLOR_OK
 

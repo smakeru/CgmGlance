@@ -1,7 +1,7 @@
 package ro.smakeru.cgmglance.provider.linx
 
 import android.app.Notification
-import android.service.notification.NotificationListenerService
+import android.content.Context
 import android.service.notification.StatusBarNotification
 import android.util.Log
 
@@ -13,28 +13,16 @@ import android.util.Log
  * Health Connect permission. Everything cleaner was checked and found absent, not assumed.
  *
  * Privacy: the system delivers **every** notification on the device to this service. Anything
- * not from a supported vendor package is dropped in the first line of [onNotificationPosted],
+ * not from a supported vendor package is dropped by [onNotificationPosted],
  * before it is read, stored or logged.
  */
-class LinxNotificationListenerService : NotificationListenerService() {
+class LinxNotificationReader(
+    context: Context,
+) {
     private val parser = LinxNotificationParser()
-    private val extractor by lazy { RemoteViewsTextExtractor(applicationContext) }
+    private val extractor = RemoteViewsTextExtractor(context.applicationContext)
 
-    /**
-     * Reads whatever is already on screen the moment the service binds.
-     *
-     * Without this the app stays blank until the vendor next updates its notification, which is
-     * the first thing a user sees after granting permission — and the same gap reappears every
-     * time the system rebinds the listener after reclaiming memory.
-     */
-    override fun onListenerConnected() {
-        Log.i(TAG, "listener connected, reading notifications already on screen")
-        runCatching { activeNotifications }
-            .getOrNull()
-            ?.forEach { onNotificationPosted(it) }
-    }
-
-    override fun onNotificationPosted(sbn: StatusBarNotification?) {
+    fun onNotificationPosted(sbn: StatusBarNotification?) {
         val notification = sbn?.notification ?: return
         if (sbn.packageName !in LinxNotificationParser.SUPPORTED_PACKAGES) return
 
@@ -66,22 +54,7 @@ class LinxNotificationListenerService : NotificationListenerService() {
         }
     }
 
-    override fun onListenerDisconnected() {
-        // Android unbinds listeners under memory pressure and does not always rebind on its
-        // own. Left unhandled this is the single most common cause of "it worked for three
-        // days and then went quiet", and it fails silently — the app looks alive, the data
-        // simply stops.
-        Log.w(TAG, "listener disconnected, requesting rebind")
-        requestRebind(NOTIFICATION_LISTENER_COMPONENT)
-    }
-
     private companion object {
         const val TAG = "CgmGlance/Linx"
-
-        val NOTIFICATION_LISTENER_COMPONENT =
-            android.content.ComponentName(
-                "ro.smakeru.cgmglance",
-                LinxNotificationListenerService::class.java.name,
-            )
     }
 }

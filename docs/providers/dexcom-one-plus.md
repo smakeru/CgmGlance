@@ -39,9 +39,9 @@ and prefer a stable native contract if one is available.
 
 1. Install official Dexcom ONE+ and activate its sensor normally.
 2. Enable **Quick Glance** in Dexcom; keep notifications and background operation enabled.
-3. In Android's notification-access settings, enable **CGM Glance — Dexcom ONE+**. This is a
-   separate service permission from the LinX reader, **CGM Glance — LinX**: Android grants
-   notification access per service, so one app shows two entries. Both may be enabled together.
+3. In Android's notification-access settings, enable the single **CGM Glance** entry. One
+   listener reads both providers; choosing the sensor happens inside CGM Glance. When upgrading
+   from a version where only the old Dexcom listener had access, grant access again once.
 4. For the overlap period, leave **LinX** selected under CGM Glance **Settings → Source for watch
    and Health Connect**. Dexcom readings are collected separately without replacing LinX.
 5. When ready, explicitly select **Dexcom ONE+** and save. Silence in LinX never switches sources

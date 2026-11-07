@@ -7,6 +7,21 @@ ever gains keys. Wear version codes use the one million offset described in the
 Entries record what changed and, where it is not obvious, why — the reasoning belongs in
 [docs/decisions.md](docs/decisions.md), and this file links to it rather than repeating it.
 
+## 1.2.1 — 2026-11-07
+
+Phone-only update; the watch and sync contract are unchanged.
+
+### Fixed
+
+- One **CGM Glance** entry in Android notification access, shared by LinX and Dexcom ONE+.
+  Some Android settings screens ignore service labels and previously showed two identical
+  switches. A second sensor permission is no longer needed. Status and readings continue to
+  follow the source selected inside the app; waiting for its first reading is yellow.
+- Existing LinX access is retained by preserving its service component name. Users who had
+  enabled only the old Dexcom entry must grant the shared permission once after updating.
+- Check the shared permission through Android's NotificationManager API on Android 8.1 and
+  newer, retaining the compatible settings check on Android 8.0.
+
 ## 1.2 — unreleased
 
 Phone `versionCode` 3, wear `versionCode` 1000003. Sync schema 2 only adds a key, so either side
