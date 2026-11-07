@@ -11,7 +11,9 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,15 +22,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.health.connect.client.PermissionController
 import com.google.android.gms.wearable.CapabilityClient
@@ -88,6 +92,14 @@ class MainActivity : ComponentActivity() {
                             onGrantPermission = { openNotificationAccessSettings() },
                             onOpenPlayStore = { openPlayStoreListing() },
                             onOpenSettings = { showSettings = true },
+                            onSelectSource = { selected ->
+                                app.updatePreferences(
+                                    thresholds = app.preferences.loadThresholds(),
+                                    unit = app.preferences.loadUnit(),
+                                    healthExport = app.preferences.loadHealthExportSettings(),
+                                    source = selected,
+                                )
+                            },
                             onRefreshHealth = { app.healthExporter.refresh() },
                         )
                     }
@@ -139,6 +151,7 @@ private fun StatusScreen(
     onGrantPermission: () -> Unit,
     onOpenPlayStore: () -> Unit,
     onOpenSettings: () -> Unit,
+    onSelectSource: (GlucoseSource) -> Unit,
     onRefreshHealth: () -> Unit,
 ) {
     // Starts at UNREACHABLE rather than NO_COMPATIBLE_APP: before the first lookup returns,
@@ -245,13 +258,95 @@ private fun StatusScreen(
             HealthConnectCard(status.healthExport)
 
             Spacer(Modifier.height(16.dp))
+            QuickSettingsCard(
+                selectedSource = status.source,
+                onSelectSource = { selected ->
+                    onSelectSource(selected)
+                    status = source.snapshot(watchLink)
+                },
+                onOpenSettings = onOpenSettings,
+            )
+
+            Spacer(Modifier.height(16.dp))
             SetupGuideCard(onOpenPlayStore = onOpenPlayStore)
 
             Spacer(Modifier.height(16.dp))
-            TextButton(onClick = onOpenSettings) { Text(stringResource(R.string.action_settings)) }
-
-            Spacer(Modifier.height(16.dp))
             Text(text = stringResource(R.string.disclaimer), style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+@Composable
+private fun QuickSettingsCard(
+    selectedSource: GlucoseSource,
+    onSelectSource: (GlucoseSource) -> Unit,
+    onOpenSettings: () -> Unit,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = COLOR_QUICK_SETTINGS_BG),
+        border = BorderStroke(1.5.dp, COLOR_BRAND_TEAL),
+    ) {
+        Column(Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(R.string.quick_settings_sensor_label),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = COLOR_QUICK_SETTINGS_TEXT,
+            )
+            Spacer(Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                GlucoseSource.entries.forEach { candidate ->
+                    val selected = candidate == selectedSource
+                    Surface(
+                        onClick = { onSelectSource(candidate) },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(20.dp),
+                        color = if (selected) COLOR_BRAND_TEAL else Color.White,
+                        border = if (selected) null else BorderStroke(1.dp, COLOR_BRAND_TEAL),
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 10.dp),
+                        ) {
+                            Text(
+                                text = if (selected) "✓ ${candidate.label}" else candidate.label,
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (selected) Color.White else COLOR_BRAND_TEAL,
+                                maxLines = 1,
+                            )
+                        }
+                    }
+                }
+            }
+            if (selectedSource == GlucoseSource.DEXCOM_ONE_PLUS) {
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.settings_dexcom_note),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = COLOR_QUICK_SETTINGS_TEXT,
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+            Button(
+                onClick = onOpenSettings,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = COLOR_BRAND_TEAL),
+            ) {
+                Text(
+                    text = stringResource(R.string.action_open_full_settings),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                )
+            }
         }
     }
 }
@@ -495,3 +590,6 @@ private val COLOR_OK = Color(0xFFA5D6A7)
 private val COLOR_ATTENTION = Color(0xFFFFE082)
 private val COLOR_PROBLEM = Color(0xFFEF9A9A)
 private val COLOR_NEUTRAL = Color(0xFFE0E0E0)
+private val COLOR_BRAND_TEAL = Color(0xFF0F5F52)
+private val COLOR_QUICK_SETTINGS_BG = Color(0xFFE8F5F2)
+private val COLOR_QUICK_SETTINGS_TEXT = Color(0xFF142623)

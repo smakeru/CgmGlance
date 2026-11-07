@@ -86,6 +86,15 @@ fun SettingsScreen(
                 .padding(20.dp)
                 .verticalScroll(rememberScrollState()),
     ) {
+        TextButton(
+            onClick = onBack,
+            modifier = Modifier.padding(bottom = 4.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.action_back_top),
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
         Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(4.dp))
         Text(stringResource(R.string.settings_subtitle), style = MaterialTheme.typography.bodySmall)

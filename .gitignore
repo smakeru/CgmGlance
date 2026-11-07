@@ -32,6 +32,7 @@ local.properties
 /captures/
 .cxx/
 release/
+*mesaje-promovare*
 
 # --- Signing — never commit keys or their passwords ------------------------
 *.jks

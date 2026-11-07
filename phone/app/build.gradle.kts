@@ -28,8 +28,8 @@ android {
         applicationId = "ro.smakeru.cgmglance"
         minSdk = libs.versions.minSdkPhone.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 6
-        versionName = "1.2.1"
+        versionCode = 7
+        versionName = "1.2.2"
     }
 
     signingConfigs {

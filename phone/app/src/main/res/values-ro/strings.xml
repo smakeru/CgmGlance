@@ -50,6 +50,10 @@
     <string name="sent_just_now">Chiar acum</string>
 
     <string name="action_settings">Setări</string>
+    <string name="quick_settings_title">Senzor și setări de afișare</string>
+    <string name="quick_settings_sensor_label">Senzor activ (atinge pentru a schimba):</string>
+    <string name="action_open_full_settings">Deschide Setările (Praguri, Unitate și Health Connect)  →</string>
+    <string name="action_back_top">← Înapoi</string>
     <string name="disclaimer">Afișează o valoare pe care aplicația oficială a calculat-o deja. Nu e dispozitiv medical: nu o folosi niciodată pentru decizii de tratament și confirmă întotdeauna cu aplicația oficială sau cu un glucometru.</string>
 
     <string name="settings_title">Setări</string>
