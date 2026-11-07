@@ -18,6 +18,8 @@ Acest document păstrează toate linkurile, configurațiile, automatizările API
 | **Link Testare Internă (Internal Testing)** | `https://play.google.com/apps/internaltest/4701313260176212479` |
 | **Link Opt-In Web Testare Închisă (Closed Testing)** | `https://play.google.com/apps/testing/ro.smakeru.cgmglance` |
 | **Link Google Play Store (după Opt-In / Producție)** | `https://play.google.com/store/apps/details?id=ro.smakeru.cgmglance` |
+| **Site Oficial de Prezentare (Firebase Hosting)** | `https://cgm-glance-play.web.app` |
+| **Privacy Policy pe Site** | `https://cgm-glance-play.web.app/privacy` |
 
 ---
 

@@ -14,7 +14,8 @@ Acest fișier (`AGENTS.md`) este încărcat automat în memoria locală a proiec
 - **Link Testare Internă**: `https://play.google.com/apps/internaltest/4701313260176212479`
 - **Link Opt-In Testare Închisă (Alpha)**: `https://play.google.com/apps/testing/ro.smakeru.cgmglance`
 - **Link Google Play Store**: `https://play.google.com/store/apps/details?id=ro.smakeru.cgmglance`
-- **Privacy Policy Gist URL**: `https://gist.github.com/smakeru/9ded20f5b72e9ce082a2d601a36f2edd` (sursa în `docs/privacy-policy.md`)
+- **Site Oficial de Prezentare (Firebase Hosting — Free)**: `https://cgm-glance-play.web.app` (sursa în `site/`, publicare cu `python scripts/deploy_site.py`)
+- **Privacy Policy URL**: `https://cgm-glance-play.web.app/privacy` (și Gist: `https://gist.github.com/smakeru/9ded20f5b72e9ce082a2d601a36f2edd`, sursa în `docs/privacy-policy.md`)
 - **Documentație completă lansare**: `docs/play-store-release.md`
 
 ## 3. Automatizare Build & Publicare Google Play (`scripts/publish_play.py`)
