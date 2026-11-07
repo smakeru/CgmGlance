@@ -60,7 +60,7 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
-      padding-bottom: 74px; /* Space for mobile sticky bar */
+      padding-bottom: 78px; /* Space for mobile sticky bar */
     }
 
     @media (min-width: 769px) {
@@ -99,7 +99,7 @@
       z-index: 100;
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
-      background: rgba(6, 14, 11, 0.85);
+      background: rgba(6, 14, 11, 0.88);
       border-bottom: 1px solid var(--border-subtle);
       transition: all 0.2s ease;
     }
@@ -648,15 +648,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      aspect-ratio: 1080 / 2205;
-      max-height: 440px;
+      padding: 6px;
     }
 
     .phone-img-wrap img {
       width: 100%;
-      height: 100%;
+      height: auto;
+      max-height: 420px;
       object-fit: contain;
       display: block;
+      border-radius: 12px;
       transition: transform 0.3s ease;
     }
 
@@ -676,6 +677,7 @@
       margin: 0 auto;
       box-shadow: var(--shadow-card);
       overflow: hidden;
+      touch-action: pan-y pinch-zoom;
     }
 
     @media (min-width: 640px) {
@@ -684,19 +686,19 @@
       }
     }
 
-    /* 2x2 grid on mobile, 4 columns on tablet/desktop */
+    /* 2x2 Grid of Tabs on Mobile (Always 100% visible, no cut-off!) */
     .guide-tabs {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     @media (min-width: 680px) {
       .guide-tabs {
         grid-template-columns: repeat(4, 1fr);
         gap: 10px;
-        margin-bottom: 22px;
+        margin-bottom: 20px;
       }
     }
 
@@ -704,22 +706,25 @@
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-subtle);
       color: var(--text-soft);
-      padding: 9px 8px;
+      padding: 10px 8px;
       border-radius: var(--radius-md);
-      font-weight: 700;
-      font-size: 0.8rem;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 3px;
-      min-height: 50px;
+      gap: 4px;
+      min-height: 52px;
       user-select: none;
       box-sizing: border-box;
       line-height: 1.25;
+      outline: none;
+    }
+
+    .guide-tab:active {
+      transform: scale(0.97);
     }
 
     @media (min-width: 680px) {
@@ -732,24 +737,39 @@
       }
     }
 
-    .guide-tab:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
+    @media (hover: hover) {
+      .guide-tab:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
     }
 
     .guide-tab.active {
-      background: rgba(52, 211, 153, 0.18);
+      background: rgba(52, 211, 153, 0.2);
       border-color: var(--accent);
       color: #fff;
       box-shadow: 0 4px 14px rgba(52, 211, 153, 0.25);
     }
 
+    .guide-tab .tab-icon {
+      font-size: 1.15rem;
+      line-height: 1;
+      display: inline-block;
+    }
+
+    .guide-tab .tab-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+
     /* Header Bar inside Guide with Step Indicator and Dots */
     .guide-header-bar {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       background: rgba(6, 16, 12, 0.55);
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: var(--radius-md);
@@ -762,28 +782,33 @@
       font-weight: 700;
       color: var(--accent-bright);
       letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .guide-dots {
       display: flex;
       align-items: center;
       gap: 6px;
+      padding: 2px 0;
     }
 
     .guide-dot {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.25);
       transition: all 0.2s ease;
       cursor: pointer;
+      display: inline-block;
     }
 
     .guide-dot.active {
-      width: 20px;
+      width: 22px;
       border-radius: 999px;
       background: var(--accent);
-      box-shadow: 0 0 8px var(--accent-glow);
+      box-shadow: 0 0 10px var(--accent-glow);
     }
 
     .guide-panel {
@@ -1036,7 +1061,7 @@
     /* Footer */
     footer {
       border-top: 1px solid var(--border-subtle);
-      padding: 36px 0 24px;
+      padding: 36px 0 32px;
       margin-top: 48px;
       text-align: center;
       color: var(--text-muted);
@@ -1100,18 +1125,23 @@
       display: inline-flex !important;
     }
 
-    /* Buttons, badges, and tabs contain centered flex labels */
+    /* Buttons and Badges containing centered labels */
     .btn span[data-lang="ro"],
     .btn span[data-lang="en"],
     .badge-pill span[data-lang="ro"],
     .badge-pill span[data-lang="en"],
     .step-pill span[data-lang="ro"],
-    .step-pill span[data-lang="en"],
-    .guide-tab span[data-lang="ro"],
-    .guide-tab span[data-lang="en"] {
+    .step-pill span[data-lang="en"] {
       display: inline-flex !important;
       align-items: center;
       justify-content: center;
+      text-align: center;
+    }
+
+    /* Tab label in guide */
+    .guide-tab .tab-label[data-lang="ro"],
+    body.lang-en .guide-tab .tab-label[data-lang="en"] {
+      display: inline-block !important;
       text-align: center;
     }
   </style>
@@ -1388,31 +1418,39 @@
       <div class="guide-container" id="guideContainer">
         <!-- 2x2 Grid of Tabs on Mobile (Always 100% visible, no cut-off!) -->
         <div class="guide-tabs">
-          <button class="guide-tab active" onclick="showTab(0, false)">
-            <span>⌚ <span data-lang="ro">1. Instalare pe ceas</span><span data-lang="en">1. Watch install</span></span>
+          <button class="guide-tab active" type="button" onclick="showTab(0, true)">
+            <span class="tab-icon">⌚</span>
+            <span class="tab-label" data-lang="ro">1. Instalare ceas</span>
+            <span class="tab-label" data-lang="en">1. Watch install</span>
           </button>
-          <button class="guide-tab" onclick="showTab(1, false)">
-            <span>🎯 <span data-lang="ro">2. Cadran (Complicație)</span><span data-lang="en">2. Watch face</span></span>
+          <button class="guide-tab" type="button" onclick="showTab(1, true)">
+            <span class="tab-icon">🎯</span>
+            <span class="tab-label" data-lang="ro">2. Cadran ceas</span>
+            <span class="tab-label" data-lang="en">2. Watch face</span>
           </button>
-          <button class="guide-tab" onclick="showTab(2, false)">
-            <span>🗂️ <span data-lang="ro">3. Card (Tile)</span><span data-lang="en">3. Watch tile</span></span>
+          <button class="guide-tab" type="button" onclick="showTab(2, true)">
+            <span class="tab-icon">🗂️</span>
+            <span class="tab-label" data-lang="ro">3. Card Tile</span>
+            <span class="tab-label" data-lang="en">3. Watch tile</span>
           </button>
-          <button class="guide-tab" onclick="showTab(3, false)">
-            <span>📱 <span data-lang="ro">4. Widget pe telefon</span><span data-lang="en">4. Phone widget</span></span>
+          <button class="guide-tab" type="button" onclick="showTab(3, true)">
+            <span class="tab-icon">📱</span>
+            <span class="tab-label" data-lang="ro">4. Widget telefon</span>
+            <span class="tab-label" data-lang="en">4. Phone widget</span>
           </button>
         </div>
 
         <!-- Step Indicator & Progress Dots -->
         <div class="guide-header-bar">
-          <div class="guide-indicator-pill" id="guideIndicatorPill">
+          <div class="guide-indicator-pill">
             <span data-lang="ro">Pasul <strong id="stepNumRo">1</strong> din 4 • <span id="stepNameRo">Instalare pe ceas</span></span>
             <span data-lang="en">Step <strong id="stepNumEn">1</strong> of 4 • <span id="stepNameEn">Watch install</span></span>
           </div>
-          <div class="guide-dots" aria-hidden="true">
-            <span class="guide-dot active" onclick="showTab(0, true)"></span>
-            <span class="guide-dot" onclick="showTab(1, true)"></span>
-            <span class="guide-dot" onclick="showTab(2, true)"></span>
-            <span class="guide-dot" onclick="showTab(3, true)"></span>
+          <div class="guide-dots" aria-label="Indicatori pași">
+            <span class="guide-dot active" onclick="showTab(0, true)" title="Pasul 1"></span>
+            <span class="guide-dot" onclick="showTab(1, true)" title="Pasul 2"></span>
+            <span class="guide-dot" onclick="showTab(2, true)" title="Pasul 3"></span>
+            <span class="guide-dot" onclick="showTab(3, true)" title="Pasul 4"></span>
           </div>
         </div>
 
@@ -1448,7 +1486,7 @@
           <div class="guide-nav-footer">
             <span style="font-size: 0.8rem; color: var(--text-muted);" data-lang="ro">Următorul pas: Afișare pe cadranul ceasului</span>
             <span style="font-size: 0.8rem; color: var(--text-muted);" data-lang="en">Next step: Watch face complication</span>
-            <button class="btn btn-secondary guide-nav-btn" onclick="showTab(1, true)">
+            <button class="btn btn-secondary guide-nav-btn" type="button" onclick="showTab(1, true)">
               <span data-lang="ro">Continuă cu Pasul 2 (Cadran ceas) →</span>
               <span data-lang="en">Continue to Step 2 (Watch face) →</span>
             </button>
@@ -1485,11 +1523,11 @@
           </div>
           <!-- Bottom Navigation Walkthrough -->
           <div class="guide-nav-footer">
-            <button class="btn btn-ghost guide-nav-btn" onclick="showTab(0, true)">
+            <button class="btn btn-ghost guide-nav-btn" type="button" onclick="showTab(0, true)">
               <span data-lang="ro">← Înapoi la Pasul 1</span>
               <span data-lang="en">← Back to Step 1</span>
             </button>
-            <button class="btn btn-secondary guide-nav-btn" onclick="showTab(2, true)">
+            <button class="btn btn-secondary guide-nav-btn" type="button" onclick="showTab(2, true)">
               <span data-lang="ro">Continuă cu Pasul 3 (Card Tile) →</span>
               <span data-lang="en">Continue to Step 3 (Watch Tile) →</span>
             </button>
@@ -1526,11 +1564,11 @@
           </div>
           <!-- Bottom Navigation Walkthrough -->
           <div class="guide-nav-footer">
-            <button class="btn btn-ghost guide-nav-btn" onclick="showTab(1, true)">
+            <button class="btn btn-ghost guide-nav-btn" type="button" onclick="showTab(1, true)">
               <span data-lang="ro">← Înapoi la Pasul 2</span>
               <span data-lang="en">← Back to Step 2</span>
             </button>
-            <button class="btn btn-secondary guide-nav-btn" onclick="showTab(3, true)">
+            <button class="btn btn-secondary guide-nav-btn" type="button" onclick="showTab(3, true)">
               <span data-lang="ro">Continuă cu Pasul 4 (Widget telefon) →</span>
               <span data-lang="en">Continue to Step 4 (Phone widget) →</span>
             </button>
@@ -1567,7 +1605,7 @@
           </div>
           <!-- Bottom Navigation Walkthrough -->
           <div class="guide-nav-footer">
-            <button class="btn btn-ghost guide-nav-btn" onclick="showTab(2, true)">
+            <button class="btn btn-ghost guide-nav-btn" type="button" onclick="showTab(2, true)">
               <span data-lang="ro">← Înapoi la Pasul 3</span>
               <span data-lang="en">← Back to Step 3</span>
             </button>
@@ -1711,6 +1749,9 @@
   </footer>
 
   <script>
+    // Current active guide tab
+    let currentGuideTab = 0;
+
     // Language switch with localStorage persistence
     function setLang(lang) {
       if (lang === 'en') {
@@ -1753,6 +1794,7 @@
     ];
 
     function showTab(idx, shouldScroll) {
+      currentGuideTab = idx;
       const tabs = document.querySelectorAll('.guide-tab');
       const panels = document.querySelectorAll('.guide-panel');
       const dots = document.querySelectorAll('.guide-dot');
@@ -1775,14 +1817,45 @@
         const container = document.getElementById('guideContainer');
         if (container) {
           const rect = container.getBoundingClientRect();
-          // Scroll so the guide container is at the top of viewport nicely
-          if (rect.top < 60 || rect.bottom > window.innerHeight) {
+          if (rect.top < 65 || rect.bottom > window.innerHeight) {
             const targetY = window.pageYOffset + rect.top - 70;
             window.scrollTo({ top: targetY, behavior: 'smooth' });
           }
         }
       }
     }
+
+    // Touch swipe gesture support on Guide Container
+    (function setupTouchSwipe() {
+      const container = document.getElementById('guideContainer');
+      if (!container) return;
+
+      let touchStartX = 0;
+      let touchStartY = 0;
+
+      container.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }, { passive: true });
+
+      container.addEventListener('touchend', function(e) {
+        const touchEndX = e.changedTouches[0].screenX;
+        const touchEndY = e.changedTouches[0].screenY;
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
+
+        // Ensure swipe was primarily horizontal and at least 50px
+        if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+          if (diffX < 0 && currentGuideTab < 3) {
+            // Swipe Left -> Next
+            showTab(currentGuideTab + 1, false);
+          } else if (diffX > 0 && currentGuideTab > 0) {
+            // Swipe Right -> Prev
+            showTab(currentGuideTab - 1, false);
+          }
+        }
+      }, { passive: true });
+    })();
 
     // Hide sticky bottom bar when near the install box
     (function setupStickyBar() {
