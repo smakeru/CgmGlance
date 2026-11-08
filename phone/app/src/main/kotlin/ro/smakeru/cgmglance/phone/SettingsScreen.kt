@@ -2,6 +2,7 @@ package ro.smakeru.cgmglance.phone
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,7 +47,8 @@ fun SettingsScreen(
     initialUnit: GlucoseUnit,
     initialHealthExport: HealthExportSettings,
     initialSource: GlucoseSource,
-    onSave: (RangeThresholds, GlucoseUnit, HealthExportSettings, GlucoseSource) -> Unit,
+    initialDeltaInterval: Int,
+    onSave: (RangeThresholds, GlucoseUnit, HealthExportSettings, GlucoseSource, Int) -> Unit,
     onBack: () -> Unit,
 ) {
     var urgentLow by remember { mutableStateOf(initialThresholds.urgentLowMgdl.toString()) }
@@ -55,6 +57,7 @@ fun SettingsScreen(
     var veryHigh by remember { mutableStateOf(initialThresholds.veryHighMgdl.toString()) }
     var unit by remember { mutableStateOf(initialUnit) }
     var source by remember { mutableStateOf(initialSource) }
+    var deltaInterval by remember { mutableStateOf(initialDeltaInterval) }
     var healthEnabled by remember { mutableStateOf(initialHealthExport.enabled) }
     var healthInterval by remember { mutableStateOf(initialHealthExport.intervalMinutes.toString()) }
 
@@ -142,6 +145,31 @@ fun SettingsScreen(
             }
         }
 
+        Spacer(Modifier.height(24.dp))
+        Text(stringResource(R.string.settings_delta_title), style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text(stringResource(R.string.settings_delta_subtitle), style = MaterialTheme.typography.bodySmall)
+        Spacer(Modifier.height(8.dp))
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            listOf(5, 10, 15, 20).forEach { minutes ->
+                val labelRes =
+                    when (minutes) {
+                        5 -> R.string.settings_delta_5m
+                        10 -> R.string.settings_delta_10m
+                        15 -> R.string.settings_delta_15m
+                        else -> R.string.settings_delta_20m
+                    }
+                FilterChip(
+                    selected = deltaInterval == minutes,
+                    onClick = { deltaInterval = minutes },
+                    label = { Text(stringResource(labelRes)) },
+                )
+            }
+        }
+
         Spacer(Modifier.height(28.dp))
         Text(stringResource(R.string.settings_health_title), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(4.dp))
@@ -207,7 +235,7 @@ fun SettingsScreen(
                                     intervalMinutes = initialHealthExport.intervalMinutes,
                                 )
                                 ?: HealthExportSettings.default
-                        onSave(thresholds, unit, health, source)
+                        onSave(thresholds, unit, health, source, deltaInterval)
                     }
                 },
                 enabled = parsed != null && healthValid,

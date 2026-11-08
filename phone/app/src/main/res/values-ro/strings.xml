@@ -69,6 +69,13 @@
     <string name="field_very_high">Foarte ridicat</string>
     <string name="settings_units_note">Toate valorile în mg/dL.</string>
     <string name="settings_display_unit">Unitate de afișare</string>
+
+    <string name="settings_delta_title">Interval variație glicemie (Delta)</string>
+    <string name="settings_delta_subtitle">Calculează diferența (+ / -) față de o citire anterioară. Afișată pe widgetul telefonului, tile-ul de pe ceas și complicațiile ceasului.</string>
+    <string name="settings_delta_5m">5 min</string>
+    <string name="settings_delta_10m">10 min (recomandat)</string>
+    <string name="settings_delta_15m">15 min</string>
+    <string name="settings_delta_20m">20 min</string>
     <string name="settings_invalid">Scăzut urgent trebuie să fie sub scăzut, scăzut sub ridicat, iar ridicat sub foarte ridicat. Toate patru trebuie să fie valori pe care un senzor le poate raporta.</string>
     <string name="action_save">Salvează</string>
     <string name="action_back">Înapoi</string>

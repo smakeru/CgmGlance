@@ -88,6 +88,7 @@ class GlucoseComplicationService : SuspendingComplicationDataSourceService() {
                 range = reading?.let { prefs.thresholds.classify(it) },
                 freshness = freshness,
                 ageMinutes = ageMinutes,
+                deltaMgdl = payload?.deltaMgdl,
             )
 
         return render(display, request.complicationType)
@@ -112,15 +113,15 @@ class GlucoseComplicationService : SuspendingComplicationDataSourceService() {
             }
 
             ComplicationType.LONG_TEXT -> {
+                val longText =
+                    listOfNotNull(
+                        display.value,
+                        display.arrow.takeIf { it.isNotEmpty() },
+                        display.deltaWithParens,
+                    ).joinToString(" ")
                 LongTextComplicationData
                     .Builder(
-                        text =
-                            PlainComplicationText
-                                .Builder(
-                                    listOf(display.value, display.arrow)
-                                        .filter { it.isNotEmpty() }
-                                        .joinToString(" "),
-                                ).build(),
+                        text = PlainComplicationText.Builder(longText).build(),
                         contentDescription = description,
                     ).setTitle(PlainComplicationText.Builder(display.unitLabel).build())
                     .setTapAction(tapAction)

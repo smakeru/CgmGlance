@@ -45,6 +45,7 @@ class GlucoseTileService : TileService() {
                 range = reading?.let { prefs.thresholds.classify(it) },
                 freshness = freshness,
                 ageMinutes = freshnessPolicy.ageMillis(reading, clock)?.let { it / 60_000L },
+                deltaMgdl = payload?.deltaMgdl,
             )
 
         val tile =
@@ -137,8 +138,17 @@ class GlucoseTileService : TileService() {
                     valueSize,
                     colorFor(display),
                 ),
-            ).addContent(text(display.unitLabel, SECONDARY_SIZE_SP, GlucoseRangePalette.MUTED))
-            .build()
+            ).addContent(
+                text(
+                    if (display.deltaFormatted != null) {
+                        "${display.deltaFormatted} ${display.unitLabel}"
+                    } else {
+                        display.unitLabel
+                    },
+                    SECONDARY_SIZE_SP,
+                    GlucoseRangePalette.MUTED,
+                ),
+            ).build()
     }
 
     private fun text(

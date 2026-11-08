@@ -17,6 +17,7 @@ import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
 import ro.smakeru.cgmglance.domain.glucose.ReadingFreshness
 import ro.smakeru.cgmglance.domain.glucose.TrendArrow
 import ro.smakeru.cgmglance.domain.time.Clock
+import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 /** Phone launcher widgets only. Each ID owns its source choice; null follows the watch source. */
@@ -133,11 +134,17 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
                     R.id.widget_trend,
                     if (freshness.allowsTrend) trendSymbol(snapshot.trend) else "",
                 )
+                // Same locale as the value above, so "7,2" is never followed by "+0.3".
+                val delta = snapshot.delta?.takeIf { freshness.allowsTrend }
+                val decimalSeparator = DecimalFormatSymbols.getInstance(Locale.getDefault()).decimalSeparator
+                views.setTextViewText(R.id.widget_delta, delta?.format(unit, decimalSeparator).orEmpty())
+                views.setViewVisibility(R.id.widget_delta, if (delta != null) View.VISIBLE else View.GONE)
                 // Same palette and thresholds as the watch, so the wrist and the home screen
                 // never disagree. An old reading is muted rather than coloured.
                 val color = GlucoseRangePalette.colorFor(reading?.let(thresholds::classify), freshness)
                 views.setTextColor(R.id.widget_value, color)
                 views.setTextColor(R.id.widget_trend, color)
+                views.setTextColor(R.id.widget_delta, color)
                 views.setInt(R.id.widget_accent, "setColorFilter", color)
                 views.setInt(R.id.widget_root, "setBackgroundResource", backgroundFor(color))
                 views.setTextViewText(

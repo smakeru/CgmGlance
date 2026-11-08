@@ -41,6 +41,7 @@ class WearTexts(
         parts += context.getString(R.string.cd_glucose, display.value, spokenUnit(display.unit))
         spokenRange(display.range)?.let { parts += it }
         parts += context.getString(trendRes(display.trend))
+        if (display.deltaFormatted != null) parts += context.getString(R.string.cd_delta, display.deltaFormatted)
         if (display.ageMinutes != null) parts += relativeAge(display.ageMinutes)
         if (display.freshness == ReadingFreshness.STALE) parts += context.getString(R.string.cd_out_of_date)
 

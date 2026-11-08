@@ -33,6 +33,24 @@ class PayloadsTest {
         assertEquals(TrendArrow.RISING_SLIGHTLY, decoded.trend)
         assertEquals(timestamp + 1_500, decoded.senderNowMillis)
         assertEquals(42L, decoded.sequence)
+        assertNull(decoded.deltaMgdl)
+    }
+
+    @Test
+    fun `a payload with delta round trips cleanly`() {
+        val payloadWithDelta =
+            LatestReadingPayload(
+                reading = reading,
+                trend = TrendArrow.RISING,
+                senderNowMillis = timestamp + 1_000,
+                sequence = 43L,
+                deltaMgdl = 8,
+            )
+        val decoded = read(payloadWithDelta.toMap())
+
+        assertNotNull(decoded)
+        assertEquals(8, decoded.deltaMgdl)
+        assertEquals(SyncContract.SCHEMA_VERSION, decoded.toMap()[SyncContract.KEY_SCHEMA_VERSION])
     }
 
     @Test

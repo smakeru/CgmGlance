@@ -44,6 +44,8 @@ inconsistent threshold set: all rejected. The alternative silently reinterprets 
 apparent 3 mg/dL per minute across a two-minute gap. `TrendCalculatorTest` holds the fixture that
 demonstrates it.
 
+**Numeric Delta alongside Trend Arrow.** The trend arrow shows directional velocity filtered of noise, while a 5-minute numeric delta (`+X` / `-X`) provides exact magnitude context. See [Future Ideas](future-ideas.md).
+
 ## Wire format
 
 **Flat `DataMap` primitives, never a blob.** Phone and watch are separate Play artifacts updated

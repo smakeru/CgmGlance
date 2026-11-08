@@ -1,6 +1,7 @@
 package ro.smakeru.cgmglance.wear
 
 import ro.smakeru.cgmglance.domain.glucose.GlucoseConversion
+import ro.smakeru.cgmglance.domain.glucose.GlucoseDelta
 import ro.smakeru.cgmglance.domain.glucose.GlucoseRange
 import ro.smakeru.cgmglance.domain.glucose.GlucoseReading
 import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
@@ -25,11 +26,21 @@ data class GlucoseDisplay(
     val ageMinutes: Long?,
     /** For the ranged-value complication. Null when there is nothing trustworthy to plot. */
     val gaugeValue: Float?,
+    /** Signed difference against baseline reading from configured window (e.g. 10 min), or null. */
+    val deltaMgdl: Int? = null,
 ) {
     /** True when there is a number worth showing at all. */
     val hasValue: Boolean get() = freshness != ReadingFreshness.NO_DATA
 
     val unitLabel: String get() = unit.label
+
+    /** Formatted delta with sign according to unit (e.g. "+4", "-5", "+0.2"), or null. */
+    val deltaFormatted: String?
+        get() = deltaMgdl?.let { GlucoseDelta.formatValue(it, unit) }
+
+    /** Formatted delta with parenthesis (e.g. "(+4)", "(-0.2)"), or null. */
+    val deltaWithParens: String?
+        get() = deltaMgdl?.let { GlucoseDelta.formatWithParens(it, unit) }
 
     /**
      * Value and arrow as one string, for slots that render a single piece of text.
@@ -75,6 +86,7 @@ data class GlucoseDisplay(
             range: GlucoseRange?,
             freshness: ReadingFreshness,
             ageMinutes: Long?,
+            deltaMgdl: Int? = null,
         ): GlucoseDisplay {
             if (reading == null || freshness == ReadingFreshness.NO_DATA) {
                 return GlucoseDisplay(
@@ -86,6 +98,7 @@ data class GlucoseDisplay(
                     trend = TrendArrow.UNKNOWN,
                     ageMinutes = null,
                     gaugeValue = null,
+                    deltaMgdl = null,
                 )
             }
 
@@ -107,6 +120,8 @@ data class GlucoseDisplay(
                 // The gauge empties before the number disappears: an arc at two thirds full is
                 // read as a fact about the present far more readily than a digit is.
                 gaugeValue = if (freshness.allowsTrend) reading.mgdl.toFloat().coerceIn(GAUGE_MIN, GAUGE_MAX) else null,
+                // Delta is also dropped if the reading is stale
+                deltaMgdl = if (freshness.allowsTrend) deltaMgdl else null,
             )
         }
 

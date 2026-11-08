@@ -1,5 +1,6 @@
 package ro.smakeru.cgmglance.phone
 
+import ro.smakeru.cgmglance.domain.glucose.GlucoseDelta
 import ro.smakeru.cgmglance.domain.glucose.GlucoseReading
 import ro.smakeru.cgmglance.domain.glucose.TrendArrow
 
@@ -29,6 +30,7 @@ class PhoneGlucoseSources(
         val usedFallbackParser: Boolean,
         val trend: TrendArrow,
         val parseFailure: String?,
+        val delta: GlucoseDelta? = null,
     )
 
     /** A fixed-source widget may inspect the background feed without changing the watch source. */
@@ -36,7 +38,14 @@ class PhoneGlucoseSources(
     fun snapshot(source: GlucoseSource? = null): Snapshot {
         val actual = source ?: selected
         val repository = repositories.getValue(actual)
-        return Snapshot(actual, repository.latest, fallback[actual] ?: false, repository.trend, failures[actual])
+        return Snapshot(
+            actual,
+            repository.latest,
+            fallback[actual] ?: false,
+            repository.trend,
+            failures[actual],
+            repository.delta,
+        )
     }
 
     @Synchronized

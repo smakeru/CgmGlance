@@ -214,4 +214,15 @@ class PhoneGlucoseRepositoryTest {
         assertNotNull(outcome.payload)
         assertEquals(true, outcome.payload.sequence > 1_000_000L)
     }
+
+    @Test
+    fun `payload includes delta when enough history exists`() {
+        record(140, 0)
+        val outcome = record(146, 10 * 60_000L)
+
+        assertNotNull(outcome.payload)
+        assertEquals(6, outcome.payload.deltaMgdl)
+        assertNotNull(repository.delta)
+        assertEquals(6, repository.delta?.deltaMgdl)
+    }
 }

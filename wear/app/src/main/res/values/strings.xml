@@ -23,6 +23,7 @@
       visual impairment, so for part of the intended audience this string is the entire app.
     -->
     <string name="cd_glucose">Glucose %1$s %2$s</string>
+    <string name="cd_delta">change %1$s</string>
     <string name="cd_no_reading">No recent glucose reading</string>
     <string name="cd_out_of_date">reading may be out of date</string>
     <string name="unit_spoken_mgdl">milligrams per decilitre</string>

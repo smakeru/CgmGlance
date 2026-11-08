@@ -58,18 +58,27 @@ class LatestReadingPayload(
     val trend: TrendArrow,
     val senderNowMillis: Long,
     val sequence: Long,
+    val deltaMgdl: Int? = null,
 ) {
-    fun toMap(): Map<String, Any> =
-        mapOf(
-            SyncContract.KEY_SCHEMA_VERSION to SyncContract.SCHEMA_VERSION,
-            SyncContract.KEY_SEQUENCE to sequence,
-            SyncContract.KEY_MGDL to reading.mgdl,
-            SyncContract.KEY_TIMESTAMP_MILLIS to reading.timestampMillis,
-            SyncContract.KEY_SENDER_NOW_MILLIS to senderNowMillis,
-            SyncContract.KEY_TREND to trend.name,
-        )
+    fun toMap(): Map<String, Any> {
+        val map =
+            mutableMapOf<String, Any>(
+                SyncContract.KEY_SCHEMA_VERSION to SyncContract.SCHEMA_VERSION,
+                SyncContract.KEY_SEQUENCE to sequence,
+                SyncContract.KEY_MGDL to reading.mgdl,
+                SyncContract.KEY_TIMESTAMP_MILLIS to reading.timestampMillis,
+                SyncContract.KEY_SENDER_NOW_MILLIS to senderNowMillis,
+                SyncContract.KEY_TREND to trend.name,
+            )
+        if (deltaMgdl != null) {
+            map[SyncContract.KEY_DELTA_MGDL] = deltaMgdl
+        }
+        return map
+    }
 
     companion object {
+        private const val NO_DELTA: Int = Int.MIN_VALUE
+
         /**
          * Reads a payload, or returns `null` when it cannot describe a real reading.
          *
@@ -88,6 +97,9 @@ class LatestReadingPayload(
                     ?.let { name -> TrendArrow.entries.firstOrNull { it.name == name } }
                     ?: TrendArrow.UNKNOWN
 
+            val rawDelta = reader.getInt(SyncContract.KEY_DELTA_MGDL, default = NO_DELTA)
+            val deltaMgdl = if (rawDelta != NO_DELTA) rawDelta else null
+
             return LatestReadingPayload(
                 reading = reading,
                 trend = trend,
@@ -95,6 +107,7 @@ class LatestReadingPayload(
                 // what an older sender that never wrote this key effectively implies.
                 senderNowMillis = reader.getLong(SyncContract.KEY_SENDER_NOW_MILLIS, timestamp),
                 sequence = reader.getLong(SyncContract.KEY_SEQUENCE, default = 0L),
+                deltaMgdl = deltaMgdl,
             )
         }
     }

@@ -1,6 +1,7 @@
 package ro.smakeru.cgmglance.phone
 
 import android.content.Context
+import ro.smakeru.cgmglance.domain.glucose.DeltaCalculator
 import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
 import ro.smakeru.cgmglance.domain.glucose.RangeThresholds
 
@@ -104,8 +105,23 @@ class PhonePreferencesStore(
         prefs.edit().putLong(KEY_LAST_HEALTH_WRITE, millis).apply()
     }
 
+    fun loadDeltaIntervalMinutes(): Int {
+        val stored = prefs.getInt(KEY_DELTA_INTERVAL_MINUTES, DeltaCalculator.DEFAULT_INTERVAL_MINUTES)
+        return if (stored in DeltaCalculator.MIN_INTERVAL_MINUTES..DeltaCalculator.MAX_INTERVAL_MINUTES) {
+            stored
+        } else {
+            DeltaCalculator.DEFAULT_INTERVAL_MINUTES
+        }
+    }
+
+    fun saveDeltaIntervalMinutes(minutes: Int) {
+        val valid = minutes.coerceIn(DeltaCalculator.MIN_INTERVAL_MINUTES, DeltaCalculator.MAX_INTERVAL_MINUTES)
+        prefs.edit().putInt(KEY_DELTA_INTERVAL_MINUTES, valid).commit()
+    }
+
     private companion object {
         const val FILE_NAME = "cgm_glance_prefs"
+        const val KEY_DELTA_INTERVAL_MINUTES = "deltaIntervalMinutes"
         const val KEY_LAST_HEALTH_WRITE = "lastHealthWriteMillis"
         const val KEY_HEALTH_ENABLED = "healthExportEnabled"
         const val KEY_HEALTH_INTERVAL = "healthExportIntervalMinutes"

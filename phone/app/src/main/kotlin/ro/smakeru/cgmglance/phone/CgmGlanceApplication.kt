@@ -50,6 +50,7 @@ class CgmGlanceApplication : Application() {
                             clock = clock,
                             thresholds = { preferences.loadThresholds() },
                             persistence = ReadingHistoryStore(this, clock, source = source),
+                            deltaIntervalMinutes = { preferences.loadDeltaIntervalMinutes() },
                         )
                     },
                 initialSource = preferences.loadSource(),
@@ -73,16 +74,18 @@ class CgmGlanceApplication : Application() {
         sendPreferencesToWatch()
     }
 
-    /** Source is phone-only. The watch's range/unit payload and reading contract stay unchanged. */
+    /** Source and delta window are phone settings; delta travels transparently in the reading payload. */
     fun updatePreferences(
         thresholds: RangeThresholds,
         unit: GlucoseUnit,
         healthExport: HealthExportSettings,
         source: GlucoseSource,
+        deltaIntervalMinutes: Int = preferences.loadDeltaIntervalMinutes(),
     ) = synchronized(ingestionLock) {
         preferences.save(thresholds, unit)
         preferences.saveHealthExportSettings(healthExport)
         preferences.saveSource(source)
+        preferences.saveDeltaIntervalMinutes(deltaIntervalMinutes)
         sendPreferencesToWatch()
 
         sources.select(source)?.let { outcome ->

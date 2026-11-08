@@ -1,5 +1,7 @@
 package ro.smakeru.cgmglance.phone
 
+import ro.smakeru.cgmglance.domain.glucose.DeltaCalculator
+import ro.smakeru.cgmglance.domain.glucose.GlucoseDelta
 import ro.smakeru.cgmglance.domain.glucose.GlucoseReading
 import ro.smakeru.cgmglance.domain.glucose.RangeThresholds
 import ro.smakeru.cgmglance.domain.glucose.TrendArrow
@@ -41,11 +43,13 @@ interface HistoryPersistence {
 class PhoneGlucoseRepository(
     private val clock: Clock,
     private val trendCalculator: TrendCalculator = TrendCalculator(),
+    private val deltaCalculator: DeltaCalculator = DeltaCalculator(),
     private val syncPolicy: SyncDecisionPolicy = SyncDecisionPolicy(),
     // A supplier rather than a value: the user can change their target range while the app is
     // running, and the next reading must be classified against the new one without the
     // repository being rebuilt around it.
     private val thresholds: () -> RangeThresholds = { RangeThresholds.default },
+    private val deltaIntervalMinutes: () -> Int = { DeltaCalculator.DEFAULT_INTERVAL_MINUTES },
     private val historyWindowMillis: Long = HISTORY_WINDOW_MILLIS,
     private val persistence: HistoryPersistence = HistoryPersistence.None,
 ) {
@@ -89,6 +93,10 @@ class PhoneGlucoseRepository(
     val trend: TrendArrow
         get() = synchronized(lock) { trendCalculator.calculate(history.toList(), clock) }
 
+    /** Signed difference against baseline ~[deltaIntervalMinutes] ago; used by phone widgets and sync. */
+    val delta: GlucoseDelta?
+        get() = synchronized(lock) { deltaCalculator.calculate(history.toList(), clock, deltaIntervalMinutes()) }
+
     /** Accepts a reading and reports whether the watch should hear about it. */
     fun record(reading: GlucoseReading): Outcome =
         synchronized(lock) {
@@ -123,6 +131,7 @@ class PhoneGlucoseRepository(
     ): Outcome {
         lastSent = LastSent(reading.mgdl, reading.timestampMillis, thresholds().classify(reading))
         sequence++
+        val calculatedDelta = deltaCalculator.calculate(history.toList(), clock, deltaIntervalMinutes())
         return Outcome(
             payload =
                 LatestReadingPayload(
@@ -130,6 +139,7 @@ class PhoneGlucoseRepository(
                     trend = trendCalculator.calculate(history.toList(), clock),
                     senderNowMillis = clock.nowMillis(),
                     sequence = sequence,
+                    deltaMgdl = calculatedDelta?.deltaMgdl,
                 ),
             urgent = urgent,
         )
