@@ -8,6 +8,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.SystemClock
+import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import ro.smakeru.cgmglance.domain.glucose.FreshnessPolicy
@@ -130,6 +131,13 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
                         "—"
                     }
                 views.setTextViewText(R.id.widget_value, value)
+                // "12,3" is a character wider than "123"; a slightly smaller face keeps a
+                // two-cell tile on one line with the arrow and delta.
+                views.setTextViewTextSize(
+                    R.id.widget_value,
+                    TypedValue.COMPLEX_UNIT_SP,
+                    if (unit == GlucoseUnit.MMOL_L) 30f else 34f,
+                )
                 views.setTextViewText(
                     R.id.widget_trend,
                     if (freshness.allowsTrend) trendSymbol(snapshot.trend) else "",

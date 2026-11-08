@@ -55,6 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
+                android:maxLines="1"
                 android:text="—"
                 android:textColor="#FFFFFF"
                 android:textSize="34sp"
@@ -66,6 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
                 android:includeFontPadding="false"
+                android:maxLines="1"
                 android:textColor="#FFFFFF"
                 android:textSize="26sp" />
 
@@ -76,17 +78,23 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginBottom="3dp"
                 android:includeFontPadding="false"
+                android:maxLines="1"
                 android:textColor="#CCFFFFFF"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
+            <!-- Takes only the width left over and never wraps: on a narrow tile with a wide
+                 mmol/L reading the unit is what gives way, never the value, arrow or delta. -->
             <TextView
                 android:id="@+id/widget_unit"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_marginStart="6dp"
                 android:layout_marginBottom="3dp"
+                android:maxLines="1"
+                android:ellipsize="none"
                 android:textColor="#99FFFFFF"
                 android:textSize="12sp" />
         </LinearLayout>
