@@ -173,7 +173,8 @@
       box-shadow: 0 2px 8px rgba(52, 211, 153, 0.35);
     }
 
-    .nav-btn-cta {
+    /* .btn.nav-btn-cta: must outrank `.btn { display: inline-flex }` declared below */
+    .btn.nav-btn-cta {
       display: none;
       white-space: nowrap;
       flex-shrink: 0;
@@ -181,7 +182,7 @@
 
     /* Same breakpoint as .mobile-sticky-bar: below it the sticky bar carries the CTA */
     @media (min-width: 769px) {
-      .nav-btn-cta {
+      .btn.nav-btn-cta {
         display: inline-flex;
       }
     }
