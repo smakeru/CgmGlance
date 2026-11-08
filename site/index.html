@@ -175,9 +175,12 @@
 
     .nav-btn-cta {
       display: none;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
-    @media (min-width: 640px) {
+    /* Same breakpoint as .mobile-sticky-bar: below it the sticky bar carries the CTA */
+    @media (min-width: 769px) {
       .nav-btn-cta {
         display: inline-flex;
       }
