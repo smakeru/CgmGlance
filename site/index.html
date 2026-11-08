@@ -1229,6 +1229,7 @@
       <div class="hero-features-chips">
         <span class="chip-item">🔒 Fără internet (<strong>Local 100%</strong>)</span>
         <span class="chip-item">⚡ Push instant (<strong>Baterie protejată</strong>)</span>
+        <span class="chip-item">📈 Variație Delta (<strong>+ / - configurabil</strong>)</span>
         <span class="chip-item">🆓 Gratuit &amp; <strong>Open Source (GPL)</strong></span>
       </div>
 
@@ -1329,10 +1330,10 @@
           <h3 data-lang="ro">1. Complicație pe Cadran</h3>
           <h3 data-lang="en">1. Watch Face Complication</h3>
           <p data-lang="ro">
-            Adaugă slotul „Glucose” pe cadranul tău preferat pentru a vedea valoarea și săgeata de trend de fiecare dată când ridici încheietura.
+            Adaugă slotul „Glucose” pe cadranul tău preferat pentru a vedea glicemia, săgeata de trend și variația Delta (+ / -) de fiecare dată când ridici încheietura.
           </p>
           <p data-lang="en">
-            Add the "Glucose" complication to any slot on your favorite watch face for glanceable readings every time you check the time.
+            Add the "Glucose" complication to any slot on your favorite watch face for glanceable readings, trend arrow, and numeric Delta (+ / -) every time you check the time.
           </p>
         </div>
 
@@ -1343,10 +1344,10 @@
           <h3 data-lang="ro">2. Card Dedicat (Tile la un Swipe)</h3>
           <h3 data-lang="en">2. Dedicated Watch Tile</h3>
           <p data-lang="ro">
-            Glisează o singură dată de pe cadran pentru cardul CGM Glance cu cifre mari, colorate în funcție de țintă (verde, galben sau roșu).
+            Glisează o singură dată de pe cadran pentru cardul CGM Glance cu cifre mari, colorate în funcție de țintă, și variația recentă Delta (+4 mg/dL).
           </p>
           <p data-lang="en">
-            Swipe once from your watch face for high-contrast glucose numbers, colored by range (in-target green, high amber, low red).
+            Swipe once from your watch face for high-contrast glucose numbers, range colors, and recent Delta change (+4 mg/dL).
           </p>
         </div>
 
@@ -1357,10 +1358,10 @@
           <h3 data-lang="ro">3. Aplicație Completă pe Ceas</h3>
           <h3 data-lang="en">3. Full Watch App</h3>
           <p data-lang="ro">
-            Apasă pe complicație sau pe card pentru a deschide ecranul detaliat cu sursa senzorului, unitatea mg/dL și minutele de la citire.
+            Apasă pe complicație sau pe card pentru a deschide ecranul detaliat cu valoarea, trendul, variația Delta și vechimea exactă a citirii.
           </p>
           <p data-lang="en">
-            Tap the complication or tile to open the full watch view with sensor origin, mg/dL unit, and reading timestamp.
+            Tap the complication or tile to open the full watch view with glucose value, trend arrow, Delta change, and exact reading timestamp.
           </p>
         </div>
       </div>
@@ -1391,10 +1392,10 @@
           <h3 data-lang="ro">Widget-uri pe Ecranul Principal</h3>
           <h3 data-lang="en">Home Screen Widgets</h3>
           <p data-lang="ro">
-            Culori dinamice pentru valori în țintă, hiper sau hipoglicemie, cronometru live de la citire și dimensionare flexibilă.
+            Valoare mare, săgeată de trend, variație numerică Delta (+4 mg/dL), cronometru live de la citire și culori dinamice pentru valori în țintă sau alerte.
           </p>
           <p data-lang="en">
-            Range-colored readings with calculated trend arrows and a live reading-age timer right on your Android home screen.
+            Range-colored readings with calculated trend arrows, signed Delta change (+4 mg/dL), and a live reading-age timer right on your home screen.
           </p>
         </div>
 
@@ -1548,8 +1549,8 @@
           </div>
           <div class="guide-tip">
             💡 <strong><span data-lang="ro">Sfat:</span><span data-lang="en">Tip:</span></strong>
-            <span data-lang="ro"> Sloturile mai late (de tip <em>Text lung</em> sau <em>Bară de progres</em>) afișează atât valoarea și săgeata de trend, cât și minutele de la citire.</span>
-            <span data-lang="en"> Wider complication slots (<em>Long text</em> or <em>Ranged value</em>) show the glucose value, trend arrow, and reading age together.</span>
+            <span data-lang="ro"> Sloturile mai late (de tip <em>Text lung</em>) afișează valoarea, săgeata de trend și variația Delta (ex: <code>112 ↗ (+4)</code>). Sloturile mici rotunde afișează compact <code>112↗</code>.</span>
+            <span data-lang="en"> Wider complication slots (<em>Long text</em>) display the glucose value, trend arrow, and Delta change (e.g. <code>112 ↗ (+4)</code>). Smaller slots display cleanly as <code>112↗</code>.</span>
           </div>
           <!-- Bottom Navigation Walkthrough -->
           <div class="guide-nav-footer">
@@ -1589,8 +1590,8 @@
           </div>
           <div class="guide-tip">
             💡 <strong><span data-lang="ro">Sfat:</span><span data-lang="en">Tip:</span></strong>
-            <span data-lang="ro"> Atinge valoarea de pe cardul Tile pentru a deschide direct aplicația completă pe ceas.</span>
-            <span data-lang="en"> Tap the reading on the tile anytime to open the full watch app screen.</span>
+            <span data-lang="ro"> Cardul Tile afișează numere mari și variația recentă Delta (+4 mg/dL). Atinge valoarea pentru a deschide aplicația completă cu vechimea citirii.</span>
+            <span data-lang="en"> The dedicated Tile displays large numbers and recent Delta change (+4 mg/dL). Tap anytime to open the full app with reading age.</span>
           </div>
           <!-- Bottom Navigation Walkthrough -->
           <div class="guide-nav-footer">
@@ -1630,8 +1631,8 @@
           </div>
           <div class="guide-tip">
             💡 <strong><span data-lang="ro">Sfat:</span><span data-lang="en">Tip:</span></strong>
-            <span data-lang="ro"> Poți redimensiona liber widget-ul trăgând de margini — fontul și detaliile se adaptează automat la spațiul disponibil.</span>
-            <span data-lang="en"> Freely resize the widget by dragging its borders — typography and layout adapt automatically.</span>
+            <span data-lang="ro"> Widget-ul afișează valoarea, săgeata de trend, variația semnată Delta (+4 mg/dL) și minutele de la citire. Poți redimensiona liber widget-ul trăgând de margini.</span>
+            <span data-lang="en"> The widget displays glucose value, trend arrow, signed Delta change (+4 mg/dL), and elapsed minutes. Freely resize by dragging borders.</span>
           </div>
           <!-- Bottom Navigation Walkthrough -->
           <div class="guide-nav-footer">
@@ -1687,6 +1688,18 @@
           </p>
           <p data-lang="en">
             Pure event-driven push architecture. Updates are triggered only when the official sensor notification changes. Zero battery waste.
+          </p>
+        </div>
+
+        <div class="feature-box">
+          <div class="feature-icon-badge">📈</div>
+          <h3 data-lang="ro">Variație Numerică Delta (+ / -)</h3>
+          <h3 data-lang="en">Signed Glucose Delta (+ / -)</h3>
+          <p data-lang="ro">
+            Calculează automat magnitudinea schimbării față de o citire anterioară. Intervalul este reglabil din setări (5, 10, 15 sau 20 de minute, implicit 10 min) și apare pe widget și pe ceas.
+          </p>
+          <p data-lang="en">
+            Calculates exact rate-of-change magnitude compared to a previous reading. Configurable window in settings (5, 10, 15, or 20 minutes, 10 min default) across widgets and watch.
           </p>
         </div>
 
