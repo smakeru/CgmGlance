@@ -51,6 +51,11 @@ class WatchGlucoseStore(
         values: Map<String, Any?>,
     ) {
         prefs.edit().apply {
+            // Replaces the previous snapshot for this prefix entirely. An omitted key
+            // (such as deltaMgdl when no baseline is available) must not retain its old value.
+            prefs.all.keys
+                .filter { it.startsWith(prefix) }
+                .forEach { remove(it) }
             values.forEach { (key, raw) ->
                 when (val value = raw) {
                     is Int -> putInt(prefix + key, value)

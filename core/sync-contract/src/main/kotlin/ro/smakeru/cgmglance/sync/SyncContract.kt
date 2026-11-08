@@ -87,7 +87,7 @@ object SyncContract {
     const val KEY_VERY_HIGH_MGDL: String = "veryHighMgdl"
 
     /**
-     * Added in schema 3. Signed delta in mg/dL against the baseline reading (~10 min ago).
+     * Added in schema 3. Signed delta in mg/dL against the baseline reading from the configured window.
      * Optional: omitted when no baseline exists or when readings are stale.
      */
     const val KEY_DELTA_MGDL: String = "deltaMgdl"

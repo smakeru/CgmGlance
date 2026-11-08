@@ -120,4 +120,16 @@ class WatchGlucoseStoreTest {
 
         assertEquals(150, store.loadLatest()?.reading?.mgdl)
     }
+
+    @Test
+    fun `a later payload without delta clears the previous delta`() {
+        store.saveLatest(latestPayload() + (SyncContract.KEY_DELTA_MGDL to 25))
+        assertEquals(25, store.loadLatest()?.deltaMgdl)
+
+        store.saveLatest(latestPayload(mgdl = 120))
+        val loaded = store.loadLatest()
+        assertNotNull(loaded)
+        assertEquals(120, loaded.reading.mgdl)
+        assertNull(loaded.deltaMgdl)
+    }
 }

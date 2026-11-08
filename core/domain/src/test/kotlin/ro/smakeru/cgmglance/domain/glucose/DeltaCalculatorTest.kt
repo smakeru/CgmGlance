@@ -60,6 +60,8 @@ class DeltaCalculatorTest {
 
         val negativeDelta = GlucoseDelta(-9, 10) // ~-0.5 mmol/L
         assertEquals("-0.5", negativeDelta.format(GlucoseUnit.MMOL_L))
+        assertEquals("-0,5", negativeDelta.format(GlucoseUnit.MMOL_L, decimalSeparator = ','))
+        assertEquals("(-0,5)", negativeDelta.formatWithParens(GlucoseUnit.MMOL_L, decimalSeparator = ','))
     }
 
     @Test
@@ -88,16 +90,23 @@ class DeltaCalculatorTest {
     }
 
     @Test
-    fun `returns null when gap exceeds max gap`() {
+    fun `returns null when baseline gap is outside tolerance window`() {
         val now = baseNow
         val clock = Clock { now }
-        // Baseline is 25 minutes ago (gap > 20 min)
-        val readings =
+        // For 10 min, tolerance 40% allows 6..14 min. Baseline at 16 min is outside tolerance.
+        val readingsOutside =
             listOf(
-                GlucoseReading.create(100, now - 25 * 60_000L)!!,
+                GlucoseReading.create(100, now - 16 * 60_000L)!!,
                 GlucoseReading.create(112, now)!!,
             )
+        assertNull(calculator.calculate(readingsOutside, clock, targetIntervalMinutes = 10))
 
-        assertNull(calculator.calculate(readings, clock))
+        // Baseline at 12 min is inside tolerance
+        val readingsInside =
+            listOf(
+                GlucoseReading.create(100, now - 12 * 60_000L)!!,
+                GlucoseReading.create(112, now)!!,
+            )
+        assertNotNull(calculator.calculate(readingsInside, clock, targetIntervalMinutes = 10))
     }
 }

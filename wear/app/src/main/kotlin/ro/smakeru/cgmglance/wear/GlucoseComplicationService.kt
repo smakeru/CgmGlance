@@ -117,7 +117,7 @@ class GlucoseComplicationService : SuspendingComplicationDataSourceService() {
                     listOfNotNull(
                         display.value,
                         display.arrow.takeIf { it.isNotEmpty() },
-                        display.deltaWithParens.takeIf { display.freshness.allowsTrend },
+                        display.deltaWithParens,
                     ).joinToString(" ")
                 LongTextComplicationData
                     .Builder(

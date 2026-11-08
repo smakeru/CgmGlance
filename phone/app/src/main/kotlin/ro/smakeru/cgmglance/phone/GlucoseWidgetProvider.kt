@@ -135,9 +135,13 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
                 )
                 val delta = snapshot.delta
                 val showDelta = delta != null && freshness.allowsTrend
+                val decimalSeparator =
+                    java.text.DecimalFormatSymbols
+                        .getInstance()
+                        .decimalSeparator
                 views.setTextViewText(
                     R.id.widget_delta,
-                    if (delta != null && freshness.allowsTrend) delta.format(unit) else "",
+                    if (delta != null && freshness.allowsTrend) delta.format(unit, decimalSeparator) else "",
                 )
                 views.setViewVisibility(R.id.widget_delta, if (showDelta) View.VISIBLE else View.GONE)
                 // Same palette and thresholds as the watch, so the wrist and the home screen

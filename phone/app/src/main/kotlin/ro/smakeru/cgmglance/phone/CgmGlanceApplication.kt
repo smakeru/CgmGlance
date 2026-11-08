@@ -74,7 +74,7 @@ class CgmGlanceApplication : Application() {
         sendPreferencesToWatch()
     }
 
-    /** Source and delta window are phone-only. The watch's range/unit payload and reading contract stay unchanged. */
+    /** Source and delta window are phone settings; delta travels transparently in the reading payload. */
     fun updatePreferences(
         thresholds: RangeThresholds,
         unit: GlucoseUnit,

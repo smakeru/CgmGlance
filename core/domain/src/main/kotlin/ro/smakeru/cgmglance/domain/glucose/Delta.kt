@@ -18,31 +18,57 @@ data class GlucoseDelta(
     /**
      * Formats the signed delta according to the target unit.
      * Examples in mg/dL: "+4", "-5", "0"
-     * Examples in mmol/L: "+0.2", "-0.3", "0.0"
+     * Examples in mmol/L: "+0.2", "-0.3", "0.0" (or with [decimalSeparator], e.g. "+0,2")
      */
-    fun format(unit: GlucoseUnit): String =
-        when (unit) {
-            GlucoseUnit.MG_DL -> {
-                if (deltaMgdl > 0) "+$deltaMgdl" else "$deltaMgdl"
-            }
-
-            GlucoseUnit.MMOL_L -> {
-                val mmol = GlucoseConversion.mgdlToMmol(deltaMgdl)
-                val rounded = (mmol * 10.0).roundToInt() / 10.0
-                if (rounded > 0.0) {
-                    "+$rounded"
-                } else if (rounded == 0.0) {
-                    "0.0"
-                } else {
-                    "$rounded"
-                }
-            }
-        }
+    fun format(
+        unit: GlucoseUnit,
+        decimalSeparator: Char? = null,
+    ): String = formatValue(deltaMgdl, unit, decimalSeparator)
 
     /**
      * Compact display with parenthesis, e.g. "(+4)" or "(-0.2)"
      */
-    fun formatWithParens(unit: GlucoseUnit): String = "(${format(unit)})"
+    fun formatWithParens(
+        unit: GlucoseUnit,
+        decimalSeparator: Char? = null,
+    ): String = formatWithParens(deltaMgdl, unit, decimalSeparator)
+
+    companion object {
+        fun formatValue(
+            deltaMgdl: Int,
+            unit: GlucoseUnit,
+            decimalSeparator: Char? = null,
+        ): String =
+            when (unit) {
+                GlucoseUnit.MG_DL -> {
+                    if (deltaMgdl > 0) "+$deltaMgdl" else "$deltaMgdl"
+                }
+
+                GlucoseUnit.MMOL_L -> {
+                    val mmol = GlucoseConversion.mgdlToMmol(deltaMgdl)
+                    val rounded = (mmol * 10.0).roundToInt() / 10.0
+                    val formatted =
+                        if (rounded > 0.0) {
+                            "+$rounded"
+                        } else if (rounded == 0.0) {
+                            "0.0"
+                        } else {
+                            "$rounded"
+                        }
+                    if (decimalSeparator != null && decimalSeparator != '.') {
+                        formatted.replace('.', decimalSeparator)
+                    } else {
+                        formatted
+                    }
+                }
+            }
+
+        fun formatWithParens(
+            deltaMgdl: Int,
+            unit: GlucoseUnit,
+            decimalSeparator: Char? = null,
+        ): String = "(${formatValue(deltaMgdl, unit, decimalSeparator)})"
+    }
 }
 
 /**
@@ -81,12 +107,11 @@ class DeltaCalculator(
 
         val actualGapMs = newest.timestampMillis - baseline.timestampMillis
 
-        // Gap must not exceed the maximum allowed gap (20 min)
-        if (actualGapMs > MAX_GAP_MINUTES * MILLIS_PER_MINUTE) return null
-
-        // Must have at least a minimal gap to prevent comparing identical back-to-back reposts
-        val minGapMs = (targetIntervalMinutes.coerceAtLeast(MIN_INTERVAL_MINUTES) * MILLIS_PER_MINUTE) / 2
-        if (actualGapMs < minGapMs.coerceAtLeast(MIN_TIME_GAP_MILLIS)) return null
+        // Gap must fall within the tolerance window (~±40% around target interval)
+        val toleranceMs = (intervalMs * 4) / 10
+        val minGapMs = maxOf(intervalMs - toleranceMs, MIN_TIME_GAP_MILLIS)
+        val maxGapMs = intervalMs + toleranceMs
+        if (actualGapMs !in minGapMs..maxGapMs) return null
 
         return GlucoseDelta(
             deltaMgdl = newest.mgdl - baseline.mgdl,
@@ -97,8 +122,7 @@ class DeltaCalculator(
     companion object {
         const val DEFAULT_INTERVAL_MINUTES: Int = 10
         const val MIN_INTERVAL_MINUTES: Int = 3
-        const val MAX_INTERVAL_MINUTES: Int = 30
-        const val MAX_GAP_MINUTES: Int = 20
+        const val MAX_INTERVAL_MINUTES: Int = 20
         private const val MILLIS_PER_MINUTE: Long = 60_000L
         private const val MIN_TIME_GAP_MILLIS: Long = 60_000L // at least 1 minute apart
     }

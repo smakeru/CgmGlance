@@ -140,7 +140,7 @@ class GlucoseTileService : TileService() {
                 ),
             ).addContent(
                 text(
-                    if (display.deltaFormatted != null && display.freshness.allowsTrend) {
+                    if (display.deltaFormatted != null) {
                         "${display.deltaFormatted} ${display.unitLabel}"
                     } else {
                         display.unitLabel

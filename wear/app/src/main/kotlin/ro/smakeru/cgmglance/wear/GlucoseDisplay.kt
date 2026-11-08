@@ -26,7 +26,7 @@ data class GlucoseDisplay(
     val ageMinutes: Long?,
     /** For the ranged-value complication. Null when there is nothing trustworthy to plot. */
     val gaugeValue: Float?,
-    /** Signed difference against baseline reading from earlier (~10 min), or null. */
+    /** Signed difference against baseline reading from configured window (e.g. 10 min), or null. */
     val deltaMgdl: Int? = null,
 ) {
     /** True when there is a number worth showing at all. */
@@ -36,11 +36,11 @@ data class GlucoseDisplay(
 
     /** Formatted delta with sign according to unit (e.g. "+4", "-5", "+0.2"), or null. */
     val deltaFormatted: String?
-        get() = deltaMgdl?.let { GlucoseDelta(it, 0).format(unit) }
+        get() = deltaMgdl?.let { GlucoseDelta.formatValue(it, unit) }
 
     /** Formatted delta with parenthesis (e.g. "(+4)", "(-0.2)"), or null. */
     val deltaWithParens: String?
-        get() = deltaMgdl?.let { GlucoseDelta(it, 0).formatWithParens(unit) }
+        get() = deltaMgdl?.let { GlucoseDelta.formatWithParens(it, unit) }
 
     /**
      * Value and arrow as one string, for slots that render a single piece of text.

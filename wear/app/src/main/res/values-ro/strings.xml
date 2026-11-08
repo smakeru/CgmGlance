@@ -18,6 +18,7 @@
     <string name="age_may_be_out_of_date">poate fi depășită</string>
 
     <string name="cd_glucose">Glicemie %1$s %2$s</string>
+    <string name="cd_delta">variație %1$s</string>
     <string name="cd_no_reading">Nicio citire recentă de glicemie</string>
     <string name="cd_out_of_date">citirea poate fi depășită</string>
     <string name="unit_spoken_mgdl">miligrame pe decilitru</string>

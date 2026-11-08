@@ -60,6 +60,22 @@ class WearTextsTest {
     }
 
     @Test
+    fun `the spoken description includes delta when present`() {
+        val withDelta =
+            GlucoseDisplay.of(
+                reading = reading,
+                trend = TrendArrow.RISING_SLIGHTLY,
+                unit = GlucoseUnit.MG_DL,
+                range = GlucoseRange.LOW,
+                freshness = ReadingFreshness.FRESH,
+                ageMinutes = 3,
+                deltaMgdl = 4,
+            )
+        val spoken = texts().describe(withDelta)
+        assertEquals("Glucose 112 milligrams per decilitre, low, rising slowly, change +4, 3 min ago", spoken)
+    }
+
+    @Test
     fun `being in range is not announced`() {
         // A screen reader saying "in range" on every glance is noise the sighted display does
         // not impose.
