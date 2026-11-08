@@ -52,3 +52,13 @@ Acest document păstrează ideile și oportunitățile de dezvoltare identificat
 
 ## 6. Mod Multi-Persoană / Părinte („Care View”)
 * **Concept:** Afișarea în paralel a citirilor dacă un utilizator monitorizează doi senzori simultan (ex. testare LinX + Dexcom în paralel) sau pentru un părinte care dorește să vadă glicemia copilului pe ecranul propriu.
+
+---
+
+## 7. Susținere Proiect / Opțiuni de Donație („Buy Me a Coffee”) — *Post-Lansare Publică*
+* **Status:** Amânat intenționat pentru etapa de după aprobarea oficială pe pista de producție Google Play (aplicația rămâne 100% gratuită pe toată durata testării închise de 14 zile).
+* **Strategie de implementare sigură (conform politicilor Google Play):**
+  * **Pe site-ul web (`cgm-glance-play.web.app`) & GitHub:** Integrarea unor butoane directe de susținere (*Buy Me a Coffee*, *Revolut*, *PayPal* / *Ko-fi*). Nu implică comisioane Google și nu are restricții de magazin.
+  * **În aplicația mobilă (Phone):** Fără butoane directe de plată externă (pentru a respecta politica Google Payments). Doar link discret în Setări / Despre către site-ul oficial („Site & ghid: cgm-glance-play.web.app”).
+  * **Varianta secundară (opțional):** Dacă se dorește buton dedicat în aplicație, acesta trebuie implementat exclusiv prin *Google Play In-App Billing* („Tip / Bacșiș dezvoltator” — comision 15% Google, necesită profil de comerciant Play Console).
+
