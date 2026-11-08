@@ -22,7 +22,7 @@ object SyncContract {
      * Incremented whenever a key is added. Readers use it for diagnostics only; they must
      * never refuse a payload merely because the number is higher than they know.
      */
-    const val SCHEMA_VERSION: Int = 2
+    const val SCHEMA_VERSION: Int = 3
 
     /**
      * Advertised by the watch, looked for by the phone.
@@ -85,4 +85,10 @@ object SyncContract {
      * it from the high threshold rather than discarding the user's whole range.
      */
     const val KEY_VERY_HIGH_MGDL: String = "veryHighMgdl"
+
+    /**
+     * Added in schema 3. Signed delta in mg/dL against the baseline reading (~10 min ago).
+     * Optional: omitted when no baseline exists or when readings are stale.
+     */
+    const val KEY_DELTA_MGDL: String = "deltaMgdl"
 }

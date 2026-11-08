@@ -127,4 +127,56 @@ class GlucoseDisplayTest {
         // Clipping the gauge must never clip the number itself.
         assertEquals("590", shown.value)
     }
+
+    @Test
+    fun `delta is formatted with sign and parens when reading is fresh`() {
+        val shown =
+            GlucoseDisplay.of(
+                reading = reading,
+                trend = TrendArrow.RISING_SLIGHTLY,
+                unit = GlucoseUnit.MG_DL,
+                range = GlucoseRange.IN_RANGE,
+                freshness = ReadingFreshness.FRESH,
+                ageMinutes = 0,
+                deltaMgdl = 4,
+            )
+
+        assertEquals("+4", shown.deltaFormatted)
+        assertEquals("(+4)", shown.deltaWithParens)
+    }
+
+    @Test
+    fun `negative delta formats with minus`() {
+        val shown =
+            GlucoseDisplay.of(
+                reading = reading,
+                trend = TrendArrow.FALLING_SLIGHTLY,
+                unit = GlucoseUnit.MG_DL,
+                range = GlucoseRange.IN_RANGE,
+                freshness = ReadingFreshness.FRESH,
+                ageMinutes = 0,
+                deltaMgdl = -5,
+            )
+
+        assertEquals("-5", shown.deltaFormatted)
+        assertEquals("(-5)", shown.deltaWithParens)
+    }
+
+    @Test
+    fun `delta is hidden when reading becomes stale`() {
+        val shown =
+            GlucoseDisplay.of(
+                reading = reading,
+                trend = TrendArrow.RISING_SLIGHTLY,
+                unit = GlucoseUnit.MG_DL,
+                range = GlucoseRange.IN_RANGE,
+                freshness = ReadingFreshness.STALE,
+                ageMinutes = 20,
+                deltaMgdl = 4,
+            )
+
+        assertNull(shown.deltaMgdl)
+        assertNull(shown.deltaFormatted)
+        assertNull(shown.deltaWithParens)
+    }
 }

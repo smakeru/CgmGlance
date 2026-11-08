@@ -60,6 +60,7 @@ class WatchMainActivity : ComponentActivity() {
                             range = reading?.let { prefs.thresholds.classify(it) },
                             freshness = freshnessPolicy.evaluate(reading, clock),
                             ageMinutes = freshnessPolicy.ageMillis(reading, clock)?.let { it / 60_000L },
+                            deltaMgdl = payload?.deltaMgdl,
                         )
                     },
                 )
@@ -102,7 +103,12 @@ private fun GlucoseScreen(
         )
 
         Text(
-            text = display.unitLabel,
+            text =
+                if (display.deltaFormatted != null && display.freshness.allowsTrend) {
+                    "${display.deltaFormatted} ${display.unitLabel}"
+                } else {
+                    display.unitLabel
+                },
             fontSize = SECONDARY_SIZE_SP.sp,
             color = COLOR_MUTED,
         )

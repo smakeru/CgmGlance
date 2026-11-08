@@ -69,6 +69,13 @@
     <string name="field_very_high">Very high</string>
     <string name="settings_units_note">All values in mg/dL.</string>
     <string name="settings_display_unit">Display unit</string>
+
+    <string name="settings_delta_title">Glucose change window (Delta)</string>
+    <string name="settings_delta_subtitle">Calculates the signed difference (+ / -) compared to an earlier reading. Displayed on the phone widget, watch tile, and watch complications.</string>
+    <string name="settings_delta_5m">5 min</string>
+    <string name="settings_delta_10m">10 min (recommended)</string>
+    <string name="settings_delta_15m">15 min</string>
+    <string name="settings_delta_20m">20 min</string>
     <string name="settings_invalid">Urgent low must be below low, low below high, and high below very high. All four must be values a sensor can report.</string>
     <string name="action_save">Save</string>
     <string name="action_back">Back</string>

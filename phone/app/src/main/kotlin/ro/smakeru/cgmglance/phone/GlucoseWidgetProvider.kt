@@ -133,11 +133,19 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
                     R.id.widget_trend,
                     if (freshness.allowsTrend) trendSymbol(snapshot.trend) else "",
                 )
+                val delta = snapshot.delta
+                val showDelta = delta != null && freshness.allowsTrend
+                views.setTextViewText(
+                    R.id.widget_delta,
+                    if (delta != null && freshness.allowsTrend) delta.format(unit) else "",
+                )
+                views.setViewVisibility(R.id.widget_delta, if (showDelta) View.VISIBLE else View.GONE)
                 // Same palette and thresholds as the watch, so the wrist and the home screen
                 // never disagree. An old reading is muted rather than coloured.
                 val color = GlucoseRangePalette.colorFor(reading?.let(thresholds::classify), freshness)
                 views.setTextColor(R.id.widget_value, color)
                 views.setTextColor(R.id.widget_trend, color)
+                views.setTextColor(R.id.widget_delta, color)
                 views.setInt(R.id.widget_accent, "setColorFilter", color)
                 views.setInt(R.id.widget_root, "setBackgroundResource", backgroundFor(color))
                 views.setTextViewText(

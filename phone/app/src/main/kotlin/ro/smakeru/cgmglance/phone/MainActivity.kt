@@ -81,8 +81,9 @@ class MainActivity : ComponentActivity() {
                             initialUnit = app.preferences.loadUnit(),
                             initialHealthExport = app.preferences.loadHealthExportSettings(),
                             initialSource = app.preferences.loadSource(),
-                            onSave = { thresholds, unit, healthExport, glucoseSource ->
-                                app.updatePreferences(thresholds, unit, healthExport, glucoseSource)
+                            initialDeltaInterval = app.preferences.loadDeltaIntervalMinutes(),
+                            onSave = { thresholds, unit, healthExport, glucoseSource, deltaInterval ->
+                                app.updatePreferences(thresholds, unit, healthExport, glucoseSource, deltaInterval)
                                 showSettings = false
                             },
                             onBack = { showSettings = false },

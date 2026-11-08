@@ -1,6 +1,7 @@
 package ro.smakeru.cgmglance.wear
 
 import androidx.wear.watchface.complications.data.ComplicationType
+import androidx.wear.watchface.complications.data.LongTextComplicationData
 import androidx.wear.watchface.complications.data.RangedValueComplicationData
 import androidx.wear.watchface.complications.data.ShortTextComplicationData
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
@@ -135,5 +136,25 @@ class GlucoseComplicationServiceTest {
 
         assertNull(request(ComplicationType.MONOCHROMATIC_IMAGE))
         assertNull(request(ComplicationType.SMALL_IMAGE))
+    }
+
+    @Test
+    fun `long text includes delta with parens when available`() {
+        val timestamp = System.currentTimeMillis()
+        store.saveLatest(
+            mapOf(
+                SyncContract.KEY_SCHEMA_VERSION to SyncContract.SCHEMA_VERSION,
+                SyncContract.KEY_SEQUENCE to 1L,
+                SyncContract.KEY_MGDL to 181,
+                SyncContract.KEY_TIMESTAMP_MILLIS to timestamp,
+                SyncContract.KEY_SENDER_NOW_MILLIS to timestamp,
+                SyncContract.KEY_TREND to TrendArrow.RISING_SLIGHTLY.name,
+                SyncContract.KEY_DELTA_MGDL to 4,
+            ),
+        )
+
+        val data = assertNotNull(request(ComplicationType.LONG_TEXT)) as LongTextComplicationData
+        val text = data.text.getTextAt(service.resources, Instant.now()).toString()
+        assertEquals("181 ↗ (+4)", text)
     }
 }
