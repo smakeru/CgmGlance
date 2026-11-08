@@ -28,7 +28,7 @@ android {
         applicationId = "ro.smakeru.cgmglance"
         minSdk = libs.versions.minSdkPhone.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 11
+        versionCode = 12
         versionName = "1.2.5"
     }
 
