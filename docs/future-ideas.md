@@ -4,7 +4,7 @@ Acest document păstrează ideile și oportunitățile de dezvoltare identificat
 
 ---
 
-## 1. Indicatorul de Variație / Delta (`Δ +X` / `-X`) — *În Implementare*
+## 1. Indicatorul de Variație / Delta (`Δ +X` / `-X`) — *✅ Implementat (v1.2.3)*
 * **Concept:** Afișarea diferenței numerice exacte de glicemie față de citirea precedentă (~5 minute în urmă), pe lângă săgeata direcțională de trend (ex. `112 ↗ (+4)`).
 * **Utilitate:** Săgeata `↗` indică doar direcția calitativă; delta indică viteza cantitativă (+2 vs. +9 mg/dL).
 * **Suprafețe vizate:**
@@ -61,4 +61,13 @@ Acest document păstrează ideile și oportunitățile de dezvoltare identificat
   * **Pe site-ul web (`cgm-glance-play.web.app`) & GitHub:** Integrarea unor butoane directe de susținere (*Buy Me a Coffee*, *Revolut*, *PayPal* / *Ko-fi*). Nu implică comisioane Google și nu are restricții de magazin.
   * **În aplicația mobilă (Phone):** Fără butoane directe de plată externă (pentru a respecta politica Google Payments). Doar link discret în Setări / Despre către site-ul oficial („Site & ghid: cgm-glance-play.web.app”).
   * **Varianta secundară (opțional):** Dacă se dorește buton dedicat în aplicație, acesta trebuie implementat exclusiv prin *Google Play In-App Billing* („Tip / Bacșiș dezvoltator” — comision 15% Google, necesită profil de comerciant Play Console).
+
+---
+
+## 8. Suport Multi-Limbă Extins & Selector Manual de Limbă în Setări — *To-Do Prioritar*
+* **Concept:** Extinderea traducerilor aplicației (peste Română și Engleză) cu cele mai folosite limbi europene/internaționale (ex. Germană `de`, Franceză `fr`, Spaniolă `es`, Italiană `it`, Poloneză `pl`, Maghiară `hu`, etc.) și adăugarea unui **selector de limbă direct în ecranul de Setări** al aplicației.
+* **Comportament vizat:**
+  * Opțiune *„Implicit sistem (System default)”* + alegere manuală a limbii dorite direct din Setările CGM Glance, independent de limba generală a telefonului.
+  * Aplicarea limbii selectate atât în interfața aplicației de telefon și în widget-uri, cât și sincronizarea preferinței către aplicația de ceas (Wear OS).
+
 
