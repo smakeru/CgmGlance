@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -76,6 +77,9 @@ class MainActivity : ComponentActivity() {
 
                 Surface(modifier = Modifier.fillMaxSize()) {
                     if (showSettings) {
+                        // System back (gesture or nav-bar arrow) must behave like the in-app
+                        // back arrow; without this it reaches the Activity and closes the app.
+                        BackHandler { showSettings = false }
                         SettingsScreen(
                             initialThresholds = app.preferences.loadThresholds(),
                             initialUnit = app.preferences.loadUnit(),
