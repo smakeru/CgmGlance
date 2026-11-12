@@ -1,2450 +1,783 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>CGM Glance — Glicemia pe Ceas (Wear OS) și Widget pe Telefon</title>
-  <meta name="description" content="Aplicație Android & Wear OS gratuită, fără reclame și Open Source pentru vizualizarea glicemiei din SinoCare LinX și Dexcom ONE+ direct pe ceas și în widget-uri pe telefon." />
-  <meta property="og:title" content="CGM Glance — Glicemia pe Ceas (Wear OS) & Widget Telefon" />
-  <meta property="og:description" content="Vezi glicemia din SinoCare LinX și Dexcom ONE+ direct pe cadranul ceasului (Wear OS) și în widget-uri pe ecranul telefonului. 100% gratuit, fără cont, fără reclame." />
-  <meta property="og:image" content="assets/phone-screenshot-2.png" />
-  <meta name="theme-color" content="#071310" />
-  <link rel="icon" type="image/png" href="assets/icon-512.png" />
-  <link rel="apple-touch-icon" href="assets/icon-512.png" />
-
-  <style>
-    :root {
-      --bg-dark: #060e0b;
-      --bg-surface: #0a1713;
-      --bg-card: rgba(14, 30, 24, 0.78);
-      --bg-card-elevated: rgba(20, 42, 34, 0.88);
-      --border-subtle: rgba(52, 211, 153, 0.16);
-      --border-medium: rgba(52, 211, 153, 0.28);
-      --border-strong: rgba(74, 222, 128, 0.5);
-      --accent: #34d399;
-      --accent-bright: #4ade80;
-      --accent-dark: #059669;
-      --accent-glow: rgba(52, 211, 153, 0.25);
-      --amber: #fbbf24;
-      --text-main: #f8fafc;
-      --text-soft: #cbd5e1;
-      --text-muted: #94a3b8;
-      --radius-xl: 24px;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
-      --shadow-card: 0 16px 36px -10px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--border-subtle);
-      --shadow-elevated: 0 24px 48px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(52, 211, 153, 0.15);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Inter, Arial, sans-serif;
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(16, 185, 129, 0.2), transparent 75%),
-        radial-gradient(ellipse 60% 40% at 90% 40%, rgba(5, 150, 105, 0.1), transparent 70%),
-        radial-gradient(ellipse 60% 40% at 10% 70%, rgba(16, 185, 129, 0.08), transparent 70%);
-      background-attachment: fixed;
-      color: var(--text-main);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-      padding-bottom: 78px; /* Space for mobile sticky bar */
-    }
-
-    @media (min-width: 769px) {
-      body {
-        padding-bottom: 0;
-      }
-    }
-
-    a {
-      color: var(--accent-bright);
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
-
-    a:hover {
-      color: #a7f3d0;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1140px;
-      margin: 0 auto;
-      padding: 0 16px;
-    }
-
-    @media (min-width: 640px) {
-      .container {
-        padding: 0 24px;
-      }
-    }
-
-    /* Navbar */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      background: rgba(6, 14, 11, 0.88);
-      border-bottom: 1px solid var(--border-subtle);
-      transition: all 0.2s ease;
-    }
-
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 62px;
-      gap: 12px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 1.15rem;
-      letter-spacing: -0.01em;
-      color: var(--text-main);
-      text-decoration: none;
-      flex-shrink: 0;
-    }
-
-    .brand img {
-      width: 36px;
-      height: 36px;
-      border-radius: 9px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(74, 222, 128, 0.25);
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    @media (min-width: 640px) {
-      .nav-actions {
-        gap: 12px;
-      }
-    }
-
-    .lang-switch {
-      display: inline-flex;
-      background: rgba(20, 42, 34, 0.85);
-      border: 1px solid var(--border-subtle);
-      border-radius: 999px;
-      padding: 2px;
-      flex-shrink: 0;
-    }
-
-    .lang-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .lang-btn.active {
-      background: var(--accent);
-      color: #03140e;
-      box-shadow: 0 2px 8px rgba(52, 211, 153, 0.35);
-    }
-
-    /* .btn.nav-btn-cta: must outrank `.btn { display: inline-flex }` declared below */
-    .btn.nav-btn-cta {
-      display: none;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    /* Same breakpoint as .mobile-sticky-bar: below it the sticky bar carries the CTA */
-    @media (min-width: 769px) {
-      .btn.nav-btn-cta {
-        display: inline-flex;
-      }
-    }
-
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 18px;
-      min-height: 48px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 0.94rem;
-      letter-spacing: -0.01em;
-      transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-      cursor: pointer;
-      border: none;
-      text-align: center;
-      text-decoration: none;
-      user-select: none;
-      box-sizing: border-box;
-      max-width: 100%;
-      word-break: break-word;
-      line-height: 1.3;
-    }
-
-    .btn:active {
-      transform: scale(0.98);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-      color: #041b13;
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.32);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #4ade80 0%, #34d399 100%);
-      box-shadow: 0 8px 26px rgba(16, 185, 129, 0.45);
-      color: #02120d;
-    }
-
-    .btn-secondary {
-      background: var(--bg-card-elevated);
-      color: var(--text-main);
-      border: 1px solid var(--border-medium);
-      backdrop-filter: blur(8px);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(30, 62, 50, 0.9);
-      border-color: var(--accent);
-      color: #fff;
-    }
-
-    .btn-ghost {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-soft);
-      border: 1px solid var(--border-subtle);
-      padding: 10px 16px;
-      min-height: 44px;
-      font-size: 0.88rem;
-    }
-
-    .btn-ghost:hover {
-      background: rgba(52, 211, 153, 0.1);
-      border-color: var(--border-medium);
-      color: #fff;
-    }
-
-    /* Hero */
-    .hero {
-      padding: 18px 0 24px;
-      text-align: center;
-      position: relative;
-    }
-
-    @media (min-width: 768px) {
-      .hero {
-        padding: 52px 0 44px;
-      }
-    }
-
-    .badges-wrapper {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 6px;
-      margin-bottom: 12px;
-    }
-
-    .badge-pill {
-      background: rgba(52, 211, 153, 0.1);
-      border: 1px solid var(--border-subtle);
-      color: var(--accent-bright);
-      padding: 5px 11px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .badge-pill.highlight {
-      background: rgba(52, 211, 153, 0.18);
-      border-color: var(--border-strong);
-      color: #fff;
-    }
-
-    .nowrap {
-      white-space: nowrap;
-    }
-
-    .badge-pill.live-badge {
-      background: rgba(16, 185, 129, 0.2);
-      border-color: var(--accent-bright);
-      color: #fff;
-      box-shadow: 0 0 16px rgba(52, 211, 153, 0.22);
-    }
-
-    .live-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #4ade80;
-      box-shadow: 0 0 8px #4ade80;
-      display: inline-block;
-      flex-shrink: 0;
-      animation: livePulse 1.8s infinite ease-in-out;
-    }
-
-    @keyframes livePulse {
-      0%, 100% {
-        transform: scale(1);
-        opacity: 1;
-        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
-      }
-      50% {
-        transform: scale(1.18);
-        opacity: 0.85;
-        box-shadow: 0 0 0 6px rgba(74, 222, 128, 0);
-      }
-    }
-
-    .hero h1 {
-      font-size: clamp(1.62rem, 5vw, 3.25rem);
-      line-height: 1.16;
-      font-weight: 800;
-      max-width: 880px;
-      margin: 0 auto 12px;
-      letter-spacing: -0.025em;
-    }
-
-    .hero h1 span.highlight {
-      background: linear-gradient(135deg, #a7f3d0 0%, #34d399 50%, #10b981 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
-    }
-
-    .hero p.subtitle {
-      font-size: clamp(0.9rem, 2.1vw, 1.12rem);
-      color: var(--text-soft);
-      max-width: 700px;
-      margin: 0 auto 16px;
-      line-height: 1.52;
-    }
-
-    /* Direct Data Flow Diagram (Sensor -> Phone -> Watch, No Cloud) */
-    .flow-diagram-card {
-      background: linear-gradient(180deg, rgba(14, 34, 27, 0.92) 0%, rgba(8, 20, 16, 0.95) 100%);
-      border: 1px solid var(--border-strong);
-      border-radius: var(--radius-lg);
-      padding: 12px 10px;
-      max-width: 760px;
-      margin: 0 auto 12px;
-      box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(52, 211, 153, 0.12);
-    }
-
-    @media (min-width: 640px) {
-      .flow-diagram-card {
-        padding: 18px 22px;
-        margin-bottom: 16px;
-      }
-    }
-
-    .flow-nodes-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
-
-    @media (min-width: 480px) {
-      .flow-nodes-row {
-        justify-content: center;
-        gap: 10px;
-      }
-    }
-
-    .flow-node {
-      background: rgba(6, 15, 12, 0.85);
-      border: 1px solid var(--border-medium);
-      border-radius: 10px;
-      padding: 7px 6px;
-      min-width: 0;
-      flex: 1 1 0;
-      max-width: 150px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-
-    @media (min-width: 480px) {
-      .flow-node {
-        padding: 9px 14px;
-      }
-    }
-
-    .flow-node.watch-node {
-      border-color: var(--accent-bright);
-      background: rgba(16, 42, 33, 0.9);
-      box-shadow: 0 0 12px rgba(52, 211, 153, 0.18);
-    }
-
-    .flow-node-icon {
-      font-size: 1.15rem;
-      line-height: 1.1;
-    }
-
-    .flow-node-title {
-      font-size: 0.74rem;
-      font-weight: 800;
-      color: #fff;
-      white-space: nowrap;
-      line-height: 1.2;
-    }
-
-    @media (min-width: 480px) {
-      .flow-node-title {
-        font-size: 0.84rem;
-      }
-    }
-
-    .flow-node-sub {
-      font-size: 0.65rem;
-      color: var(--accent-bright);
-      font-weight: 600;
-      white-space: nowrap;
-      line-height: 1.15;
-    }
-
-    @media (min-width: 480px) {
-      .flow-node-sub {
-        font-size: 0.72rem;
-      }
-    }
-
-    .flow-connector {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      flex: 0 0 auto;
-      min-width: 32px;
-      position: relative;
-    }
-
-    @media (min-width: 480px) {
-      .flow-connector {
-        min-width: 58px;
-      }
-    }
-
-    .flow-connector-label {
-      font-size: 0.6rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: var(--accent-bright);
-      margin-bottom: 2px;
-      white-space: nowrap;
-    }
-
-    @media (min-width: 480px) {
-      .flow-connector-label {
-        font-size: 0.68rem;
-      }
-    }
-
-    .flow-line {
-      width: 100%;
-      height: 2px;
-      background: rgba(52, 211, 153, 0.35);
-      position: relative;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .flow-line::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -35%;
-      width: 35%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, #4ade80, #fff);
-      animation: flowSignal 1.6s infinite linear;
-    }
-
-    @keyframes flowSignal {
-      0% { left: -35%; }
-      100% { left: 100%; }
-    }
-
-    .flow-arrow-tip {
-      font-size: 0.68rem;
-      color: var(--accent-bright);
-      line-height: 1;
-      margin-top: -5px;
-      align-self: flex-end;
-    }
-
-    .no-cloud-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      background: rgba(52, 211, 153, 0.07);
-      border: 1px solid var(--border-medium);
-      border-radius: 10px;
-      padding: 7px 10px;
-      font-size: 0.77rem;
-      color: var(--text-soft);
-      line-height: 1.35;
-    }
-
-    @media (min-width: 640px) {
-      .no-cloud-bar {
-        font-size: 0.84rem;
-        padding: 8px 14px;
-      }
-    }
-
-    .no-cloud-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(52, 211, 153, 0.16);
-      border: 1px solid var(--accent-bright);
-      color: #fff;
-      font-weight: 800;
-      font-size: 0.72rem;
-      padding: 2px 8px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-
-    .no-cloud-icon {
-      width: 16px;
-      height: 16px;
-      display: inline-block;
-      vertical-align: middle;
-      flex-shrink: 0;
-    }
-
-    /* Airplane Mode Proof Card */
-    .airplane-proof-card {
-      background: rgba(20, 42, 34, 0.75);
-      border: 1px solid var(--border-medium);
-      border-radius: var(--radius-md);
-      padding: 10px 12px;
-      max-width: 760px;
-      margin: 0 auto 16px;
-      font-size: 0.82rem;
-      color: var(--text-soft);
-      line-height: 1.45;
-      text-align: left;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    @media (min-width: 640px) {
-      .airplane-proof-card {
-        padding: 12px 18px;
-        font-size: 0.88rem;
-        align-items: center;
-        margin-bottom: 22px;
-      }
-    }
-
-    .airplane-proof-card .airplane-icon {
-      font-size: 1.2rem;
-      line-height: 1.2;
-      flex-shrink: 0;
-    }
-
-    .airplane-proof-card strong {
-      color: #fff;
-    }
-
-    /* Cloud vs CGM Glance Comparison Table */
-    .compare-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-medium);
-      border-radius: var(--radius-xl);
-      padding: 16px 12px;
-      max-width: 820px;
-      margin: 0 auto 28px;
-      box-shadow: var(--shadow-card);
-      overflow: hidden;
-    }
-
-    @media (min-width: 640px) {
-      .compare-card {
-        padding: 24px 28px;
-        margin-bottom: 36px;
-      }
-    }
-
-    .compare-card h3 {
-      text-align: center;
-      font-size: clamp(1.05rem, 2.5vw, 1.3rem);
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 14px;
-    }
-
-    .compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      table-layout: fixed;
-    }
-
-    @media (min-width: 640px) {
-      .compare-table {
-        font-size: 0.9rem;
-      }
-    }
-
-    .compare-table th,
-    .compare-table td {
-      padding: 9px 6px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-      vertical-align: middle;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    @media (min-width: 640px) {
-      .compare-table th,
-      .compare-table td {
-        padding: 12px 14px;
-      }
-    }
-
-    .compare-table th:nth-child(1),
-    .compare-table td:nth-child(1) {
-      width: 40%;
-      color: var(--text-soft);
-      font-weight: 600;
-    }
-
-    .compare-table th:nth-child(2),
-    .compare-table td:nth-child(2) {
-      width: 28%;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .compare-table th:nth-child(3),
-    .compare-table td:nth-child(3) {
-      width: 32%;
-      text-align: center;
-      background: rgba(52, 211, 153, 0.08);
-      color: #fff;
-      font-weight: 700;
-    }
-
-    .compare-table thead th {
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      border-bottom: 1px solid var(--border-medium);
-      color: var(--text-muted);
-    }
-
-    .compare-table thead th:nth-child(3) {
-      color: var(--accent-bright);
-      background: rgba(52, 211, 153, 0.14);
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-    }
-
-    .compare-table tr:last-child td {
-      border-bottom: none;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .live-dot,
-      .flow-line::after {
-        animation: none !important;
-      }
-    }
-
-    /* Key highlights row */
-    .hero-features-chips {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 6px;
-      margin-bottom: 22px;
-    }
-
-    .chip-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(14, 30, 24, 0.6);
-      border: 1px solid var(--border-subtle);
-      padding: 5px 11px;
-      border-radius: 999px;
-      font-size: 0.77rem;
-      color: var(--text-soft);
-    }
-
-    .chip-item strong {
-      color: var(--text-main);
-    }
-
-    /* 2-Step Install Box */
-    .install-box {
-      background: linear-gradient(180deg, rgba(16, 38, 30, 0.95) 0%, rgba(10, 24, 19, 0.98) 100%);
-      border: 1px solid var(--border-strong);
-      border-radius: var(--radius-xl);
-      padding: 20px 14px;
-      max-width: 880px;
-      margin: 0 auto 40px;
-      box-shadow: var(--shadow-elevated);
-      text-align: left;
-      position: relative;
-      overflow: hidden;
-    }
-
-    @media (min-width: 640px) {
-      .install-box {
-        padding: 32px 28px;
-        margin-bottom: 56px;
-      }
-    }
-
-    .install-box::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 10%;
-      right: 10%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent-bright), transparent);
-    }
-
-    .install-header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .install-header h2 {
-      font-size: clamp(1.25rem, 3vw, 1.65rem);
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      letter-spacing: -0.015em;
-    }
-
-    .install-header p {
-      color: var(--text-soft);
-      font-size: 0.92rem;
-      max-width: 620px;
-      margin: 0 auto;
-    }
-
-    .install-steps-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    @media (min-width: 768px) {
-      .install-steps-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-      }
-    }
-
-    .install-step-card {
-      background: rgba(6, 16, 12, 0.7);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 18px 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      transition: border-color 0.2s ease, transform 0.2s ease;
-    }
-
-    @media (min-width: 640px) {
-      .install-step-card {
-        padding: 24px;
-      }
-    }
-
-    .install-step-card:hover {
-      border-color: var(--border-medium);
-      transform: translateY(-2px);
-    }
-
-    .step-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(52, 211, 153, 0.18);
-      color: var(--accent-bright);
-      font-weight: 800;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      padding: 4px 10px;
-      border-radius: 6px;
-      margin-bottom: 12px;
-      width: fit-content;
-    }
-
-    .install-step-card h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-
-    .install-step-card p {
-      font-size: 0.88rem;
-      color: var(--text-soft);
-      line-height: 1.55;
-      margin-bottom: 18px;
-    }
-
-    .install-step-card .card-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: auto;
-    }
-
-    .install-note {
-      background: rgba(251, 191, 36, 0.08);
-      border: 1px solid rgba(251, 191, 36, 0.28);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-      font-size: 0.85rem;
-      color: #fef3c7;
-      line-height: 1.5;
-    }
-
-    .install-note strong {
-      color: #fbbf24;
-    }
-
-    /* Section Headings */
-    .section {
-      padding: 40px 0;
-    }
-
-    @media (min-width: 768px) {
-      .section {
-        padding: 64px 0;
-      }
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 26px;
-    }
-
-    @media (min-width: 768px) {
-      .section-title {
-        margin-bottom: 44px;
-      }
-    }
-
-    .section-title .section-tag {
-      font-size: 0.76rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--accent-bright);
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    .section-title h2 {
-      font-size: clamp(1.4rem, 3.2vw, 2.2rem);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 10px;
-      color: #fff;
-    }
-
-    .section-title p {
-      color: var(--text-soft);
-      font-size: 0.94rem;
-      max-width: 620px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-
-    /* Wear OS Showcase */
-    .watch-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    @media (min-width: 640px) {
-      .watch-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-      }
-    }
-
-    @media (min-width: 992px) {
-      .watch-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-      }
-    }
-
-    .media-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 20px 16px;
-      text-align: center;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: var(--shadow-card);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .media-card:hover {
-      border-color: var(--border-strong);
-      transform: translateY(-3px);
-      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6), 0 0 20px rgba(52, 211, 153, 0.12);
-    }
-
-    .watch-img-wrap {
-      width: 180px;
-      height: 180px;
-      margin: 0 auto 16px;
-      border-radius: 50%;
-      padding: 6px;
-      background: radial-gradient(circle at 35% 25%, #2d3748 0%, #0f172a 75%, #050811 100%);
-      box-shadow: 
-        0 14px 28px rgba(0, 0, 0, 0.6),
-        inset 0 0 0 3px rgba(255, 255, 255, 0.1),
-        inset 0 0 12px rgba(0, 0, 0, 0.8),
-        0 0 15px rgba(52, 211, 153, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    @media (min-width: 640px) {
-      .watch-img-wrap {
-        width: 210px;
-        height: 210px;
-        padding: 8px;
-      }
-    }
-
-    .watch-img-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-      display: block;
-    }
-
-    .media-card h3 {
-      font-size: 1.08rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-
-    .media-card p {
-      font-size: 0.88rem;
-      color: var(--text-soft);
-      line-height: 1.55;
-    }
-
-    /* Phone Showcase */
-    .phone-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    @media (min-width: 640px) {
-      .phone-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-      }
-    }
-
-    @media (min-width: 992px) {
-      .phone-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-      }
-    }
-
-    .phone-img-wrap {
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      margin-bottom: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.55);
-      background: #020705;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 6px;
-    }
-
-    .phone-img-wrap img {
-      width: 100%;
-      height: auto;
-      max-height: 420px;
-      object-fit: contain;
-      display: block;
-      border-radius: 12px;
-      transition: transform 0.3s ease;
-    }
-
-    .media-card:hover .phone-img-wrap img {
-      transform: scale(1.02);
-    }
-
-    /* ========================================================
-       Interactive Setup Guide (Mobile First & Flawless Touch)
-       ======================================================== */
-    .guide-container {
-      background: var(--bg-card);
-      border: 1px solid var(--border-medium);
-      border-radius: var(--radius-xl);
-      padding: 16px 12px;
-      max-width: 880px;
-      margin: 0 auto;
-      box-shadow: var(--shadow-card);
-      overflow: hidden;
-      touch-action: pan-y pinch-zoom;
-    }
-
-    @media (min-width: 640px) {
-      .guide-container {
-        padding: 28px 24px;
-      }
-    }
-
-    /* 2x2 Grid of Tabs on Mobile (Always 100% visible, no cut-off!) */
-    .guide-tabs {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    @media (min-width: 680px) {
-      .guide-tabs {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-    }
-
-    .guide-tab {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-soft);
-      padding: 10px 8px;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      min-height: 52px;
-      user-select: none;
-      box-sizing: border-box;
-      line-height: 1.25;
-      outline: none;
-    }
-
-    .guide-tab:active {
-      transform: scale(0.97);
-    }
-
-    @media (min-width: 680px) {
-      .guide-tab {
-        flex-direction: row;
-        padding: 11px 12px;
-        font-size: 0.86rem;
-        min-height: 46px;
-        gap: 6px;
-      }
-    }
-
-    @media (hover: hover) {
-      .guide-tab:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: #fff;
-      }
-    }
-
-    .guide-tab.active {
-      background: rgba(52, 211, 153, 0.2);
-      border-color: var(--accent);
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(52, 211, 153, 0.25);
-    }
-
-    .guide-tab .tab-icon {
-      font-size: 1.15rem;
-      line-height: 1;
-      display: inline-block;
-    }
-
-    .guide-tab .tab-label {
-      font-size: 0.82rem;
-      font-weight: 700;
-      display: inline-block;
-    }
-
-    /* Header Bar inside Guide with Step Indicator and Dots */
-    .guide-header-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      background: rgba(6, 16, 12, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: var(--radius-md);
-      padding: 9px 14px;
-      margin-bottom: 14px;
-    }
-
-    .guide-indicator-pill {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--accent-bright);
-      letter-spacing: -0.01em;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .guide-dots {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 2px 0;
-    }
-
-    .guide-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.25);
-      transition: all 0.2s ease;
-      cursor: pointer;
-      display: inline-block;
-    }
-
-    .guide-dot.active {
-      width: 22px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent-glow);
-    }
-
-    .guide-panel {
-      display: none;
-      animation: fadeIn 0.22s ease;
-    }
-
-    .guide-panel.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Step Rows with bulletproof word wrapping */
-    .guide-step-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 10px;
-      background: rgba(6, 16, 12, 0.65);
-      padding: 12px 14px;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      box-sizing: border-box;
-      width: 100%;
-    }
-
-    @media (min-width: 640px) {
-      .guide-step-row {
-        gap: 16px;
-        padding: 16px 18px;
-        margin-bottom: 14px;
-      }
-    }
-
-    .guide-step-num {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #03140e;
-      font-weight: 800;
-      font-size: 0.82rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 1px;
-      box-shadow: 0 2px 6px rgba(52, 211, 153, 0.4);
-    }
-
-    .guide-step-text {
-      flex: 1;
-      min-width: 0; /* Prevents flex children from stretching outside the box */
-      font-size: 0.89rem;
-      line-height: 1.58;
-      color: var(--text-soft);
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    @media (min-width: 640px) {
-      .guide-step-text {
-        font-size: 0.94rem;
-      }
-    }
-
-    .guide-step-text strong {
-      color: #fff;
-    }
-
-    .guide-tip {
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: var(--radius-md);
-      background: rgba(52, 211, 153, 0.08);
-      border: 1px solid var(--border-subtle);
-      font-size: 0.86rem;
-      color: #a7f3d0;
-      line-height: 1.52;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    /* Navigation buttons at bottom of each guide step */
-    .guide-nav-footer {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 18px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    @media (min-width: 540px) {
-      .guide-nav-footer {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-      }
-    }
-
-    .guide-nav-btn {
-      width: 100%;
-      min-height: 44px;
-      padding: 10px 16px;
-      font-size: 0.88rem;
-    }
-
-    @media (min-width: 540px) {
-      .guide-nav-btn {
-        width: auto;
-      }
-    }
-
-    /* Features Grid */
-    .features-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    @media (min-width: 640px) {
-      .features-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 18px;
-      }
-    }
-
-    @media (min-width: 992px) {
-      .features-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-      }
-    }
-
-    .feature-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 20px 18px;
-      transition: border-color 0.2s ease, transform 0.2s ease;
-    }
-
-    .feature-box:hover {
-      border-color: var(--border-medium);
-      transform: translateY(-2px);
-    }
-
-    .feature-icon-badge {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      background: rgba(52, 211, 153, 0.12);
-      border: 1px solid var(--border-subtle);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      margin-bottom: 12px;
-    }
-
-    .feature-box h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-
-    .feature-box p {
-      font-size: 0.87rem;
-      color: var(--text-soft);
-      line-height: 1.55;
-    }
-
-    /* Mobile Sticky Bottom CTA Bar */
-    .mobile-sticky-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 999;
-      background: rgba(6, 14, 11, 0.95);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid var(--border-medium);
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
-      transform: translateY(0);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    @media (min-width: 769px) {
-      .mobile-sticky-bar {
-        display: none !important;
-      }
-    }
-
-    .mobile-sticky-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-    }
-
-    .mobile-sticky-info img {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-
-    .mobile-sticky-text {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .mobile-sticky-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #fff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .mobile-sticky-sub {
-      font-size: 0.72rem;
-      color: var(--accent-bright);
-      white-space: nowrap;
-    }
-
-    .mobile-sticky-btn {
-      padding: 9px 16px;
-      min-height: 40px;
-      font-size: 0.84rem;
-      font-weight: 700;
-      flex-shrink: 0;
-      border-radius: 10px;
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border-subtle);
-      padding: 36px 0 32px;
-      margin-top: 48px;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.86rem;
-      background: rgba(5, 11, 9, 0.6);
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 14px 22px;
-      margin-bottom: 18px;
-    }
-
-    .footer-links a {
-      color: var(--text-soft);
-      font-weight: 600;
-      font-size: 0.86rem;
-      transition: color 0.15s ease;
-    }
-
-    .footer-links a:hover {
-      color: var(--accent-bright);
-    }
-
-    .footer-disclaimer {
-      font-size: 0.8rem;
-      color: #718096;
-      max-width: 740px;
-      margin: 0 auto;
-      line-height: 1.55;
-    }
-
-    /* ========================================================
-       Language Display Logic (Foolproof: only active lang displays!)
-       ======================================================== */
-    /* 1. By default (Romanian): HIDE ALL English elements completely */
-    [data-lang="en"] {
-      display: none !important;
-    }
-
-    /* 2. When English is active: HIDE ALL Romanian elements completely */
-    body.lang-en [data-lang="ro"] {
-      display: none !important;
-    }
-
-    /* 3. By default (Romanian): styling for active Romanian elements */
-    span[data-lang="ro"],
-    strong[data-lang="ro"],
-    p[data-lang="ro"] {
-      display: inline;
-    }
-    div[data-lang="ro"],
-    h1[data-lang="ro"],
-    h2[data-lang="ro"],
-    h3[data-lang="ro"] {
-      display: block;
-    }
-    a[data-lang="ro"] {
-      display: inline-flex;
-    }
-    .btn span[data-lang="ro"],
-    .badge-pill span[data-lang="ro"],
-    .step-pill span[data-lang="ro"] {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    .guide-tab .tab-label[data-lang="ro"] {
-      display: inline-block;
-      text-align: center;
-    }
-
-    /* 4. When English is active: styling for active English elements */
-    body.lang-en [data-lang="en"] {
-      display: block !important;
-    }
-    body.lang-en span[data-lang="en"],
-    body.lang-en strong[data-lang="en"],
-    body.lang-en p[data-lang="en"] {
-      display: inline !important;
-    }
-    body.lang-en div[data-lang="en"],
-    body.lang-en h1[data-lang="en"],
-    body.lang-en h2[data-lang="en"],
-    body.lang-en h3[data-lang="en"] {
-      display: block !important;
-    }
-    body.lang-en a[data-lang="en"] {
-      display: inline-flex !important;
-    }
-    body.lang-en .btn span[data-lang="en"],
-    body.lang-en .badge-pill span[data-lang="en"],
-    body.lang-en .step-pill span[data-lang="en"] {
-      display: inline-flex !important;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    body.lang-en .guide-tab .tab-label[data-lang="en"] {
-      display: inline-block !important;
-      text-align: center;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CGM Glance — Glicemia pe Ceas (Wear OS) și Widget pe Telefon</title>
+<meta name="description" content="Aplicație Android & Wear OS gratuită, fără reclame și Open Source pentru vizualizarea glicemiei din SinoCare LinX și Dexcom ONE+ direct pe ceas și în widget-uri pe telefon.">
+<meta property="og:title" content="CGM Glance — Glicemia pe Ceas (Wear OS) & Widget Telefon">
+<meta property="og:description" content="Vezi glicemia din SinoCare LinX și Dexcom ONE+ direct pe cadranul ceasului (Wear OS) și în widget-uri pe ecranul telefonului. 100% gratuit, fără cont, fără reclame.">
+<meta property="og:image" content="assets/phone-screenshot-2.png">
+<meta name="theme-color" content="#f2f5f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c1513" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="assets/icon-512.png">
+<link rel="apple-touch-icon" href="assets/icon-512.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+  /* Layout: the reading itself is the hero (a live watch + widget in sync); below it, plain
+     full-width bands alternate page/band ground, text left-aligned, devices as the only "objects". */
+  :root {
+    --bg: #f2f5f1;
+    --band: #e7ede8;
+    --surface: #ffffff;
+    --ink: #10201b;
+    --ink-soft: #43554c;
+    --muted: #68796f;
+    --line: #d3dcd5;
+    --accent: #0e6655;
+    --accent-hover: #0a5143;
+    --accent-ink: #ffffff;
+    --accent-wash: #dcebe5;
+    --pulse: #2fd0a0;
+    /* device surfaces stay dark in both themes: they are screens */
+    --screen: #000000;
+    --bezel: #1d2523;
+    --bezel-edge: #3a4743;
+    --screen-text: #c9d1cd;
+    --in-range: #6cc070;
+    --high: #ffd54a;
+    --low: #ffb347;
+    --shadow: 0 30px 60px -28px rgba(16, 32, 27, 0.45);
+    --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --body: "Instrument Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", "Roboto Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c1513; --band: #111d1a; --surface: #15221e; --ink: #eaf1ed; --ink-soft: #b5c4bc;
+      --muted: #86978e; --line: #25352f; --accent: #5fcfab; --accent-hover: #7fdcbd;
+      --accent-ink: #06211a; --accent-wash: #16302a; --pulse: #ffffff; --bezel: #26302d; --bezel-edge: #47554f;
+      --shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.8); color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c1513; --band: #111d1a; --surface: #15221e; --ink: #eaf1ed; --ink-soft: #b5c4bc;
+    --muted: #86978e; --line: #25352f; --accent: #5fcfab; --accent-hover: #7fdcbd;
+    --accent-ink: #06211a; --accent-wash: #16302a; --pulse: #ffffff; --bezel: #26302d; --bezel-edge: #47554f;
+    --shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.8); color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 400 1.0625rem/1.6 var(--body); -webkit-font-smoothing: antialiased;
+    padding-bottom: 76px;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+    z-index: 30; background: var(--bg);
+  }
+  h1, h2, h3, p, ol, ul, dl, dd, figure { margin: 0; padding: 0; }
+  h1, h2, h3 { font-family: var(--display); text-wrap: balance; letter-spacing: -0.02em; }
+  a { color: var(--accent); }
+  code { font-family: var(--mono); font-size: 0.88em; background: var(--accent-wash); padding: 0.1em 0.35em; border-radius: 4px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  /* language: exactly one of the two is rendered */
+  body:not(.lang-en) [lang="en"], body.lang-en [lang="ro"] { display: none !important; }
+
+  .wrap {
+    max-width: 1120px; margin-inline: auto;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+  .eyebrow {
+    font: 500 0.75rem/1.3 var(--mono); letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent);
+  }
+  .band { background: var(--band); border-block: 1px solid var(--line); }
+  .section { padding-block: clamp(48px, 8vw, 96px); }
+  .section-head { display: grid; gap: 12px; max-width: 40rem; margin-bottom: clamp(28px, 4vw, 48px); }
+  .section-head h2 { font-size: clamp(1.7rem, 3.6vw, 2.6rem); line-height: 1.08; }
+  .section-head p { color: var(--ink-soft); }
+
+  /* buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 11px 20px; border-radius: 10px; border: 1px solid transparent;
+    font: 600 0.97rem/1.25 var(--body); text-decoration: none; cursor: pointer; text-align: center;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-quiet { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn-quiet:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-small { min-height: 40px; padding: 8px 16px; font-size: 0.9rem; }
+
+  /* header */
+  .site-header {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 60px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font: 700 1.1rem/1 var(--display); color: var(--ink); text-decoration: none; }
+  .brand img { width: 32px; height: 32px; border-radius: 8px; }
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+  .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+  .lang button {
+    border: 0; background: transparent; color: var(--muted); cursor: pointer;
+    font: 600 0.78rem/1 var(--mono); letter-spacing: 0.05em; padding: 7px 11px; border-radius: 999px;
+  }
+  .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+  .nav .btn { display: none; }
+
+  /* hero */
+  .hero { padding-block: clamp(32px, 6vw, 72px) clamp(40px, 6vw, 80px); }
+  .hero-grid { display: grid; gap: clamp(36px, 6vw, 72px); align-items: center; }
+  .hero-copy { display: grid; gap: 20px; min-width: 0; }
+  .hero h1 { font-size: clamp(2.3rem, 6vw, 4.2rem); line-height: 1; font-weight: 700; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .lede { font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--ink-soft); max-width: 34rem; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; font-size: 0.9rem; color: var(--muted); }
+  .facts li::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+
+  /* live demo: watch + widget */
+  .demo { display: grid; justify-items: center; gap: 0; min-width: 0; }
+  .watch {
+    position: relative; width: min(290px, 72vw); aspect-ratio: 1; border-radius: 50%;
+    background: var(--screen); color: var(--screen-text);
+    box-shadow: 0 0 0 11px var(--bezel), 0 0 0 12px var(--bezel-edge), var(--shadow);
+    display: grid; place-content: center; justify-items: center; gap: 2px; text-align: center;
+    font-family: var(--body);
+  }
+  .watch::after { /* crown */
+    content: ""; position: absolute; right: -19px; top: 50%; width: 9px; height: 34px;
+    transform: translateY(-50%); border-radius: 0 5px 5px 0; background: var(--bezel-edge);
+  }
+  .reading { display: flex; align-items: baseline; gap: 10px; color: var(--range); font-variant-numeric: tabular-nums; transition: color 0.4s ease; }
+  .watch .reading { font: 700 clamp(3.4rem, 17vw, 4.6rem)/1 var(--body); }
+  .watch .reading .arrow { font-size: 0.62em; font-weight: 500; }
+  .watch .delta { font-size: 1.25rem; }
+  .watch .age { font-size: 1.1rem; opacity: 0.8; }
+  .link {
+    display: grid; justify-items: center; gap: 6px; padding-block: 20px 8px;
+    font: 500 0.72rem/1.2 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  }
+  .link::before, .link::after { content: ""; width: 0; height: 22px; border-left: 2px dotted var(--muted); }
+  .widget {
+    width: min(340px, 100%); border-radius: 28px; padding: 16px 20px 16px 16px;
+    display: grid; grid-template-columns: 6px 1fr; gap: 16px; color: var(--screen-text);
+    background: linear-gradient(135deg, #25445a, var(--tint)); box-shadow: var(--shadow);
+    transition: background 0.4s ease;
+  }
+  .widget .bar { border-radius: 3px; background: var(--range); transition: background-color 0.4s ease; }
+  .widget .body { display: grid; gap: 2px; min-width: 0; }
+  .widget .src, .widget .age { font-size: 0.95rem; }
+  .widget .row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .widget .reading { font: 700 2.6rem/1.05 var(--body); gap: 10px; }
+  .widget .reading .arrow { font-size: 0.7em; font-weight: 500; }
+  .widget .reading .d { font-size: 0.38em; font-weight: 700; }
+  .widget .unit { font-size: 1.05rem; }
+  .demo-note { margin-top: 14px; font: 400 0.72rem/1.3 var(--mono); color: var(--muted); letter-spacing: 0.04em; }
+  [data-range="in"] { --range: var(--in-range); --tint: #356b5c; }
+  [data-range="high"] { --range: var(--high); --tint: #6b6a45; }
+  [data-range="low"] { --range: var(--low); --tint: #6e5a48; }
+
+  /* path of a reading */
+  .path { list-style: none; display: grid; gap: 0; }
+  .path li { position: relative; padding: 0 0 28px 28px; border-left: 2px solid var(--accent); display: grid; gap: 4px; }
+  .path li::before {
+    content: ""; position: absolute; left: -8px; top: 0; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--band); border: 3px solid var(--accent);
+  }
+  .path li::before { z-index: 1; }
+  .path li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  /* signal travelling sensor -> phone -> watch */
+  .path li:not(:last-child)::after {
+    content: ""; position: absolute; left: -4px; top: 0; width: 6px; height: 40px; border-radius: 3px;
+    background: linear-gradient(180deg, transparent, var(--pulse)); opacity: 0;
+    animation: travel-y 2.6s linear infinite;
+  }
+  .path li:nth-child(2)::after { animation-delay: 1.3s; }
+  @keyframes travel-y {
+    0% { top: 0; opacity: 0; transform: translateY(0); }
+    6%, 44% { opacity: 1; }
+    50%, 100% { top: 100%; opacity: 0; transform: translateY(-100%); }
+  }
+  @keyframes travel-x {
+    0% { left: 0; opacity: 0; transform: translateX(0); }
+    6%, 44% { opacity: 1; }
+    50%, 100% { left: 100%; opacity: 0; transform: translateX(-100%); }
+  }
+  .path .via { font: 500 0.72rem/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-top: -3px; }
+  .path h3 { font-size: 1.3rem; line-height: 1.2; }
+  .path p { color: var(--ink-soft); font-size: 0.97rem; max-width: 22rem; }
+  .not-on-path {
+    margin-top: 28px; padding: 14px 18px; border: 1px dashed var(--muted); border-radius: 10px;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; color: var(--ink-soft); font-size: 0.97rem;
+  }
+  .not-on-path s { font: 700 1.05rem/1.2 var(--display); color: var(--muted); text-decoration-thickness: 2px; }
+  .airplane { margin-top: clamp(36px, 5vw, 56px); display: grid; gap: 12px; }
+  .airplane h3 { font-size: clamp(1.5rem, 3.4vw, 2.4rem); line-height: 1.1; }
+  .airplane p { color: var(--ink-soft); max-width: 40rem; }
+
+  /* install */
+  .steps { list-style: none; display: grid; gap: 20px; counter-reset: step; }
+  .steps > li {
+    counter-increment: step; background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 24px; display: grid; gap: 12px; align-content: start; min-width: 0;
+  }
+  .steps > li::before {
+    content: counter(step); font: 700 3rem/0.9 var(--display); color: var(--accent);
+  }
+  .steps h3 { font-size: 1.3rem; line-height: 1.2; }
+  .steps p { color: var(--ink-soft); font-size: 0.97rem; }
+  .steps .actions { display: grid; gap: 10px; margin-top: 6px; }
+  .keep { margin-top: 24px; max-width: 46rem; color: var(--ink-soft); }
+  .keep strong { color: var(--ink); }
+
+  /* showcases */
+  .shots { display: grid; gap: clamp(24px, 4vw, 40px); }
+  .shots figure { display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .shots figcaption { display: grid; gap: 6px; }
+  .shots h3 { font-size: 1.2rem; line-height: 1.2; }
+  .shots p { color: var(--ink-soft); font-size: 0.95rem; }
+  .dial {
+    width: min(210px, 60vw); aspect-ratio: 1; border-radius: 50%; object-fit: cover; display: block;
+    box-shadow: 0 0 0 9px var(--bezel), 0 0 0 10px var(--bezel-edge), var(--shadow); margin: 10px 10px 18px;
+  }
+  .phone-shot {
+    width: 100%; max-width: 300px; height: auto; display: block; border-radius: 26px;
+    border: 7px solid var(--bezel); box-shadow: var(--shadow); margin-bottom: 8px;
+  }
+
+  /* guide */
+  .guide { display: grid; gap: 20px; max-width: 52rem; }
+  .tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border-bottom: 1px solid var(--line); }
+  .tabs button {
+    border: 0; border-bottom: 3px solid transparent; background: transparent; color: var(--muted); cursor: pointer;
+    font: 600 0.95rem/1.25 var(--body); padding: 12px 8px; text-align: left; margin-bottom: -1px;
+  }
+  .tabs button:hover { color: var(--ink); }
+  .tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+  .tabs .n { font: 500 0.75rem/1 var(--mono); color: var(--accent); margin-right: 6px; }
+  .panel ol { list-style: none; counter-reset: g; display: grid; gap: 0; }
+  .panel li {
+    counter-increment: g; display: grid; grid-template-columns: 2rem 1fr; gap: 8px;
+    padding-block: 14px; border-bottom: 1px solid var(--line); color: var(--ink-soft);
+  }
+  .panel li::before { content: counter(g); font: 700 1.2rem/1.4 var(--display); color: var(--accent); }
+  .panel li strong { color: var(--ink); font-weight: 600; }
+  .tip { margin-top: 16px; padding: 14px 16px; background: var(--accent-wash); border-radius: 10px; font-size: 0.95rem; color: var(--ink-soft); }
+  .tip strong { color: var(--ink); }
+  .guide-nav { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+  .guide-nav .count { font: 500 0.78rem/1.2 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .guide-nav .btns { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  /* compare + features */
+  .table-scroll { overflow-x: auto; max-width: 46rem; margin-bottom: clamp(36px, 5vw, 56px); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.97rem; }
+  th, td { text-align: left; padding: 13px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th { font: 500 0.72rem/1.3 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  tbody th { font-weight: 500; color: var(--ink-soft); }
+  td:nth-child(2) { color: var(--muted); }
+  th:nth-child(3), td:nth-child(3) { background: var(--accent-wash); color: var(--ink); font-weight: 600; }
+  thead th:nth-child(3) { color: var(--accent); }
+  .features { display: grid; gap: 0 clamp(28px, 5vw, 64px); }
+  .features div { padding-block: 18px; border-top: 1px solid var(--line); display: grid; gap: 6px; align-content: start; }
+  .features dt { font: 700 1.12rem/1.25 var(--display); letter-spacing: -0.01em; }
+  .features dd { color: var(--ink-soft); font-size: 0.95rem; }
+
+  /* footer */
+  footer { border-top: 1px solid var(--line); padding-block: 36px; font-size: 0.9rem; color: var(--muted); }
+  footer .wrap { display: grid; gap: 18px; }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 10px 24px; list-style: none; }
+  .footer-links a { color: var(--ink-soft); font-weight: 600; text-decoration: none; }
+  .footer-links a:hover { color: var(--accent); }
+  .disclaimer { max-width: 48rem; font-size: 0.84rem; line-height: 1.55; }
+
+  /* mobile install bar */
+  .sticky-bar {
+    position: fixed; inset: auto 0 0 0; z-index: 25; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: var(--surface); border-top: 1px solid var(--line);
+    padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    transition: transform 0.25s ease;
+  }
+  .sticky-bar.away { transform: translateY(110%); }
+  .sticky-bar .who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .sticky-bar img { width: 34px; height: 34px; border-radius: 8px; }
+  .sticky-bar b { display: block; font: 700 0.92rem/1.2 var(--display); }
+  .sticky-bar small { display: block; font-size: 0.76rem; color: var(--muted); }
+
+  @media (min-width: 720px) {
+    .path { grid-template-columns: repeat(3, 1fr); }
+    .path li { border-left: 0; border-top: 2px solid var(--accent); padding: 22px 24px 0 0; }
+    .path li::before { left: 0; top: -8px; }
+    .path li:last-child { border-top-color: transparent; }
+    .path li:not(:last-child)::after {
+      left: 0; top: -4px; width: 64px; height: 6px;
+      background: linear-gradient(90deg, transparent, var(--pulse)); animation-name: travel-x;
+    }
+    .path .via { margin-top: 0; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .shots { grid-template-columns: repeat(3, 1fr); }
+    .tabs { grid-template-columns: repeat(4, 1fr); }
+    .features { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 719px) {
+    .phones { grid-auto-flow: column; grid-auto-columns: 72%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; }
+    .phones figure { scroll-snap-align: start; }
+  }
+  @media (min-width: 769px) {
+    body { padding-bottom: 0; }
+    .sticky-bar { display: none; }
+    .nav .btn { display: inline-flex; }
+  }
+  @media (min-width: 900px) {
+    .hero-grid { grid-template-columns: 1.15fr 0.85fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+    .path li::after { animation: none !important; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div class="container nav-inner">
-      <a href="#" class="brand" aria-label="CGM Glance Acasă">
-        <img src="assets/icon-512.png" alt="CGM Glance Icon" />
-        <span>CGM Glance</span>
-      </a>
-
-      <div class="nav-actions">
-        <div class="lang-switch" role="group" aria-label="Alege limba / Choose language">
-          <button class="lang-btn active" id="btn-ro" onclick="setLang('ro')" aria-label="Română">RO 🇷🇴</button>
-          <button class="lang-btn" id="btn-en" onclick="setLang('en')" aria-label="English">EN 🇬🇧</button>
-        </div>
-
-        <a href="#install" class="btn btn-primary nav-btn-cta" style="padding: 9px 18px; min-height: 40px; font-size: 0.86rem;">
-          <span data-lang="ro">Instalează Gratuit</span>
-          <span data-lang="en">Install Free</span>
-        </a>
+<header class="site-header">
+  <div class="wrap nav">
+    <a href="#top" class="brand"><img src="assets/icon-512.png" alt=""><span>CGM Glance</span></a>
+    <div class="nav-actions">
+      <div class="lang" role="group" aria-label="Limba / Language">
+        <button type="button" id="btn-ro" aria-pressed="true">RO</button>
+        <button type="button" id="btn-en" aria-pressed="false">EN</button>
       </div>
+      <a href="#install" class="btn btn-primary btn-small"><span lang="ro">Instalează gratuit</span><span lang="en">Install free</span></a>
     </div>
-  </header>
+  </div>
+</header>
 
-  <!-- Hero -->
+<main id="top">
   <section class="hero">
-    <div class="container">
-      <div class="badges-wrapper">
-        <span class="badge-pill live-badge">
-          <span class="live-dot" aria-hidden="true"></span>
-          <span>LIVE</span>
-        </span>
-        <span class="badge-pill highlight">✨ SinoCare LinX &amp; Dexcom ONE+</span>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">SinoCare LinX · Dexcom ONE+ · Wear OS</p>
+        <h1 lang="ro">Glicemia ta, pe ceas și în widget. <em>Fără internet.</em></h1>
+        <h1 lang="en">Your glucose, on your watch and in a widget. <em>No internet.</em></h1>
+        <p class="lede" lang="ro">CGM Glance citește local notificarea aplicației oficiale <strong>SinoCare LinX</strong> sau <strong>Dexcom ONE+</strong> și o trimite direct pe ceasul <strong>Wear OS</strong> și în widget-uri. Zero cloud, zero servere, zero cont.</p>
+        <p class="lede" lang="en">CGM Glance reads your official <strong>SinoCare LinX</strong> or <strong>Dexcom ONE+</strong> notification locally and sends it straight to your <strong>Wear OS</strong> watch and widgets. No cloud, no servers, no account.</p>
+        <div class="cta-row">
+          <a href="#install" class="btn btn-primary"><span lang="ro">Instalează din Google Play</span><span lang="en">Install from Google Play</span></a>
+          <a href="#how" class="btn btn-quiet"><span lang="ro">Cum funcționează</span><span lang="en">How it works</span></a>
+        </div>
+        <ul class="facts">
+          <li><span lang="ro">Gratuit</span><span lang="en">Free</span></li>
+          <li><span lang="ro">Fără reclame</span><span lang="en">No ads</span></li>
+          <li><span lang="ro">Baterie protejată</span><span lang="en">Battery friendly</span></li>
+          <li>Open source (GPL-3.0)</li>
+        </ul>
       </div>
 
-      <h1 data-lang="ro">
-        Glicemia ta pe <span class="highlight">Ceas</span> și în <span class="highlight">Widget</span>.<br />
-        Live, direct, <span class="nowrap"><span class="highlight">fără internet</span>.</span>
-      </h1>
-      <h1 data-lang="en">
-        Your Glucose on <span class="highlight">Watch</span> &amp; <span class="highlight">Widget</span>.<br />
-        Live, direct, <span class="nowrap"><span class="highlight">no internet needed</span>.</span>
-      </h1>
+      <div class="demo" id="demo" data-range="in" aria-label="Demo">
+        <div class="watch">
+          <div class="reading"><span data-v>114</span><span class="arrow" data-a>→</span></div>
+          <div class="delta"><span data-d>+2</span> mg/dL</div>
+          <div class="age"><span lang="ro">acum</span><span lang="en">just now</span></div>
+        </div>
+        <div class="link">Bluetooth</div>
+        <div class="widget">
+          <span class="bar"></span>
+          <div class="body">
+            <span class="src">LinX</span>
+            <div class="row">
+              <span class="reading"><span data-v>114</span><span class="arrow" data-a>→</span><span class="d" data-d>+2</span></span>
+              <span class="unit">mg/dL</span>
+            </div>
+            <span class="age">Age <span data-t>00:01</span></span>
+          </div>
+        </div>
+        <p class="demo-note"><span lang="ro">Demo cu valori exemplu</span><span lang="en">Demo with example values</span></p>
+      </div>
+    </div>
+  </section>
 
-      <p class="subtitle" data-lang="ro">
-        CGM Glance preia local notificarea aplicației oficiale <strong>SinoCare LinX</strong> sau <strong>Dexcom ONE+</strong> și o trimite direct pe ceasul <strong>Wear OS</strong> și în widget-uri — <strong>zero cloud, zero servere, zero cont</strong>.
+  <section class="band section" id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><span lang="ro">Traseul unei citiri</span><span lang="en">The path of a reading</span></p>
+        <h2 lang="ro">De la senzor la încheietură, fără ocol prin cloud</h2>
+        <h2 lang="en">From sensor to wrist, with no detour through the cloud</h2>
+      </div>
+      <ol class="path">
+        <li>
+          <h3><span lang="ro">Senzor</span><span lang="en">Sensor</span></h3>
+          <p lang="ro">LinX sau Dexcom ONE+ trimite citirea către aplicația lui oficială, ca de obicei.</p>
+          <p lang="en">LinX or Dexcom ONE+ sends the reading to its official app, as usual.</p>
+        </li>
+        <li>
+          <span class="via"><span lang="ro">prin notificare locală</span><span lang="en">via local notification</span></span>
+          <h3><span lang="ro">Telefon</span><span lang="en">Phone</span></h3>
+          <p lang="ro">CGM Glance preia valoarea din notificare, calculează trendul și Delta și actualizează widget-urile.</p>
+          <p lang="en">CGM Glance picks the value from the notification, computes trend and Delta, and updates the widgets.</p>
+        </li>
+        <li>
+          <span class="via"><span lang="ro">prin Bluetooth</span><span lang="en">via Bluetooth</span></span>
+          <h3><span lang="ro">Ceas</span><span lang="en">Watch</span></h3>
+          <p lang="ro">Valoarea apare pe cadran, pe card și în aplicația de ceas, de exemplu <strong>114 → +2</strong>.</p>
+          <p lang="en">The value shows on the watch face, the tile and the watch app, e.g. <strong>114 → +2</strong>.</p>
+        </li>
+      </ol>
+      <p class="not-on-path">
+        <s><span lang="ro">Server / cloud</span><span lang="en">Server / cloud</span></s>
+        <span lang="ro">Nu există pe traseu. Aplicația nici nu cere permisiunea de internet.</span>
+        <span lang="en">Not on the path. The app does not even request the internet permission.</span>
       </p>
-      <p class="subtitle" data-lang="en">
-        CGM Glance reads your official <strong>SinoCare LinX</strong> or <strong>Dexcom ONE+</strong> phone notification locally and sends it straight to your <strong>Wear OS</strong> watch and widgets — <strong>no cloud, no servers, no account</strong>.
-      </p>
-
-      <!-- P2: Direct Data Flow Diagram (Sensor -> Phone -> Bluetooth -> Watch, Crossed-out Cloud) -->
-      <div class="flow-diagram-card" role="region" aria-label="Flux direct de date fără cloud">
-        <div class="flow-nodes-row">
-          <div class="flow-node">
-            <span class="flow-node-icon" aria-hidden="true">📡</span>
-            <span class="flow-node-title" data-lang="ro">Senzor</span>
-            <span class="flow-node-title" data-lang="en">Sensor</span>
-            <span class="flow-node-sub">LinX / ONE+</span>
-          </div>
-
-          <div class="flow-connector" aria-hidden="true">
-            <span class="flow-connector-label">&nbsp;</span>
-            <div class="flow-line"></div>
-            <span class="flow-arrow-tip">▸</span>
-          </div>
-
-          <div class="flow-node">
-            <span class="flow-node-icon" aria-hidden="true">📱</span>
-            <span class="flow-node-title" data-lang="ro">Telefon</span>
-            <span class="flow-node-title" data-lang="en">Phone</span>
-            <span class="flow-node-sub">App + Widget</span>
-          </div>
-
-          <div class="flow-connector" aria-hidden="true">
-            <span class="flow-connector-label">Bluetooth</span>
-            <div class="flow-line"></div>
-            <span class="flow-arrow-tip">▸</span>
-          </div>
-
-          <div class="flow-node watch-node">
-            <span class="flow-node-icon" aria-hidden="true">⌚</span>
-            <span class="flow-node-title" data-lang="ro">Ceas</span>
-            <span class="flow-node-title" data-lang="en">Watch</span>
-            <span class="flow-node-sub" data-lang="ro">ex. 114 → +2</span>
-            <span class="flow-node-sub" data-lang="en">e.g. 114 → +2</span>
-          </div>
-        </div>
-
-        <div class="no-cloud-bar">
-          <span class="no-cloud-pill">
-            <svg class="no-cloud-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
-              <line x1="3" y1="3" x2="21" y2="21" stroke="#f87171" stroke-width="2.6" />
-            </svg>
-            <span data-lang="ro">Fără cloud</span>
-            <span data-lang="en">No cloud</span>
-          </span>
-          <span data-lang="ro">Datele nu trec prin niciun server • Aplicația nu are acces la internet</span>
-          <span data-lang="en">Your data never touches a server • The app has no internet access</span>
-        </div>
-      </div>
-
-      <!-- P3: Airplane Mode Concrete Proof Card -->
-      <div class="airplane-proof-card">
-        <span class="airplane-icon" aria-hidden="true">✈️</span>
-        <div>
-          <span data-lang="ro"><strong>Mod avion + Bluetooth = funcționează.</strong> La subsol, în avion sau în străinătate fără roaming: cât timp telefonul primește citirea de la senzor, CGM Glance o trimite mai departe pe ceas.</span>
-          <span data-lang="en"><strong>Airplane mode + Bluetooth = still works.</strong> Basement, flight, or abroad without roaming: as long as your phone receives the sensor reading, CGM Glance sends it to your watch.</span>
-        </div>
-      </div>
-
-      <div class="hero-features-chips">
-        <span class="chip-item">
-          <span aria-hidden="true">⚡</span>
-          <span data-lang="ro">Actualizare la fiecare citire (<strong>Baterie protejată</strong>)</span>
-          <span data-lang="en">Event-driven push (<strong>Battery friendly</strong>)</span>
-        </span>
-        <span class="chip-item">
-          <span aria-hidden="true">📈</span>
-          <span data-lang="ro">Variație Delta (<strong>+ / - configurabil</strong>)</span>
-          <span data-lang="en">Signed Delta (<strong>+ / - configurable</strong>)</span>
-        </span>
-        <span class="chip-item">
-          <span aria-hidden="true">🆓</span>
-          <span data-lang="ro">Gratuit &amp; <strong>Open Source (GPL)</strong></span>
-          <span data-lang="en">Free &amp; <strong>Open Source (GPL)</strong></span>
-        </span>
-      </div>
-
-      <!-- 2-Step Install Box -->
-      <div id="install" class="install-box">
-        <div class="install-header">
-          <h2 data-lang="ro">📲 Instalează din Google Play (în 2 Pași Simpli)</h2>
-          <h2 data-lang="en">📲 Install from Google Play (in 2 Simple Steps)</h2>
-          <p data-lang="ro">
-            Aplicația se află în testare comunitară pe Google Play. Deblochează descărcarea oficială în mai puțin de 30 de secunde:
-          </p>
-          <p data-lang="en">
-            The app is currently in community testing on Google Play. Unlock the official store download in less than 30 seconds:
-          </p>
-        </div>
-
-        <div class="install-steps-grid">
-          <!-- Step 1 -->
-          <div class="install-step-card">
-            <div>
-              <span class="step-pill" data-lang="ro">Pasul 1 • 30 de secunde</span>
-              <span class="step-pill" data-lang="en">Step 1 • 30 seconds</span>
-              <h3 data-lang="ro">Intră în Grupul Google</h3>
-              <h3 data-lang="en">Join Google Group</h3>
-              <p data-lang="ro">
-                Deschide pagina grupului (cu același cont Google pe care îl ai pe telefon) și apasă pe <strong>„Join group” / „Alătură-te grupului”</strong>. Nu e nevoie să lași adresa de email în comentarii!
-              </p>
-              <p data-lang="en">
-                Open the Google Group (signed in with the Google account used on your phone) and tap <strong>"Join group"</strong>. No comments or personal emails needed!
-              </p>
-            </div>
-            <div class="card-actions">
-              <a href="https://groups.google.com/g/cgm-glance-testers" target="_blank" rel="noopener" class="btn btn-secondary">
-                <span data-lang="ro">1. Intră în Grupul Google →</span>
-                <span data-lang="en">1. Join Google Group →</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Step 2 -->
-          <div class="install-step-card">
-            <div>
-              <span class="step-pill" data-lang="ro">Pasul 2 • Descărcare Oficială</span>
-              <span class="step-pill" data-lang="en">Step 2 • Official Install</span>
-              <h3 data-lang="ro">Descarcă din Magazin Play</h3>
-              <h3 data-lang="en">Download on Google Play</h3>
-              <p data-lang="ro">
-                După ce ai intrat în grup, acceptă invitația (<strong>„Become a tester”</strong>) și instalează CGM Glance pe <strong>telefon</strong> și pe <strong>ceasul Wear OS</strong>.
-              </p>
-              <p data-lang="en">
-                Once joined, accept the invite (<strong>"Become a tester"</strong>) and install CGM Glance on both your <strong>phone</strong> and your <strong>Wear OS watch</strong>.
-              </p>
-            </div>
-            <div class="card-actions">
-              <a href="https://play.google.com/apps/testing/ro.smakeru.cgmglance" target="_blank" rel="noopener" class="btn btn-primary">
-                <span data-lang="ro">2A. Acceptă Invitația (Web Opt-In) →</span>
-                <span data-lang="en">2A. Accept Invite (Web Opt-In) →</span>
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=ro.smakeru.cgmglance" target="_blank" rel="noopener" class="btn btn-secondary">
-                <span data-lang="ro">2B. Deschide în Google Play Store →</span>
-                <span data-lang="en">2B. Open in Google Play Store →</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="install-note" data-lang="ro">
-          ✅ <strong>Rămâne instalată permanent:</strong> Toți cei care instalează acum păstrează aplicația pentru totdeauna și primesc automat toate actualizările. Ținând-o instalată 14 zile, ajuți enorm comunitatea să deblocheze lansarea publică generală!
-        </div>
-        <div class="install-note" data-lang="en">
-          ✅ <strong>Yours to keep permanently:</strong> Installing now gives you lifetime access and all future updates automatically. Keeping it installed for 14 days helps unlock public access for the whole community!
-        </div>
+      <div class="airplane">
+        <h3 lang="ro">Mod avion + Bluetooth = funcționează.</h3>
+        <h3 lang="en">Airplane mode + Bluetooth = still works.</h3>
+        <p lang="ro">La subsol, în avion sau în străinătate fără roaming: cât timp telefonul primește citirea de la senzor, CGM Glance o trimite mai departe pe ceas. Se actualizează doar la fiecare citire nouă, fără bucle care consumă bateria.</p>
+        <p lang="en">Basement, flight, or abroad without roaming: as long as your phone receives the sensor reading, CGM Glance passes it on to your watch. It updates only when a new reading arrives, with no polling that drains the battery.</p>
       </div>
     </div>
   </section>
 
-  <!-- Wear OS Showcase -->
-  <section class="section" style="background: rgba(8, 20, 16, 0.45); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
-    <div class="container">
-      <div class="section-title">
-        <span class="section-tag" data-lang="ro">Optimizat pentru ceas</span>
-        <span class="section-tag" data-lang="en">Tailored for your watch</span>
-        <h2 data-lang="ro">⌚ Cum arată pe Ceasul tău (Wear OS)</h2>
-        <h2 data-lang="en">⌚ How It Looks on Your Wear OS Watch</h2>
-        <p data-lang="ro">
-          Compatibil cu Samsung Galaxy Watch 4, 5, 6, 7, 8, Ultra, Google Pixel Watch, Xiaomi Watch 2 și orice ceas modern cu Wear OS 3+.
-        </p>
-        <p data-lang="en">
-          Compatible with Samsung Galaxy Watch 4, 5, 6, 7, 8, Ultra, Google Pixel Watch, Xiaomi Watch 2, and any Wear OS 3+ smartwatch.
-        </p>
+  <section class="section" id="install">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><span lang="ro">Instalare · testare comunitară</span><span lang="en">Install · community testing</span></p>
+        <h2 lang="ro">Instalează din Google Play în 2 pași</h2>
+        <h2 lang="en">Install from Google Play in 2 steps</h2>
+        <p lang="ro">Aplicația este în testare comunitară pe Google Play. Deblochezi descărcarea oficială în mai puțin de 30 de secunde.</p>
+        <p lang="en">The app is in community testing on Google Play. You unlock the official download in under 30 seconds.</p>
       </div>
-
-      <div class="watch-grid">
-        <div class="media-card">
-          <div class="watch-img-wrap">
-            <img src="assets/wear-screenshot-3.png" alt="Complicație pe cadranul ceasului" loading="lazy" />
+      <ol class="steps">
+        <li>
+          <h3><span lang="ro">Intră în Grupul Google</span><span lang="en">Join the Google Group</span></h3>
+          <p lang="ro">Deschide pagina grupului cu același cont Google pe care îl ai pe telefon și apasă <strong>„Join group” / „Alătură-te grupului”</strong>. Nu trebuie să lași adresa de email nicăieri.</p>
+          <p lang="en">Open the group signed in with the Google account used on your phone and tap <strong>"Join group"</strong>. No comments or email addresses needed.</p>
+          <div class="actions">
+            <a class="btn btn-quiet" href="https://groups.google.com/g/cgm-glance-testers" target="_blank" rel="noopener"><span lang="ro">Intră în Grupul Google</span><span lang="en">Join Google Group</span></a>
           </div>
-          <h3 data-lang="ro">1. Complicație pe Cadran</h3>
-          <h3 data-lang="en">1. Watch Face Complication</h3>
-          <p data-lang="ro">
-            Adaugă slotul „Glucose” pe cadranul tău preferat pentru a vedea glicemia, săgeata de trend și variația Delta (+ / -) de fiecare dată când ridici încheietura.
-          </p>
-          <p data-lang="en">
-            Add the "Glucose" complication to any slot on your favorite watch face for glanceable readings, trend arrow, and numeric Delta (+ / -) every time you check the time.
-          </p>
-        </div>
-
-        <div class="media-card">
-          <div class="watch-img-wrap">
-            <img src="assets/wear-screenshot-2.png" alt="Card Tile dedicat pe ceas" loading="lazy" />
+        </li>
+        <li>
+          <h3><span lang="ro">Descarcă din Magazin Play</span><span lang="en">Download on Google Play</span></h3>
+          <p lang="ro">Acceptă invitația (<strong>„Become a tester”</strong>), apoi instalează CGM Glance pe <strong>telefon</strong> și pe <strong>ceasul Wear OS</strong>.</p>
+          <p lang="en">Accept the invite (<strong>"Become a tester"</strong>), then install CGM Glance on your <strong>phone</strong> and your <strong>Wear OS watch</strong>.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="https://play.google.com/apps/testing/ro.smakeru.cgmglance" target="_blank" rel="noopener"><span lang="ro">A. Acceptă invitația (opt-in web)</span><span lang="en">A. Accept invite (web opt-in)</span></a>
+            <a class="btn btn-quiet" href="https://play.google.com/store/apps/details?id=ro.smakeru.cgmglance" target="_blank" rel="noopener"><span lang="ro">B. Deschide în Google Play</span><span lang="en">B. Open in Google Play</span></a>
           </div>
-          <h3 data-lang="ro">2. Card Dedicat (Tile la un Swipe)</h3>
-          <h3 data-lang="en">2. Dedicated Watch Tile</h3>
-          <p data-lang="ro">
-            Glisează o singură dată de pe cadran pentru cardul CGM Glance cu cifre mari, colorate în funcție de țintă, și variația recentă Delta (+4 mg/dL).
-          </p>
-          <p data-lang="en">
-            Swipe once from your watch face for high-contrast glucose numbers, range colors, and recent Delta change (+4 mg/dL).
-          </p>
-        </div>
+        </li>
+      </ol>
+      <p class="keep" lang="ro"><strong>Rămâne instalată permanent.</strong> Cine instalează acum păstrează aplicația și primește automat toate actualizările. Dacă o ții instalată 14 zile, ajuți la deblocarea lansării publice.</p>
+      <p class="keep" lang="en"><strong>Yours to keep.</strong> Installing now keeps the app and all future updates. Keeping it installed for 14 days helps unlock the public release.</p>
+    </div>
+  </section>
 
-        <div class="media-card">
-          <div class="watch-img-wrap">
-            <img src="assets/wear-screenshot-1.png" alt="Aplicația completă pe ceas" loading="lazy" />
-          </div>
-          <h3 data-lang="ro">3. Aplicație Completă pe Ceas</h3>
-          <h3 data-lang="en">3. Full Watch App</h3>
-          <p data-lang="ro">
-            Apasă pe complicație sau pe card pentru a deschide ecranul detaliat cu valoarea, trendul, variația Delta și vechimea exactă a citirii.
-          </p>
-          <p data-lang="en">
-            Tap the complication or tile to open the full watch view with glucose value, trend arrow, Delta change, and exact reading timestamp.
-          </p>
-        </div>
+  <section class="band section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><span lang="ro">Pe ceas</span><span lang="en">On your watch</span></p>
+        <h2 lang="ro">Trei locuri în care o vezi pe Wear OS</h2>
+        <h2 lang="en">Three places to see it on Wear OS</h2>
+        <p lang="ro">Compatibil cu Samsung Galaxy Watch 4, 5, 6, 7, 8, Ultra, Google Pixel Watch, Xiaomi Watch 2 și orice ceas cu Wear OS 3+.</p>
+        <p lang="en">Works with Samsung Galaxy Watch 4, 5, 6, 7, 8, Ultra, Google Pixel Watch, Xiaomi Watch 2 and any Wear OS 3+ watch.</p>
+      </div>
+      <div class="shots">
+        <figure>
+          <img class="dial" src="assets/wear-screenshot-3.png" alt="Complicație pe cadranul ceasului" loading="lazy">
+          <figcaption>
+            <h3><span lang="ro">Complicație pe cadran</span><span lang="en">Watch face complication</span></h3>
+            <p lang="ro">Adaugă slotul „Glucose” pe cadranul preferat și vezi glicemia, săgeata de trend și Delta de fiecare dată când ridici încheietura.</p>
+            <p lang="en">Add the "Glucose" slot to your favorite watch face and see glucose, trend arrow and Delta every time you raise your wrist.</p>
+          </figcaption>
+        </figure>
+        <figure>
+          <img class="dial" src="assets/wear-screenshot-2.png" alt="Card Tile pe ceas" loading="lazy">
+          <figcaption>
+            <h3><span lang="ro">Card dedicat (Tile), la un swipe</span><span lang="en">Dedicated tile, one swipe away</span></h3>
+            <p lang="ro">Glisează o dată de pe cadran: cifre mari, colorate după țintă, și variația recentă (+4 mg/dL).</p>
+            <p lang="en">Swipe once from the watch face: large range-colored numbers and the recent change (+4 mg/dL).</p>
+          </figcaption>
+        </figure>
+        <figure>
+          <img class="dial" src="assets/wear-screenshot-1.png" alt="Aplicația pe ceas" loading="lazy">
+          <figcaption>
+            <h3><span lang="ro">Aplicația de pe ceas</span><span lang="en">Full watch app</span></h3>
+            <p lang="ro">Atinge complicația sau cardul pentru ecranul detaliat: valoare, trend, Delta și vechimea exactă a citirii.</p>
+            <p lang="en">Tap the complication or tile for the detailed view: value, trend, Delta and exact reading age.</p>
+          </figcaption>
+        </figure>
       </div>
     </div>
   </section>
 
-  <!-- Phone Showcase -->
   <section class="section">
-    <div class="container">
-      <div class="section-title">
-        <span class="section-tag" data-lang="ro">Pe telefonul tău</span>
-        <span class="section-tag" data-lang="en">On your phone</span>
-        <h2 data-lang="ro">📱 Widget-uri &amp; Diagnostic în Timp Real</h2>
-        <h2 data-lang="en">📱 Phone Widgets &amp; Live Diagnostics</h2>
-        <p data-lang="ro">
-          Plasează widget-uri redimensionabile pe ecranul principal și verifică oricând conexiunea cu senzorul și ceasul.
-        </p>
-        <p data-lang="en">
-          Place resizable glucose widgets on your home screen and monitor sensor, watch sync, and Health Connect status in one place.
-        </p>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><span lang="ro">Pe telefon</span><span lang="en">On your phone</span></p>
+        <h2 lang="ro">Widget-uri și diagnostic în timp real</h2>
+        <h2 lang="en">Widgets and live diagnostics</h2>
+        <p lang="ro">Pune widget-uri redimensionabile pe ecranul principal și verifică oricând conexiunea cu senzorul și cu ceasul.</p>
+        <p lang="en">Place resizable widgets on your home screen and check the sensor and watch connection at any time.</p>
       </div>
-
-      <div class="phone-grid">
-        <div class="media-card">
-          <div class="phone-img-wrap">
-            <img src="assets/phone-screenshot-2.png" alt="Widget-uri pe ecranul telefonului" loading="lazy" />
-          </div>
-          <h3 data-lang="ro">Widget-uri pe Ecranul Principal</h3>
-          <h3 data-lang="en">Home Screen Widgets</h3>
-          <p data-lang="ro">
-            Valoare mare, săgeată de trend, variație numerică Delta (+2 / +6 / -5 mg/dL), cronometru live de la citire și culori dinamice pentru valori în țintă sau în afara țintei.
-          </p>
-          <p data-lang="en">
-            Range-colored readings with calculated trend arrows, signed Delta change (+2 / +6 / -5 mg/dL), and a live reading-age timer right on your home screen.
-          </p>
-        </div>
-
-        <div class="media-card">
-          <div class="phone-img-wrap">
-            <img src="assets/phone-screenshot-3.png" alt="Aplicația pe telefon cu diagnostic de conexiune" loading="lazy" />
-          </div>
-          <h3 data-lang="ro">Panou Clar de Stare &amp; Sincronizare</h3>
-          <h3 data-lang="en">Live Sync &amp; Health Connect</h3>
-          <p data-lang="ro">
-            Vezi instant permisiunea de notificare, starea conexiunii Bluetooth cu ceasul și salvarea automată în Health Connect.
-          </p>
-          <p data-lang="en">
-            Instantly verify notification listener status, Wear OS watch pairing, and optional Health Connect synchronization.
-          </p>
-        </div>
-
-        <div class="media-card">
-          <div class="phone-img-wrap">
-            <img src="assets/phone-screenshot-1.png" alt="Setări senzor LinX, Dexcom ONE+ și fereastră Delta" loading="lazy" />
-          </div>
-          <h3 data-lang="ro">Suport LinX, Dexcom ONE+ &amp; Fereastră Delta</h3>
-          <h3 data-lang="en">LinX, Dexcom ONE+ &amp; Delta Window</h3>
-          <p data-lang="ro">
-            Alege senzorul activ, pragurile de culoare, unitatea (mg/dL sau mmol/L) și fereastra de calcul Delta (5, 10, 15 sau 20 min).
-          </p>
-          <p data-lang="en">
-            Configure your active sensor, range thresholds, display unit (mg/dL or mmol/L), and Delta calculation window (5, 10, 15, or 20 min).
-          </p>
-        </div>
+      <div class="shots phones">
+        <figure>
+          <img class="phone-shot" src="assets/phone-screenshot-2.png" alt="Widget-uri pe ecranul telefonului" loading="lazy">
+          <figcaption>
+            <h3><span lang="ro">Widget-uri pe ecranul principal</span><span lang="en">Home screen widgets</span></h3>
+            <p lang="ro">Valoare mare, săgeată de trend, Delta numeric (+2 / +6 / -5 mg/dL), cronometru de la ultima citire și culori după țintă.</p>
+            <p lang="en">Large value, trend arrow, signed Delta (+2 / +6 / -5 mg/dL), a live reading-age timer and range colors.</p>
+          </figcaption>
+        </figure>
+        <figure>
+          <img class="phone-shot" src="assets/phone-screenshot-3.png" alt="Panou de stare și sincronizare" loading="lazy">
+          <figcaption>
+            <h3><span lang="ro">Panou de stare și sincronizare</span><span lang="en">Sync status and Health Connect</span></h3>
+            <p lang="ro">Vezi imediat permisiunea de notificare, conexiunea Bluetooth cu ceasul și salvarea în Health Connect.</p>
+            <p lang="en">See notification access, the Bluetooth link to your watch and Health Connect sync at a glance.</p>
+          </figcaption>
+        </figure>
+        <figure>
+          <img class="phone-shot" src="assets/phone-screenshot-1.png" alt="Setări senzor și fereastră Delta" loading="lazy">
+          <figcaption>
+            <h3><span lang="ro">LinX, Dexcom ONE+ și fereastra Delta</span><span lang="en">LinX, Dexcom ONE+ and Delta window</span></h3>
+            <p lang="ro">Alegi senzorul activ, pragurile de culoare, unitatea (mg/dL sau mmol/L) și fereastra Delta (5, 10, 15 sau 20 min).</p>
+            <p lang="en">Pick the active sensor, range thresholds, unit (mg/dL or mmol/L) and the Delta window (5, 10, 15 or 20 min).</p>
+          </figcaption>
+        </figure>
       </div>
     </div>
   </section>
 
-  <!-- Interactive Setup Guide (Fixed & Enhanced for Mobile!) -->
-  <section class="section" id="guideSection" style="background: rgba(8, 20, 16, 0.45); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
-    <div class="container">
-      <div class="section-title">
-        <span class="section-tag" data-lang="ro">Ghid de configurare pas cu pas</span>
-        <span class="section-tag" data-lang="en">Step-by-step setup walkthrough</span>
-        <h2 data-lang="ro">🛠️ Ghid Pas cu Pas: Ceas &amp; Widget</h2>
-        <h2 data-lang="en">🛠️ Step-by-Step: Watch &amp; Widget Setup</h2>
-        <p data-lang="ro">
-          Alege pasul dorit sau urmează traseul complet pentru a configura ceasul și widget-urile în câteva minute:
-        </p>
-        <p data-lang="en">
-          Select any step or follow the full walkthrough to configure your watch and home screen widgets in minutes:
-        </p>
+  <section class="band section" id="guide">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><span lang="ro">Ghid de configurare</span><span lang="en">Setup guide</span></p>
+        <h2 lang="ro">Ceas și widget, pas cu pas</h2>
+        <h2 lang="en">Watch and widget, step by step</h2>
+        <p lang="ro">Alege un pas sau parcurge tot traseul. Durează câteva minute.</p>
+        <p lang="en">Pick a step or follow the whole walkthrough. It takes a few minutes.</p>
       </div>
 
-      <div class="guide-container" id="guideContainer">
-        <!-- 2x2 Grid of Tabs on Mobile (Always 100% visible, no cut-off!) -->
-        <div class="guide-tabs">
-          <button class="guide-tab active" type="button" onclick="showTab(0, true)">
-            <span class="tab-icon">⌚</span>
-            <span class="tab-label" data-lang="ro">1. Instalare ceas</span>
-            <span class="tab-label" data-lang="en">1. Watch install</span>
-          </button>
-          <button class="guide-tab" type="button" onclick="showTab(1, true)">
-            <span class="tab-icon">🎯</span>
-            <span class="tab-label" data-lang="ro">2. Cadran ceas</span>
-            <span class="tab-label" data-lang="en">2. Watch face</span>
-          </button>
-          <button class="guide-tab" type="button" onclick="showTab(2, true)">
-            <span class="tab-icon">🗂️</span>
-            <span class="tab-label" data-lang="ro">3. Card Tile</span>
-            <span class="tab-label" data-lang="en">3. Watch tile</span>
-          </button>
-          <button class="guide-tab" type="button" onclick="showTab(3, true)">
-            <span class="tab-icon">📱</span>
-            <span class="tab-label" data-lang="ro">4. Widget telefon</span>
-            <span class="tab-label" data-lang="en">4. Phone widget</span>
-          </button>
+      <div class="guide" id="guideBox">
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" aria-selected="true"><span class="n">1</span><span lang="ro">Instalare ceas</span><span lang="en">Watch install</span></button>
+          <button type="button" role="tab" aria-selected="false"><span class="n">2</span><span lang="ro">Cadran ceas</span><span lang="en">Watch face</span></button>
+          <button type="button" role="tab" aria-selected="false"><span class="n">3</span><span lang="ro">Card Tile</span><span lang="en">Watch tile</span></button>
+          <button type="button" role="tab" aria-selected="false"><span class="n">4</span><span lang="ro">Widget telefon</span><span lang="en">Phone widget</span></button>
         </div>
 
-        <!-- Step Indicator & Progress Dots -->
-        <div class="guide-header-bar">
-          <div class="guide-indicator-pill">
-            <span data-lang="ro">Pasul <strong id="stepNumRo">1</strong> din 4 • <span id="stepNameRo">Instalare pe ceas</span></span>
-            <span data-lang="en">Step <strong id="stepNumEn">1</strong> of 4 • <span id="stepNameEn">Watch install</span></span>
-          </div>
-          <div class="guide-dots" aria-label="Indicatori pași">
-            <span class="guide-dot active" onclick="showTab(0, true)" title="Pasul 1"></span>
-            <span class="guide-dot" onclick="showTab(1, true)" title="Pasul 2"></span>
-            <span class="guide-dot" onclick="showTab(2, true)" title="Pasul 3"></span>
-            <span class="guide-dot" onclick="showTab(3, true)" title="Pasul 4"></span>
-          </div>
+        <div class="panel" role="tabpanel">
+          <ol>
+            <li><span><span lang="ro">În pagina <strong>Google Play</strong> a aplicației pe telefon, apasă săgeata <strong>„▼”</strong> de lângă <em>Instalează / Instalat</em> (sau <em>„Install on more devices”</em>) și bifează ceasul.</span><span lang="en">On the app's <strong>Google Play</strong> page on your phone, tap the <strong>"▼"</strong> arrow next to <em>Install / Installed</em> (or <em>"Install on more devices"</em>) and check your watch.</span></span></li>
+            <li><span><span lang="ro">Alternativ, deschide <strong>Magazin Play</strong> direct pe ceas, derulează la <strong>„Aplicații de pe telefon”</strong> și apasă <strong>Instalează</strong> lângă <strong>CGM Glance</strong>.</span><span lang="en">Alternatively, open the <strong>Play Store</strong> on your watch, scroll to <strong>"Apps on your phone"</strong> and tap <strong>Install</strong> next to <strong>CGM Glance</strong>.</span></span></li>
+            <li><span><span lang="ro">Deschide o dată <strong>CGM Glance</strong> pe ceas. Când telefonul și ceasul sunt conectate prin Bluetooth, statusul din aplicație devine <strong>„Gata / Ready”</strong>.</span><span lang="en">Open <strong>CGM Glance</strong> once on your watch. With Bluetooth connected, the phone app status turns to <strong>"Ready"</strong>.</span></span></li>
+          </ol>
+          <p class="tip"><strong><span lang="ro">Important:</span><span lang="en">Important:</span></strong> <span lang="ro">pe ceas și pe telefon trebuie să fii conectat cu același cont Google cu care ai intrat în grupul de testeri.</span><span lang="en">your phone and watch must be signed in with the same Google account that joined the tester group.</span></p>
         </div>
 
-        <!-- Tab 0: Watch Install -->
-        <div class="guide-panel active" id="tab-0">
-          <div class="guide-step-row">
-            <div class="guide-step-num">1</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">În pagina <strong>Google Play</strong> a aplicației pe telefon, apasă pe săgeata <strong>„▼”</strong> de lângă butonul <em>Instalează / Instalat</em> (sau pe <em>„Install on more devices”</em>) și bifează ceasul tău.</span>
-              <span data-lang="en">On the <strong>Google Play</strong> store page on your phone, tap the <strong>"▼"</strong> arrow next to <em>Install / Installed</em> (or <em>"Install on more devices"</em>) and check your watch.</span>
-            </div>
-          </div>
-          <div class="guide-step-row">
-            <div class="guide-step-num">2</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">Alternativ, deschide aplicația <strong>Magazin Play</strong> direct pe ceas, derulează până jos la secțiunea <strong>„Aplicații de pe telefon”</strong> și apasă <strong>Instalează</strong> lângă <strong>CGM Glance</strong>.</span>
-              <span data-lang="en">Alternatively, open the <strong>Play Store</strong> app directly on your watch, scroll down to <strong>"Apps on your phone"</strong>, and tap <strong>Install</strong> next to <strong>CGM Glance</strong>.</span>
-            </div>
-          </div>
-          <div class="guide-step-row">
-            <div class="guide-step-num">3</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">După instalare, deschide o dată <strong>CGM Glance</strong> pe ceas. Când telefonul și ceasul sunt conectate prin Bluetooth, statusul din aplicație va deveni <strong>„Gata / Ready”</strong>.</span>
-              <span data-lang="en">Once installed, open <strong>CGM Glance</strong> once on your watch. With Bluetooth connected, the phone app status will automatically turn green (<strong>"Ready"</strong>).</span>
-            </div>
-          </div>
-          <div class="guide-tip">
-            💡 <strong><span data-lang="ro">Sfat important:</span><span data-lang="en">Important tip:</span></strong>
-            <span data-lang="ro"> Asigură-te că pe ceas și pe telefon ești conectat cu același cont Google cu care ai intrat în grupul de testeri.</span>
-            <span data-lang="en"> Make sure your phone and watch are signed in with the same Google account that joined the tester group.</span>
-          </div>
-          <!-- Bottom Navigation Walkthrough -->
-          <div class="guide-nav-footer">
-            <span style="font-size: 0.8rem; color: var(--text-muted);" data-lang="ro">Următorul pas: Afișare pe cadranul ceasului</span>
-            <span style="font-size: 0.8rem; color: var(--text-muted);" data-lang="en">Next step: Watch face complication</span>
-            <button class="btn btn-secondary guide-nav-btn" type="button" onclick="showTab(1, true)">
-              <span data-lang="ro">Continuă cu Pasul 2 (Cadran ceas) →</span>
-              <span data-lang="en">Continue to Step 2 (Watch face) →</span>
-            </button>
-          </div>
+        <div class="panel" role="tabpanel" hidden>
+          <ol>
+            <li><span><span lang="ro">Ține apăsat pe <strong>cadranul ceasului</strong> și apasă <strong>Personalizează (Customize)</strong>, sau deschide <em>Galaxy Wearable / Watch</em> pe telefon.</span><span lang="en">Long-press your <strong>watch face</strong> and tap <strong>Customize</strong>, or open the <em>Galaxy Wearable / Watch</em> app on your phone.</span></span></li>
+            <li><span><span lang="ro">Glisează până la <strong>Complicații (Complications)</strong> și atinge zona în care vrei să apară glicemia.</span><span lang="en">Swipe to <strong>Complications</strong> and tap the slot where you want your glucose to appear.</span></span></li>
+            <li><span><span lang="ro">Alege <strong>CGM Glance → Glucose</strong> și apasă butonul lateral pentru a salva cadranul.</span><span lang="en">Choose <strong>CGM Glance → Glucose</strong> and press the side button to save.</span></span></li>
+          </ol>
+          <p class="tip"><strong><span lang="ro">Sfat:</span><span lang="en">Tip:</span></strong> <span lang="ro">sloturile late (<em>Text lung</em>) afișează valoarea, trendul și Delta, de exemplu <code>112 ↗ (+4)</code>. Sloturile mici rotunde afișează compact <code>112↗</code>.</span><span lang="en">wide slots (<em>Long text</em>) show value, trend and Delta, e.g. <code>112 ↗ (+4)</code>. Small round slots show a compact <code>112↗</code>.</span></p>
         </div>
 
-        <!-- Tab 1: Watch Face Complication -->
-        <div class="guide-panel" id="tab-1">
-          <div class="guide-step-row">
-            <div class="guide-step-num">1</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">Ține apăsat lung pe <strong>cadranul ceasului</strong> și apasă pe <strong>Personalizează (Customize)</strong> — sau deschide aplicația <em>Galaxy Wearable / Watch</em> pe telefon.</span>
-              <span data-lang="en">Long-press your <strong>watch face</strong> and tap <strong>Customize</strong> — or open the <em>Galaxy Wearable / Watch</em> companion app on your phone.</span>
-            </div>
-          </div>
-          <div class="guide-step-row">
-            <div class="guide-step-num">2</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">Glisează până la secțiunea <strong>Complicații (Complications)</strong> și atinge zona de pe cadran unde vrei să apară glicemia.</span>
-              <span data-lang="en">Swipe to the <strong>Complications</strong> page and tap the slot where you want your glucose reading to appear.</span>
-            </div>
-          </div>
-          <div class="guide-step-row">
-            <div class="guide-step-num">3</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">Alege din listă <strong>CGM Glance → Glucose</strong> și apasă butonul fizic lateral pentru a salva cadranul.</span>
-              <span data-lang="en">Select <strong>CGM Glance → Glucose</strong> from the list and press the watch side button to save.</span>
-            </div>
-          </div>
-          <div class="guide-tip">
-            💡 <strong><span data-lang="ro">Sfat:</span><span data-lang="en">Tip:</span></strong>
-            <span data-lang="ro"> Sloturile mai late (de tip <em>Text lung</em>) afișează valoarea, săgeata de trend și variația Delta (ex: <code>112 ↗ (+4)</code>). Sloturile mici rotunde afișează compact <code>112↗</code>.</span>
-            <span data-lang="en"> Wider complication slots (<em>Long text</em>) display the glucose value, trend arrow, and Delta change (e.g. <code>112 ↗ (+4)</code>). Smaller slots display cleanly as <code>112↗</code>.</span>
-          </div>
-          <!-- Bottom Navigation Walkthrough -->
-          <div class="guide-nav-footer">
-            <button class="btn btn-ghost guide-nav-btn" type="button" onclick="showTab(0, true)">
-              <span data-lang="ro">← Înapoi la Pasul 1</span>
-              <span data-lang="en">← Back to Step 1</span>
-            </button>
-            <button class="btn btn-secondary guide-nav-btn" type="button" onclick="showTab(2, true)">
-              <span data-lang="ro">Continuă cu Pasul 3 (Card Tile) →</span>
-              <span data-lang="en">Continue to Step 3 (Watch Tile) →</span>
-            </button>
-          </div>
+        <div class="panel" role="tabpanel" hidden>
+          <ol>
+            <li><span><span lang="ro">De pe cadran, glisează spre stânga (sau ține apăsat pe un card existent) până la <strong>Adaugă card (+ / Add tile)</strong>.</span><span lang="en">From the watch face, swipe left through your tiles (or long-press one) until you reach <strong>Add tile (+)</strong>.</span></span></li>
+            <li><span><span lang="ro">Derulează lista de carduri și alege <strong>CGM Glance</strong>.</span><span lang="en">Scroll the list of tiles and tap <strong>CGM Glance</strong>.</span></span></li>
+            <li><span><span lang="ro">Așază cardul imediat lângă cadran, ca să vezi glicemia cu cifre mari dintr-o singură glisare.</span><span lang="en">Place the tile right next to the watch face so your glucose is one swipe away.</span></span></li>
+          </ol>
+          <p class="tip"><strong><span lang="ro">Sfat:</span><span lang="en">Tip:</span></strong> <span lang="ro">cardul afișează numere mari și variația recentă (+4 mg/dL). Atinge valoarea pentru aplicația completă, cu vechimea citirii.</span><span lang="en">the tile shows large numbers and the recent change (+4 mg/dL). Tap it to open the full app with reading age.</span></p>
         </div>
 
-        <!-- Tab 2: Watch Tile -->
-        <div class="guide-panel" id="tab-2">
-          <div class="guide-step-row">
-            <div class="guide-step-num">1</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">De pe cadranul ceasului, glisează spre stânga (sau ține apăsat pe un card existent) până ajungi la <strong>Adaugă card (+ / Add tile)</strong>.</span>
-              <span data-lang="en">From your watch face, swipe left through your tiles until you reach <strong>Add tile (+)</strong> (or long-press any existing tile).</span>
-            </div>
-          </div>
-          <div class="guide-step-row">
-            <div class="guide-step-num">2</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">Derulează lista de carduri disponibile și selectează <strong>CGM Glance</strong>.</span>
-              <span data-lang="en">Scroll through the available tiles list and tap <strong>CGM Glance</strong>.</span>
-            </div>
-          </div>
-          <div class="guide-step-row">
-            <div class="guide-step-num">3</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">Aşează cardul imediat lângă cadranul ceasului, ca să vezi glicemia cu cifre mari dintr-o singură glisare!</span>
-              <span data-lang="en">Place the tile right next to your watch face so your glucose is always one quick swipe away!</span>
-            </div>
-          </div>
-          <div class="guide-tip">
-            💡 <strong><span data-lang="ro">Sfat:</span><span data-lang="en">Tip:</span></strong>
-            <span data-lang="ro"> Cardul Tile afișează numere mari și variația recentă Delta (+4 mg/dL). Atinge valoarea pentru a deschide aplicația completă cu vechimea citirii.</span>
-            <span data-lang="en"> The dedicated Tile displays large numbers and recent Delta change (+4 mg/dL). Tap anytime to open the full app with reading age.</span>
-          </div>
-          <!-- Bottom Navigation Walkthrough -->
-          <div class="guide-nav-footer">
-            <button class="btn btn-ghost guide-nav-btn" type="button" onclick="showTab(1, true)">
-              <span data-lang="ro">← Înapoi la Pasul 2</span>
-              <span data-lang="en">← Back to Step 2</span>
-            </button>
-            <button class="btn btn-secondary guide-nav-btn" type="button" onclick="showTab(3, true)">
-              <span data-lang="ro">Continuă cu Pasul 4 (Widget telefon) →</span>
-              <span data-lang="en">Continue to Step 4 (Phone widget) →</span>
-            </button>
-          </div>
+        <div class="panel" role="tabpanel" hidden>
+          <ol>
+            <li><span><span lang="ro">Ține apăsat pe o zonă liberă de pe <strong>ecranul principal al telefonului</strong> și alege <strong>Widget-uri (Widgets)</strong>.</span><span lang="en">Long-press an empty area of your <strong>phone's home screen</strong> and tap <strong>Widgets</strong>.</span></span></li>
+            <li><span><span lang="ro">Caută <strong>CGM Glance</strong> în listă și trage widget-ul unde vrei.</span><span lang="en">Find <strong>CGM Glance</strong> in the list and drag the widget into place.</span></span></li>
+            <li><span><span lang="ro">Alege sursa (<em>Automat</em>, <em>SinoCare LinX</em> sau <em>Dexcom ONE+</em>) și apasă <strong>Salvează</strong>.</span><span lang="en">Choose the source (<em>Automatic</em>, <em>SinoCare LinX</em> or <em>Dexcom ONE+</em>) and tap <strong>Save</strong>.</span></span></li>
+          </ol>
+          <p class="tip"><strong><span lang="ro">Sfat:</span><span lang="en">Tip:</span></strong> <span lang="ro">widget-ul afișează valoarea, trendul, Delta (+4 mg/dL) și minutele de la citire. Îl redimensionezi trăgând de margini.</span><span lang="en">the widget shows value, trend, Delta (+4 mg/dL) and minutes since the reading. Resize it by dragging its edges.</span></p>
         </div>
 
-        <!-- Tab 3: Phone Widget -->
-        <div class="guide-panel" id="tab-3">
-          <div class="guide-step-row">
-            <div class="guide-step-num">1</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">Ține apăsat lung pe o zonă liberă de pe <strong>ecranul principal al telefonului</strong> și alege <strong>Widget-uri (Widgets)</strong>.</span>
-              <span data-lang="en">Long-press an empty area on your <strong>phone's home screen</strong> and tap <strong>Widgets</strong>.</span>
-            </div>
-          </div>
-          <div class="guide-step-row">
-            <div class="guide-step-num">2</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">Caută <strong>CGM Glance</strong> în listă și trage widget-ul în poziția dorită pe ecran.</span>
-              <span data-lang="en">Find <strong>CGM Glance</strong> in the widget list and drag it onto your home screen.</span>
-            </div>
-          </div>
-          <div class="guide-step-row">
-            <div class="guide-step-num">3</div>
-            <div class="guide-step-text">
-              <span data-lang="ro">Alege sursa senzorului (<em>Automat</em>, <em>SinoCare LinX</em> sau <em>Dexcom ONE+</em>) și apasă <strong>Salvează</strong>.</span>
-              <span data-lang="en">Choose your sensor source (<em>Automatic</em>, <em>SinoCare LinX</em>, or <em>Dexcom ONE+</em>) and tap <strong>Save</strong>.</span>
-            </div>
-          </div>
-          <div class="guide-tip">
-            💡 <strong><span data-lang="ro">Sfat:</span><span data-lang="en">Tip:</span></strong>
-            <span data-lang="ro"> Widget-ul afișează valoarea, săgeata de trend, variația semnată Delta (+4 mg/dL) și minutele de la citire. Poți redimensiona liber widget-ul trăgând de margini.</span>
-            <span data-lang="en"> The widget displays glucose value, trend arrow, signed Delta change (+4 mg/dL), and elapsed minutes. Freely resize by dragging borders.</span>
-          </div>
-          <!-- Bottom Navigation Walkthrough -->
-          <div class="guide-nav-footer">
-            <button class="btn btn-ghost guide-nav-btn" type="button" onclick="showTab(2, true)">
-              <span data-lang="ro">← Înapoi la Pasul 3</span>
-              <span data-lang="en">← Back to Step 3</span>
-            </button>
-            <a href="#install" class="btn btn-primary guide-nav-btn">
-              <span data-lang="ro">📲 Mergi la Instalare Play Store ↑</span>
-              <span data-lang="en">📲 Go to Play Store Install ↑</span>
-            </a>
+        <div class="guide-nav">
+          <span class="count"><span lang="ro">Pasul</span><span lang="en">Step</span> <span id="guideNum">1</span> / 4</span>
+          <div class="btns">
+            <button type="button" class="btn btn-quiet btn-small" id="guidePrev" hidden><span lang="ro">← Înapoi</span><span lang="en">← Back</span></button>
+            <button type="button" class="btn btn-primary btn-small" id="guideNext"><span lang="ro">Continuă →</span><span lang="en">Continue →</span></button>
+            <a href="#install" class="btn btn-primary btn-small" id="guideDone" hidden><span lang="ro">Mergi la instalare ↑</span><span lang="en">Go to install ↑</span></a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Key Features Grid -->
   <section class="section">
-    <div class="container">
-      <div class="section-title">
-        <span class="section-tag" data-lang="ro">Arhitectură &amp; Securitate</span>
-        <span class="section-tag" data-lang="en">Architecture &amp; Privacy</span>
-        <h2 data-lang="ro">Construit cu Respect pentru Datele Tale</h2>
-        <h2 data-lang="en">Built with Privacy &amp; Performance First</h2>
-        <p data-lang="ro">
-          Creat de la zero fără compromisuri comerciale: fără reclame, fără analitice, fără conturi obligatorii.
-        </p>
-        <p data-lang="en">
-          Built from the ground up without commercial compromises: no ads, no trackers, no forced accounts.
-        </p>
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><span lang="ro">Arhitectură și confidențialitate</span><span lang="en">Architecture and privacy</span></p>
+        <h2 lang="ro">Construit cu respect pentru datele tale</h2>
+        <h2 lang="en">Built with respect for your data</h2>
+        <p lang="ro">Fără compromisuri comerciale: fără reclame, fără analitice, fără conturi obligatorii.</p>
+        <p lang="en">No commercial compromises: no ads, no trackers, no forced accounts.</p>
       </div>
 
-      <!-- P4: Simple Comparison Table (Cloud Solutions vs CGM Glance) -->
-      <div class="compare-card">
-        <h3 data-lang="ro">⚡ Soluții prin Cloud vs. CGM Glance (Direct pe Dispozitiv)</h3>
-        <h3 data-lang="en">⚡ Cloud-Based Solutions vs. CGM Glance (Direct On-Device)</h3>
-        <table class="compare-table">
+      <div class="table-scroll">
+        <table>
           <thead>
             <tr>
-              <th>
-                <span data-lang="ro">Criteriu</span>
-                <span data-lang="en">Feature</span>
-              </th>
-              <th>
-                <span data-lang="ro">Soluții prin cloud</span>
-                <span data-lang="en">Cloud solutions</span>
-              </th>
-              <th>CGM Glance</th>
+              <th scope="col"><span lang="ro">Criteriu</span><span lang="en">Criterion</span></th>
+              <th scope="col"><span lang="ro">Soluții prin cloud</span><span lang="en">Cloud solutions</span></th>
+              <th scope="col">CGM Glance</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <span data-lang="ro">Internet necesar</span>
-                <span data-lang="en">Internet required</span>
-              </td>
-              <td>
-                <span data-lang="ro">Da</span>
-                <span data-lang="en">Yes</span>
-              </td>
-              <td>
-                <span data-lang="ro">Nu (0% internet)</span>
-                <span data-lang="en">No (0% internet)</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span data-lang="ro">Cont obligatoriu</span>
-                <span data-lang="en">Account required</span>
-              </td>
-              <td>
-                <span data-lang="ro">De obicei</span>
-                <span data-lang="en">Usually</span>
-              </td>
-              <td>
-                <span data-lang="ro">Nu</span>
-                <span data-lang="en">No</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span data-lang="ro">Datele trec prin servere</span>
-                <span data-lang="en">Data passes through servers</span>
-              </td>
-              <td>
-                <span data-lang="ro">Da</span>
-                <span data-lang="en">Yes</span>
-              </td>
-              <td>
-                <span data-lang="ro">Nu (100% local)</span>
-                <span data-lang="en">No (100% local)</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span data-lang="ro">Întârziere suplimentară</span>
-                <span data-lang="en">Extra cloud delay</span>
-              </td>
-              <td>
-                <span data-lang="ro">Posibilă</span>
-                <span data-lang="en">Possible</span>
-              </td>
-              <td>
-                <span data-lang="ro">Nu (doar Bluetooth)</span>
-                <span data-lang="en">No (Bluetooth only)</span>
-              </td>
-            </tr>
+            <tr><th scope="row"><span lang="ro">Internet necesar</span><span lang="en">Internet required</span></th><td><span lang="ro">Da</span><span lang="en">Yes</span></td><td><span lang="ro">Nu (0% internet)</span><span lang="en">No (0% internet)</span></td></tr>
+            <tr><th scope="row"><span lang="ro">Cont obligatoriu</span><span lang="en">Account required</span></th><td><span lang="ro">De obicei</span><span lang="en">Usually</span></td><td><span lang="ro">Nu</span><span lang="en">No</span></td></tr>
+            <tr><th scope="row"><span lang="ro">Datele trec prin servere</span><span lang="en">Data passes through servers</span></th><td><span lang="ro">Da</span><span lang="en">Yes</span></td><td><span lang="ro">Nu (100% local)</span><span lang="en">No (100% local)</span></td></tr>
+            <tr><th scope="row"><span lang="ro">Întârziere suplimentară</span><span lang="en">Extra delay</span></th><td><span lang="ro">Posibilă</span><span lang="en">Possible</span></td><td><span lang="ro">Nu (doar Bluetooth)</span><span lang="en">No (Bluetooth only)</span></td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="features-grid">
-        <div class="feature-box">
-          <div class="feature-icon-badge">🔒</div>
-          <h3 data-lang="ro">100% Privat &amp; Local</h3>
-          <h3 data-lang="en">100% Private &amp; Local</h3>
-          <p data-lang="ro">
-            Aplicația nu solicită permisiunea de internet (<code>INTERNET</code>). Citirile tale nu părăsesc niciodată telefonul și ceasul tău.
-          </p>
-          <p data-lang="en">
-            The app does not even request the Android <code>INTERNET</code> permission. Your glucose readings never leave your personal devices.
-          </p>
+      <dl class="features">
+        <div>
+          <dt><span lang="ro">100% privat și local</span><span lang="en">100% private and local</span></dt>
+          <dd lang="ro">Aplicația nu solicită permisiunea <code>INTERNET</code>. Citirile nu părăsesc niciodată telefonul și ceasul tău.</dd>
+          <dd lang="en">The app does not request the Android <code>INTERNET</code> permission. Your readings never leave your phone and watch.</dd>
         </div>
-
-        <div class="feature-box">
-          <div class="feature-icon-badge">⚡</div>
-          <h3 data-lang="ro">Consum Minim de Baterie</h3>
-          <h3 data-lang="en">Zero Polling Drain</h3>
-          <p data-lang="ro">
-            Arhitectură bazată pe evenimente (event-driven). Se actualizează doar când aplicația oficială a senzorului postează o citire nouă. Fără bucle permanente.
-          </p>
-          <p data-lang="en">
-            Pure event-driven push architecture. Updates are triggered only when the official sensor notification posts a new reading. Zero battery waste.
-          </p>
+        <div>
+          <dt><span lang="ro">Consum minim de baterie</span><span lang="en">Minimal battery use</span></dt>
+          <dd lang="ro">Arhitectură bazată pe evenimente: se actualizează doar când aplicația oficială a senzorului postează o citire nouă. Fără bucle permanente.</dd>
+          <dd lang="en">Event-driven: it updates only when the official sensor app posts a new reading. No polling loops.</dd>
         </div>
-
-        <div class="feature-box">
-          <div class="feature-icon-badge">📈</div>
-          <h3 data-lang="ro">Variație Numerică Delta (+ / -)</h3>
-          <h3 data-lang="en">Signed Glucose Delta (+ / -)</h3>
-          <p data-lang="ro">
-            Calculează automat diferența semnată față de o citire anterioară. Intervalul este reglabil din setări (5, 10, 15 sau 20 de minute, implicit 10 min) și apare pe widget și pe ceas.
-          </p>
-          <p data-lang="en">
-            Calculates the signed difference compared to a previous reading. Configurable window in settings (5, 10, 15, or 20 minutes, 10 min default) across widgets and watch.
-          </p>
+        <div>
+          <dt><span lang="ro">Delta numeric (+ / -)</span><span lang="en">Signed Delta (+ / -)</span></dt>
+          <dd lang="ro">Diferența semnată față de o citire anterioară, cu interval reglabil (5, 10, 15 sau 20 de minute, implicit 10), pe widget și pe ceas.</dd>
+          <dd lang="en">The signed difference from an earlier reading, with a configurable window (5, 10, 15 or 20 minutes, default 10), on widgets and watch.</dd>
         </div>
-
-        <div class="feature-box">
-          <div class="feature-icon-badge">🎯</div>
-          <h3 data-lang="ro">Culori în Funcție de Interval</h3>
-          <h3 data-lang="en">Range-Colored Readings</h3>
-          <p data-lang="ro">
-            Cifrele se colorează în verde (în țintă, ex. 70–180 mg/dL), galben (peste țintă) sau portocaliu/roșu (sub țintă) pentru lizibilitate dintr-o privire.
-          </p>
-          <p data-lang="en">
-            High-contrast numbers color-code into target green (e.g. 70–180 mg/dL), high amber, or low orange/red for effortless readability at a glance.
-          </p>
+        <div>
+          <dt><span lang="ro">Culori după interval</span><span lang="en">Range-colored readings</span></dt>
+          <dd lang="ro">Verde în țintă (de ex. 70–180 mg/dL), galben peste țintă, portocaliu/roșu sub țintă, ca să citești dintr-o privire.</dd>
+          <dd lang="en">Green in range (e.g. 70–180 mg/dL), amber above, orange/red below, readable at a glance.</dd>
         </div>
-
-        <div class="feature-box">
-          <div class="feature-icon-badge">🔄</div>
-          <h3 data-lang="ro">Senzor LinX &amp; Dexcom ONE+</h3>
-          <h3 data-lang="en">LinX &amp; Dexcom ONE+ Support</h3>
-          <p data-lang="ro">
-            Parser nativ ultra-rapid pentru notificările ambelor aplicații oficiale, cu calcul local automat al săgeților de trend și al vârstei citirii.
-          </p>
-          <p data-lang="en">
-            High-performance native parser for both official CGM companion notifications with local trend calculation and reading timers.
-          </p>
+        <div>
+          <dt><span lang="ro">LinX și Dexcom ONE+</span><span lang="en">LinX and Dexcom ONE+</span></dt>
+          <dd lang="ro">Parser nativ pentru notificările ambelor aplicații oficiale, cu calcul local al săgeților de trend și al vechimii citirii.</dd>
+          <dd lang="en">A native parser for both official app notifications, with trend arrows and reading age computed locally.</dd>
         </div>
-
-        <div class="feature-box">
-          <div class="feature-icon-badge">🏥</div>
-          <h3 data-lang="ro">Integrare Health Connect</h3>
-          <h3 data-lang="en">Health Connect Ready</h3>
-          <p data-lang="ro">
-            Opțional, poate sincroniza citirile locale direct în baza de date Android Health Connect de pe telefonul tău, dacă dorești să le stochezi.
-          </p>
-          <p data-lang="en">
-            Optionally syncs blood glucose records locally into Android Health Connect on your phone if you wish to centralize your records.
-          </p>
+        <div>
+          <dt>Health Connect</dt>
+          <dd lang="ro">Opțional, salvează citirile local în Android Health Connect pe telefonul tău, dacă vrei să le păstrezi.</dd>
+          <dd lang="en">Optionally stores readings locally in Android Health Connect on your phone, if you want to keep them.</dd>
         </div>
-
-        <div class="feature-box">
-          <div class="feature-icon-badge">💻</div>
-          <h3 data-lang="ro">Cod Open Source (GPL-3.0)</h3>
-          <h3 data-lang="en">Open Source (GPL-3.0)</h3>
-          <p data-lang="ro">
-            Întregul cod sursă este public și verificabil pe GitHub. Comunitatea poate contribui cu noi integrări sau sugestii.
-          </p>
-          <p data-lang="en">
-            The full source code is publicly accessible on GitHub under the GPL-3.0 license. Community contributions and feedback are welcome.
-          </p>
+        <div>
+          <dt><span lang="ro">Open source (GPL-3.0)</span><span lang="en">Open source (GPL-3.0)</span></dt>
+          <dd lang="ro">Tot codul sursă este public și verificabil pe GitHub. Comunitatea poate contribui cu integrări și sugestii.</dd>
+          <dd lang="en">The full source code is public and verifiable on GitHub. Contributions and feedback are welcome.</dd>
         </div>
-      </div>
+        <div>
+          <dt><span lang="ro">Gratuit, fără reclame, fără cont</span><span lang="en">Free, no ads, no account</span></dt>
+          <dd lang="ro">Nicio reclamă, niciun serviciu de analitice și niciun cont de creat. Instalezi și folosești.</dd>
+          <dd lang="en">No ads, no analytics service and no account to create. Install and use.</dd>
+        </div>
+      </dl>
     </div>
   </section>
+</main>
 
-  <!-- Mobile Sticky Bottom Bar -->
-  <div class="mobile-sticky-bar" id="mobileStickyBar">
-    <div class="mobile-sticky-info">
-      <img src="assets/icon-512.png" alt="CGM Glance icon" />
-      <div class="mobile-sticky-text">
-        <span class="mobile-sticky-title">CGM Glance</span>
-        <span class="mobile-sticky-sub" data-lang="ro">Gratuit pe Google Play</span>
-        <span class="mobile-sticky-sub" data-lang="en">Free on Google Play</span>
-      </div>
-    </div>
-    <a href="#install" class="btn btn-primary mobile-sticky-btn">
-      <span data-lang="ro">Instalează</span>
-      <span data-lang="en">Install</span>
-    </a>
+<footer>
+  <div class="wrap">
+    <ul class="footer-links">
+      <li><a href="https://groups.google.com/g/cgm-glance-testers" target="_blank" rel="noopener">Google Group (Testers)</a></li>
+      <li><a href="https://play.google.com/apps/testing/ro.smakeru.cgmglance" target="_blank" rel="noopener">Google Play Opt-In</a></li>
+      <li><a href="https://github.com/smakeru/CgmGlance" target="_blank" rel="noopener">GitHub (GPL-3.0)</a></li>
+      <li><a href="privacy.html">Privacy Policy</a></li>
+    </ul>
+    <p class="disclaimer" lang="ro">Dezvoltat independent pentru comunitate de <strong>Viorel D.</strong> <strong>Declinare a responsabilității medicale:</strong> CGM Glance este un instrument informativ secundar de afișaj și nu înlocuiește aplicația oficială a producătorului senzorului sau consultul medical. Pentru decizii terapeutice sau de dozare a insulinei, verificați întotdeauna aplicația oficială și glucometrul capilar.</p>
+    <p class="disclaimer" lang="en">Independently developed for the community by <strong>Viorel D.</strong> <strong>Medical disclaimer:</strong> CGM Glance is a secondary informational display and does not replace your official CGM app or professional medical advice. Always confirm with your official CGM app and a fingerstick meter before any therapeutic or insulin dosing decision.</p>
   </div>
+</footer>
 
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <div class="footer-links">
-        <a href="https://groups.google.com/g/cgm-glance-testers" target="_blank" rel="noopener">Google Group (Testers)</a>
-        <a href="https://play.google.com/apps/testing/ro.smakeru.cgmglance" target="_blank" rel="noopener">Google Play Opt-In</a>
-        <a href="https://github.com/smakeru/CgmGlance" target="_blank" rel="noopener">GitHub (GPL-3.0)</a>
-        <a href="privacy.html">Privacy Policy</a>
-      </div>
+<div class="sticky-bar" id="stickyBar">
+  <div class="who">
+    <img src="assets/icon-512.png" alt="">
+    <div><b>CGM Glance</b><small><span lang="ro">Gratuit pe Google Play</span><span lang="en">Free on Google Play</span></small></div>
+  </div>
+  <a href="#install" class="btn btn-primary btn-small"><span lang="ro">Instalează</span><span lang="en">Install</span></a>
+</div>
 
-      <p class="footer-disclaimer" data-lang="ro">
-        Dezvoltat independent pentru comunitate de <strong>Viorel D.</strong><br />
-        ⚠️ <strong>Declinare a responsabilității medicale:</strong> CGM Glance este un instrument informativ secundar de afișaj și nu înlocuiește aplicația oficială a producătorului senzorului sau consultul medical. Pentru decizii terapeutice sau de dozare a insulinei, verificați întotdeauna aplicația oficială și glucometrul capilar.
-      </p>
-      <p class="footer-disclaimer" data-lang="en">
-        Independently developed for the community by <strong>Viorel D.</strong><br />
-        ⚠️ <strong>Medical Disclaimer:</strong> CGM Glance is a secondary informational display utility and does not replace your official CGM app or professional medical advice. Always confirm with your official CGM app and fingerstick blood glucose meter before making any therapeutic or insulin dosing decisions.
-      </p>
-    </div>
-  </footer>
+<script>
+  // Language switch (same storage key as the current site)
+  function setLang(lang) {
+    var en = lang === 'en';
+    document.body.classList.toggle('lang-en', en);
+    document.documentElement.lang = en ? 'en' : 'ro';
+    document.getElementById('btn-en').setAttribute('aria-pressed', String(en));
+    document.getElementById('btn-ro').setAttribute('aria-pressed', String(!en));
+    try { localStorage.setItem('cgm_glance_lang', en ? 'en' : 'ro'); } catch (e) {}
+  }
+  document.getElementById('btn-ro').addEventListener('click', function () { setLang('ro'); });
+  document.getElementById('btn-en').addEventListener('click', function () { setLang('en'); });
+  try { if (localStorage.getItem('cgm_glance_lang') === 'en') setLang('en'); } catch (e) {}
 
-  <script>
-    // Current active guide tab
-    let currentGuideTab = 0;
-
-    // Language switch with localStorage persistence
-    function setLang(lang) {
-      if (lang === 'en') {
-        document.body.classList.add('lang-en');
-        document.documentElement.lang = 'en';
-        document.getElementById('btn-en').classList.add('active');
-        document.getElementById('btn-ro').classList.remove('active');
-        try { localStorage.setItem('cgm_glance_lang', 'en'); } catch(e) {}
-      } else {
-        document.body.classList.remove('lang-en');
-        document.documentElement.lang = 'ro';
-        document.getElementById('btn-ro').classList.add('active');
-        document.getElementById('btn-en').classList.remove('active');
-        try { localStorage.setItem('cgm_glance_lang', 'ro'); } catch(e) {}
-      }
-    }
-
-    // Initialize saved language if set
-    (function initLang() {
-      try {
-        const saved = localStorage.getItem('cgm_glance_lang');
-        if (saved === 'en') {
-          setLang('en');
-        }
-      } catch(e) {}
-    })();
-
-    // Tab switcher with smooth navigation and indicators
-    const stepNamesRo = [
-      "Instalare pe ceas",
-      "Cadran (Complicație)",
-      "Card Dedicat (Tile)",
-      "Widget pe telefon"
+  // Hero demo: watch and widget show the same example reading
+  (function () {
+    var demo = document.getElementById('demo');
+    var seq = [
+      [114, 2, '→'], [126, 12, '↗'], [148, 22, '↑'], [171, 23, '↑'], [186, 15, '↗'], [183, -3, '→'],
+      [164, -19, '↘'], [131, -33, '↓'], [96, -35, '↓'], [74, -22, '↘'], [66, -8, '↘'], [71, 5, '→'],
+      [92, 21, '↑'], [108, 16, '↗']
     ];
-    const stepNamesEn = [
-      "Watch install",
-      "Watch face complication",
-      "Dedicated watch tile",
-      "Phone home widget"
-    ];
-
-    function showTab(idx, shouldScroll) {
-      currentGuideTab = idx;
-      const tabs = document.querySelectorAll('.guide-tab');
-      const panels = document.querySelectorAll('.guide-panel');
-      const dots = document.querySelectorAll('.guide-dot');
-
-      tabs.forEach((t, i) => t.classList.toggle('active', i === idx));
-      panels.forEach((p, i) => p.classList.toggle('active', i === idx));
-      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-
-      const stepNumRo = document.getElementById('stepNumRo');
-      const stepNumEn = document.getElementById('stepNumEn');
-      const stepNameRo = document.getElementById('stepNameRo');
-      const stepNameEn = document.getElementById('stepNameEn');
-
-      if (stepNumRo) stepNumRo.textContent = idx + 1;
-      if (stepNumEn) stepNumEn.textContent = idx + 1;
-      if (stepNameRo) stepNameRo.textContent = stepNamesRo[idx];
-      if (stepNameEn) stepNameEn.textContent = stepNamesEn[idx];
-
-      if (shouldScroll) {
-        const container = document.getElementById('guideContainer');
-        if (container) {
-          const rect = container.getBoundingClientRect();
-          if (rect.top < 65 || rect.bottom > window.innerHeight) {
-            const targetY = window.pageYOffset + rect.top - 70;
-            window.scrollTo({ top: targetY, behavior: 'smooth' });
-          }
-        }
-      }
+    var i = 0, secs = 1;
+    function set(sel, text) { demo.querySelectorAll(sel).forEach(function (n) { n.textContent = text; }); }
+    function show() {
+      var r = seq[i];
+      demo.dataset.range = r[0] > 180 ? 'high' : r[0] < 70 ? 'low' : 'in';
+      set('[data-v]', r[0]); set('[data-a]', r[2]); set('[data-d]', (r[1] > 0 ? '+' : '') + r[1]);
     }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    setInterval(function () {
+      secs++;
+      if (secs > 3) { secs = 0; i = (i + 1) % seq.length; show(); }
+      set('[data-t]', '00:0' + secs);
+    }, 1000);
+  })();
 
-    // Touch swipe gesture support on Guide Container
-    (function setupTouchSwipe() {
-      const container = document.getElementById('guideContainer');
-      if (!container) return;
+  // Setup guide: tabs, back/continue, horizontal swipe
+  (function () {
+    var box = document.getElementById('guideBox');
+    var tabs = box.querySelectorAll('[role="tab"]');
+    var panels = box.querySelectorAll('.panel');
+    var prev = document.getElementById('guidePrev'), next = document.getElementById('guideNext'), done = document.getElementById('guideDone');
+    var cur = 0, last = tabs.length - 1;
+    function show(n) {
+      cur = Math.max(0, Math.min(last, n));
+      tabs.forEach(function (t, k) { t.setAttribute('aria-selected', String(k === cur)); });
+      panels.forEach(function (p, k) { p.hidden = k !== cur; });
+      document.getElementById('guideNum').textContent = cur + 1;
+      prev.hidden = cur === 0; next.hidden = cur === last; done.hidden = cur !== last;
+    }
+    tabs.forEach(function (t, k) { t.addEventListener('click', function () { show(k); }); });
+    prev.addEventListener('click', function () { show(cur - 1); });
+    next.addEventListener('click', function () { show(cur + 1); });
+    var x0 = 0, y0 = 0;
+    box.addEventListener('touchstart', function (e) { x0 = e.changedTouches[0].screenX; y0 = e.changedTouches[0].screenY; }, { passive: true });
+    box.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].screenX - x0, dy = e.changedTouches[0].screenY - y0;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) show(cur + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+  })();
 
-      let touchStartX = 0;
-      let touchStartY = 0;
-
-      container.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-        touchStartY = e.changedTouches[0].screenY;
-      }, { passive: true });
-
-      container.addEventListener('touchend', function(e) {
-        const touchEndX = e.changedTouches[0].screenX;
-        const touchEndY = e.changedTouches[0].screenY;
-        const diffX = touchEndX - touchStartX;
-        const diffY = touchEndY - touchStartY;
-
-        // Ensure swipe was primarily horizontal and at least 50px
-        if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
-          if (diffX < 0 && currentGuideTab < 3) {
-            // Swipe Left -> Next
-            showTab(currentGuideTab + 1, false);
-          } else if (diffX > 0 && currentGuideTab > 0) {
-            // Swipe Right -> Prev
-            showTab(currentGuideTab - 1, false);
-          }
-        }
-      }, { passive: true });
-    })();
-
-    // Hide sticky bottom bar when near the install box
-    (function setupStickyBar() {
-      const bar = document.getElementById('mobileStickyBar');
-      const installBox = document.getElementById('install');
-      if (!bar || !installBox) return;
-
-      window.addEventListener('scroll', function() {
-        const rect = installBox.getBoundingClientRect();
-        if (rect.top <= window.innerHeight && rect.bottom >= 0) {
-          bar.style.transform = 'translateY(120%)';
-        } else {
-          bar.style.transform = 'translateY(0)';
-        }
-      }, { passive: true });
-    })();
-  </script>
+  // Hide the mobile install bar while the install section is on screen
+  (function () {
+    var bar = document.getElementById('stickyBar'), target = document.getElementById('install');
+    if (!('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (entries) {
+      bar.classList.toggle('away', entries[0].isIntersecting);
+    }).observe(target);
+  })();
+</script>
 </body>
 </html>
