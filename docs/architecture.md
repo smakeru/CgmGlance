@@ -114,8 +114,9 @@ cannot substantiate.
 ### Trend
 
 LinX publishes no arrow in the observed notification. For both providers we derive our own arrow
-from each source's separate history: a least-squares fit over the last 15 minutes, with the
-standard ±1 / ±2 / ±3 mg·dL⁻¹·min⁻¹ boundaries. The Dexcom arrow is not copied from the vendor and
+from each source's separate history: a least-squares fit over the last 10 minutes, with the
+standard ±1 / ±2 / ±3 mg·dL⁻¹·min⁻¹ boundaries and a small hysteresis around each so the arrow
+does not flicker on a threshold. The Dexcom arrow is not copied from the vendor and
 must not be presented as its official trend.
 
 A two-point difference was rejected. Sensor noise of ±5–10 mg/dL across a two-minute gap produces

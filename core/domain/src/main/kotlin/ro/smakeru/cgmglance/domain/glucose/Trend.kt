@@ -47,17 +47,22 @@ class TrendCalculator(
      *
      * [readings] may arrive in any order and may contain entries older than the window; both
      * are handled here so callers are not required to maintain a sorted, trimmed buffer.
+     *
+     * [previous] is the arrow last shown for this series. A slope within [HYSTERESIS] of a
+     * boundary keeps that arrow, so one that hovers on a threshold does not flip between two
+     * symbols from one reading to the next. [TrendArrow.UNKNOWN] disables this.
      */
     fun calculate(
         readings: List<GlucoseReading>,
         clock: Clock,
+        previous: TrendArrow = TrendArrow.UNKNOWN,
     ): TrendArrow {
         val newest = readings.maxByOrNull { it.timestampMillis } ?: return TrendArrow.UNKNOWN
 
         if (!freshnessPolicy.evaluate(newest, clock).allowsTrend) return TrendArrow.UNKNOWN
 
         // Anchored on the newest reading rather than on "now": the window should always cover
-        // the last quarter hour of data, even when that data stopped arriving a few minutes ago.
+        // the last ten minutes of data, even when that data stopped arriving a few minutes ago.
         val windowStart = newest.timestampMillis - WINDOW_MINUTES * MILLIS_PER_MINUTE
         val window = readings.filter { it.timestampMillis >= windowStart }
 
@@ -68,7 +73,7 @@ class TrendCalculator(
         if (spanMillis < MIN_SPAN_MINUTES * MILLIS_PER_MINUTE) return TrendArrow.UNKNOWN
 
         val slope = slopePerMinute(window, newest.timestampMillis) ?: return TrendArrow.UNKNOWN
-        return arrowFor(slope)
+        return arrowFor(slope, previous)
     }
 
     /**
@@ -97,6 +102,28 @@ class TrendCalculator(
         return covariance / variance
     }
 
+    private fun arrowFor(
+        slope: Double,
+        previous: TrendArrow,
+    ): TrendArrow {
+        val band = bandOf(previous) ?: return arrowFor(slope)
+        val stillPrevious = slope >= band.start - HYSTERESIS && slope <= band.endInclusive + HYSTERESIS
+        return if (stillPrevious) previous else arrowFor(slope)
+    }
+
+    /** The slope range [arrow] stands for, or `null` when it stands for none. */
+    private fun bandOf(arrow: TrendArrow): ClosedFloatingPointRange<Double>? =
+        when (arrow) {
+            TrendArrow.RISING_RAPIDLY -> RAPID_THRESHOLD..Double.MAX_VALUE
+            TrendArrow.RISING -> MODERATE_THRESHOLD..RAPID_THRESHOLD
+            TrendArrow.RISING_SLIGHTLY -> SLIGHT_THRESHOLD..MODERATE_THRESHOLD
+            TrendArrow.STEADY -> -SLIGHT_THRESHOLD..SLIGHT_THRESHOLD
+            TrendArrow.FALLING_SLIGHTLY -> -MODERATE_THRESHOLD..-SLIGHT_THRESHOLD
+            TrendArrow.FALLING -> -RAPID_THRESHOLD..-MODERATE_THRESHOLD
+            TrendArrow.FALLING_RAPIDLY -> -Double.MAX_VALUE..-RAPID_THRESHOLD
+            TrendArrow.UNKNOWN -> null
+        }
+
     private fun arrowFor(slope: Double): TrendArrow =
         when {
             abs(slope) <= SLIGHT_THRESHOLD -> TrendArrow.STEADY
@@ -111,8 +138,16 @@ class TrendCalculator(
     companion object {
         private const val MILLIS_PER_MINUTE = 60_000L
 
-        /** How far back the fit reaches. Matches what commercial CGM systems use. */
-        const val WINDOW_MINUTES: Int = 15
+        /**
+         * How far back the fit reaches.
+         *
+         * A fit reports the average slope across its window, so it trails a change of direction
+         * by roughly half the window. Fifteen minutes left the arrow flat for seven to ten
+         * minutes into a real rise, beside a delta already showing +15; ten brings the first
+         * arrow about two minutes sooner. Shorter was rejected: at seven minutes ordinary sensor
+         * noise on a flat glucose produces arrows a noticeable share of the time.
+         */
+        const val WINDOW_MINUTES: Int = 10
 
         /** Below this many points a line says more about noise than about glucose. */
         const val MIN_READINGS: Int = 3
@@ -128,5 +163,8 @@ class TrendCalculator(
 
         /** Boundary between a moderate and a rapid change. */
         const val RAPID_THRESHOLD: Double = 3.0
+
+        /** How far past a boundary the slope must go before the arrow already shown changes. */
+        const val HYSTERESIS: Double = 0.15
     }
 }

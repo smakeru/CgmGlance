@@ -36,7 +36,7 @@ interface HistoryPersistence {
  * gets told.
  *
  * Holds two hours of readings. That is far more than the display needs — the trend fit reaches
- * back fifteen minutes — and exists so the diagnostics screen can answer "when did readings
+ * back ten minutes — and exists so the diagnostics screen can answer "when did readings
  * arrive, and how far apart", which is how a broken parser will be diagnosed after a vendor
  * update.
  */
@@ -67,6 +67,12 @@ class PhoneGlucoseRepository(
     private var runAnchorMillis: Long = 0L
 
     /**
+     * The arrow as of the last recorded reading, fed back into the fit as its hysteresis
+     * reference. Not persisted: after a restart the first fit simply runs without one.
+     */
+    private var lastArrow: TrendArrow = TrendArrow.UNKNOWN
+
+    /**
      * Seeded from the clock rather than starting at zero.
      *
      * The Data Layer ignores a payload identical to the one already stored. After a process
@@ -91,7 +97,7 @@ class PhoneGlucoseRepository(
 
     /** Derived without sending or adding a sample; used by phone widgets. */
     val trend: TrendArrow
-        get() = synchronized(lock) { trendCalculator.calculate(history.toList(), clock) }
+        get() = synchronized(lock) { trendCalculator.calculate(history.toList(), clock, lastArrow) }
 
     /** Signed difference against baseline ~[deltaIntervalMinutes] ago; used by phone widgets and sync. */
     val delta: GlucoseDelta?
@@ -103,6 +109,7 @@ class PhoneGlucoseRepository(
             val collapsed = collapseRepost(reading)
             insertInOrder(reading)
             trimToWindow(reading.timestampMillis)
+            lastArrow = trendCalculator.calculate(history.toList(), clock, lastArrow)
 
             // Only when the shape of the history changed. A collapsed repost merely refreshes
             // the last entry's timestamp, and writing on every one of those would mean a few
@@ -136,7 +143,7 @@ class PhoneGlucoseRepository(
             payload =
                 LatestReadingPayload(
                     reading = reading,
-                    trend = trendCalculator.calculate(history.toList(), clock),
+                    trend = trendCalculator.calculate(history.toList(), clock, lastArrow),
                     senderNowMillis = clock.nowMillis(),
                     sequence = sequence,
                     deltaMgdl = calculatedDelta?.deltaMgdl,

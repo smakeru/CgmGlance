@@ -103,6 +103,47 @@ class TrendCalculatorTest {
     }
 
     @Test
+    fun `a rise that began six minutes ago already shows an arrow`() {
+        // Seen on the phone widget: flat, then climbing 2.5 mg/dL per minute, with the arrow
+        // still flat beside a delta of +15. A fifteen minute window averages the rise away.
+        val flat = List(10) { 100 }
+        val rising = listOf(102, 105, 108, 110, 112, 115)
+        val readings = series(*(flat + rising).toIntArray(), everyMinutes = 1)
+
+        assertEquals(TrendArrow.RISING_SLIGHTLY, trendOf(readings))
+    }
+
+    @Test
+    fun `a slope hovering on a boundary keeps the arrow already shown`() {
+        // Exactly 2.0 per minute sits on the slight/moderate boundary.
+        val readings = series(100, 104, 108, 112)
+
+        assertEquals(
+            TrendArrow.RISING,
+            calculator.calculate(readings, clockAfter(readings), previous = TrendArrow.RISING),
+        )
+        assertEquals(
+            TrendArrow.RISING_SLIGHTLY,
+            calculator.calculate(readings, clockAfter(readings), previous = TrendArrow.RISING_SLIGHTLY),
+        )
+    }
+
+    @Test
+    fun `a slope well past a boundary overrides the arrow already shown`() {
+        val rising = series(100, 106, 112, 118)
+        val flat = series(110, 111, 110, 111)
+
+        assertEquals(
+            TrendArrow.RISING,
+            calculator.calculate(rising, clockAfter(rising), previous = TrendArrow.STEADY),
+        )
+        assertEquals(
+            TrendArrow.STEADY,
+            calculator.calculate(flat, clockAfter(flat), previous = TrendArrow.RISING),
+        )
+    }
+
+    @Test
     fun `input order does not matter`() {
         val readings = series(100, 105, 110, 115, 120, 125)
         assertEquals(TrendArrow.RISING, calculator.calculate(readings.reversed(), clockAfter(readings)))

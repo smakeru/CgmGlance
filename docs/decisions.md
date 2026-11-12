@@ -40,9 +40,18 @@ the watch — our version would be strictly less reliable redundancy.
 inconsistent threshold set: all rejected. The alternative silently reinterprets a scale, and
 6.2 mmol/L rendered as 6 mg/dL is a normal value shown as a lethal one.
 
-**Trend by 15-minute regression, not by two-point difference.** Sensor noise alone produces an
+**Trend by 10-minute regression, not by two-point difference.** Sensor noise alone produces an
 apparent 3 mg/dL per minute across a two-minute gap. `TrendCalculatorTest` holds the fixture that
 demonstrates it.
+
+**Ten minutes, not fifteen, with hysteresis at the boundaries.** A fit reports the average slope
+of its window, so it trails a change of direction by about half of it. At fifteen minutes the
+widget showed `→` beside a delta of +14 while glucose climbed 2 mg/dL per minute, and the first
+arrow came nine minutes into the rise. Ten minutes brings it about two minutes sooner. Seven was
+rejected: simulated sensor noise on a flat glucose then produces arrows far too often. A slope
+within 0.15 mg/dL per minute of a boundary keeps the arrow already shown, so a steady 2.0 does
+not alternate between `↗` and `↑`. The lag is reduced, not removed — the numeric delta remains
+the faster signal.
 
 **Numeric Delta alongside Trend Arrow.** The trend arrow shows directional velocity filtered of noise, while a 5-minute numeric delta (`+X` / `-X`) provides exact magnitude context. See [Future Ideas](future-ideas.md).
 
