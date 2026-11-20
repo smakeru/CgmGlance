@@ -35,7 +35,7 @@ android {
         // release number without ever colliding.
         // TODO: confirm the expected ordering against Play's multi-APK rules before the
         //  first upload; the offset direction matters there and cannot be changed later.
-        versionCode = 1_000_005
+        versionCode = 1_000_006
         versionName = "1.2"
     }
 
