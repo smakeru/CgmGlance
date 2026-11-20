@@ -1,6 +1,7 @@
 package ro.smakeru.cgmglance.phone
 
 import android.app.Application
+import android.content.Context
 import android.util.Log
 import ro.smakeru.cgmglance.domain.glucose.GlucoseReading
 import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
@@ -37,6 +38,12 @@ class CgmGlanceApplication : Application() {
     /** Writes glucose out to Health Connect. Read by the status screen to report on itself. */
     lateinit var healthExporter: HealthConnectExporter
         private set
+
+    override fun attachBaseContext(base: Context) {
+        // Before anything asks for a string, so the first widget draw and the notification
+        // channel are already in the chosen language. A no-op from Android 13.
+        super.attachBaseContext(AppLanguageController.wrap(base))
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -95,6 +102,15 @@ class CgmGlanceApplication : Application() {
             watchdog.arm()
             sendOutcome(outcome)
         }
+        GlucoseWidgetProvider.refresh(this)
+    }
+
+    /**
+     * Everything drawn outside an activity keeps its old wording until redrawn: the widgets, and
+     * the notification channel name shown in system settings.
+     */
+    fun onLanguageChanged() {
+        notifier.ensureChannel()
         GlucoseWidgetProvider.refresh(this)
     }
 

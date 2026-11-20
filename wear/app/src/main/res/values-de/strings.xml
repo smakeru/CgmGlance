@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Der App-Name bleibt unübersetzt: ein Eigenname. -->
+
+    <!-- Kurz, damit es auf dem kleinen Bildschirm nicht abgeschnitten wird, und ohne Herstellermarke. -->
+    <string name="complication_label">Glukose</string>
+
+    <string name="age_just_now">gerade eben</string>
+    <plurals name="age_minutes_ago">
+        <item quantity="one">vor %d Min.</item>
+        <item quantity="other">vor %d Min.</item>
+    </plurals>
+    <string name="age_no_recent_data">keine aktuellen Daten</string>
+    <string name="age_may_be_out_of_date">evtl. veraltet</string>
+
+    <string name="cd_glucose">Glukose %1$s %2$s</string>
+    <string name="cd_delta">Änderung %1$s</string>
+    <string name="cd_no_reading">Kein aktueller Glukosewert</string>
+    <string name="cd_out_of_date">Messwert ist möglicherweise veraltet</string>
+    <string name="unit_spoken_mgdl">Milligramm pro Deziliter</string>
+    <string name="unit_spoken_mmol">Millimol pro Liter</string>
+
+    <string name="range_urgent_low">sehr niedrig</string>
+    <string name="range_low">niedrig</string>
+    <string name="range_high">hoch</string>
+    <string name="range_very_high">sehr hoch</string>
+
+    <string name="trend_rising_rapidly">steigt schnell</string>
+    <string name="trend_rising">steigt</string>
+    <string name="trend_rising_slightly">steigt langsam</string>
+    <string name="trend_steady">stabil</string>
+    <string name="trend_falling_slightly">fällt langsam</string>
+    <string name="trend_falling">fällt</string>
+    <string name="trend_falling_rapidly">fällt schnell</string>
+    <string name="trend_unknown">Trend unbekannt</string>
+</resources>

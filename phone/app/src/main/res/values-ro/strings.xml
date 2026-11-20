@@ -76,6 +76,9 @@
     <string name="settings_delta_10m">10 min (recomandat)</string>
     <string name="settings_delta_15m">15 min</string>
     <string name="settings_delta_20m">20 min</string>
+    <string name="settings_language_title">Limbă</string>
+    <string name="settings_language_subtitle">Se aplică aplicației, widgeturilor și notificărilor ei. Ceasul folosește limba setată pe ceas.</string>
+    <string name="settings_language_system">Limba telefonului</string>
     <string name="settings_invalid">Scăzut urgent trebuie să fie sub scăzut, scăzut sub ridicat, iar ridicat sub foarte ridicat. Toate patru trebuie să fie valori pe care un senzor le poate raporta.</string>
     <string name="action_save">Salvează</string>
     <string name="action_back">Înapoi</string>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Glukose</string>
+    <string name="widget_description">Glukosewert, berechneter Trend und Alter des Messwerts von LinX oder Dexcom ONE+.</string>
+    <string name="widget_config_title">Quelle des Widgets</string>
+    <string name="widget_config_description">Für dieses Widget einzeln wählbar. Ein Tipp auf das Widget öffnet die offizielle App der Quelle oder CgmGlance, wenn diese nicht verfügbar ist.</string>
+    <string name="widget_follow_selected">Der für die Uhr gewählten Quelle folgen</string>
+    <string name="widget_save">Widget speichern</string>
+    <string name="widget_cancel">Abbrechen</string>
+    <string name="widget_save_failed">Speichern fehlgeschlagen. Bitte versuche es erneut.</string>
+    <string name="widget_reading">Letzter Messwert · berechneter Trend</string>
+    <string name="widget_stale">Alter Messwert · kein Trend</string>
+    <string name="widget_no_current_data">Kein aktueller Messwert</string>
+    <string name="widget_age_format" formatted="false">Alter %s</string>
+    <string name="widget_stale_age_format" formatted="false">Alt · Alter %s</string>
+    <string name="widget_expired_age_format" formatted="false">Abgelaufen · Alter %s</string>
+    <string name="widget_delay_notice">Android kann Aktualisierungen im Hintergrund verzögern. Der Alters-Timer läuft weiter; prüfe ihn, bevor du einen Wert deutest. Dieses Widget bietet keine Glukose-Alarme.</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The languages offered under the system's per-app language settings on Android 13 and later.
+  Must match AppLanguage and the values-* folders: a locale listed here without resources would
+  silently show English under another language's name.
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="ro" />
+    <locale android:name="de" />
+    <locale android:name="fr" />
+</locale-config>

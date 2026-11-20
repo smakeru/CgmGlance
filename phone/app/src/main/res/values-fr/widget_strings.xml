@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_name">Glycémie</string>
+    <string name="widget_description">Glycémie, tendance calculée et âge de la mesure depuis LinX ou Dexcom ONE+.</string>
+    <string name="widget_config_title">Source du widget</string>
+    <string name="widget_config_description">À choisir séparément pour ce widget. Toucher le widget ouvre l’application officielle de la source, ou CgmGlance si elle n’est pas disponible.</string>
+    <string name="widget_follow_selected">Suivre la source sélectionnée pour la montre</string>
+    <string name="widget_save">Enregistrer le widget</string>
+    <string name="widget_cancel">Annuler</string>
+    <string name="widget_save_failed">Échec de l’enregistrement. Veuillez réessayer.</string>
+    <string name="widget_reading">Dernière mesure · tendance calculée</string>
+    <string name="widget_stale">Mesure ancienne · pas de tendance</string>
+    <string name="widget_no_current_data">Aucune mesure actuelle</string>
+    <string name="widget_age_format" formatted="false">Âge %s</string>
+    <string name="widget_stale_age_format" formatted="false">Ancienne · âge %s</string>
+    <string name="widget_expired_age_format" formatted="false">Expirée · âge %s</string>
+    <string name="widget_delay_notice">Android peut retarder les mises à jour en arrière-plan. Le minuteur d’âge continue de tourner ; vérifiez-le avant d’interpréter une valeur. Ce widget ne fournit pas d’alarmes de glycémie.</string>
+</resources>

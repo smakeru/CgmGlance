@@ -145,6 +145,14 @@ separate. `org.jetbrains.kotlin.android` is a hard error.
 **compileSdk 36, not 37.** Only `androidx.core` 1.19 demands 37, and it is unused. Every Wear
 library the project needs was verified to build against 36.
 
+**Language is chosen in the app, through the platform where the platform can.** From Android 13
+the choice goes to `LocaleManager`, so it is the same value the system's per-app language screen
+shows, and `locales_config.xml` lists what is shipped. Below 13 the choice lives in a preference
+file and is applied by wrapping contexts (`AppLanguageController.wrap`), because AppCompat is not
+a dependency and is not worth adding for this. English, Romanian, German and French ship;
+`TranslationParityTest` fails the build when one of them drifts. The watch follows the watch's own
+language: syncing the choice would need a new sync key and a second place for it to go wrong.
+
 **No analytics, no crash reporting.** Health data plus a third-party SDK is a trust problem and a
 Play Data Safety complication. Declaring "no data collected" is a feature.
 

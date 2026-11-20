@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Der App-Name bleibt unübersetzt: ein Eigenname. -->
+
+    <string name="health_ok_title">Funktioniert</string>
+    <string name="health_ok_body">Messwerte kommen an und die Uhr hat den neuesten.</string>
+    <string name="health_no_permission_title">Benachrichtigungszugriff erforderlich</string>
+    <string name="health_no_permission_body">Diese App liest den Glukosewert aus den Benachrichtigungen von LinX oder Dexcom ONE+. Aktiviere den einzigen Eintrag „CGM Glance“ im Benachrichtigungszugriff und wähle dann deinen Sensor in den Einstellungen. War vor diesem Update nur der alte Dexcom-Eintrag aktiv, erteile den Zugriff einmal erneut. Andere Apps werden ignoriert.</string>
+    <string name="health_waiting_title">Warte auf den ersten Messwert</string>
+    <string name="health_waiting_body">Die Berechtigung ist erteilt. Öffne die gewählte CGM-App, damit sie ihre Benachrichtigung aktualisiert. Aktiviere bei Dexcom ONE+ „Quick Glance“.</string>
+    <string name="health_not_receiving_title">Keine Messwerte</string>
+    <string name="health_not_receiving_body">Von der gewählten Quelle ist seit einiger Zeit nichts angekommen. Prüfe, ob ihre CGM-App läuft und mit dem Sensor verbunden ist.</string>
+    <string name="health_watch_title">Uhr nicht erreichbar</string>
+    <string name="health_watch_body">Messwerte kommen an, aber die Uhr ist außer Reichweite oder ausgeschaltet. Sie holt von selbst auf, sobald sie wieder verbunden ist.</string>
+    <string name="health_watch_missing_title">Keine Uhr-App gefunden</string>
+    <string name="health_watch_missing_body">Messwerte kommen an, aber CGM Glance ist noch nicht auf deiner Uhr installiert. Installiere die App aus Google Play auf der Uhr (entweder über „Auf weiteren Geräten verfügbar“ auf diesem Telefon oder im Play Store der Uhr unter „Apps auf deinem Smartphone“). Wenn du per APK installiert hast, müssen Telefon und Uhr aus demselben Build stammen.</string>
+
+    <string name="action_open_notification_access">Benachrichtigungszugriff öffnen</string>
+    <string name="action_open_play_store">In Google Play öffnen</string>
+
+    <string name="fallback_title">Lesen über Ersatzverfahren</string>
+    <string name="fallback_body">Die gewählte Quelle wird über den Ersatz-Parser gelesen. Prüfe das Format ihrer Benachrichtigung; die Dexcom-Unterstützung muss noch auf einem echten Gerät bestätigt werden.</string>
+
+    <string name="details_heading">Details</string>
+    <string name="detail_source">Quelle</string>
+    <string name="detail_parse_failure">Zuletzt abgelehnte Benachrichtigung</string>
+    <string name="detail_permission">Benachrichtigungszugriff</string>
+    <string name="detail_last_reading">Letzter Messwert</string>
+    <string name="detail_sent">An die Uhr gesendet</string>
+    <string name="detail_watch">Uhr</string>
+    <string name="value_granted">Erteilt</string>
+    <string name="value_not_granted">Nicht erteilt</string>
+    <string name="value_connected">Verbunden</string>
+    <string name="value_not_reachable">Nicht erreichbar</string>
+    <string name="value_watch_no_app">App nicht gefunden</string>
+    <string name="value_none_yet">Noch keiner</string>
+    <string name="value_not_yet">Noch nicht</string>
+
+    <string name="age_just_now">gerade eben</string>
+    <plurals name="age_minutes_ago">
+        <item quantity="one">vor %d Min.</item>
+        <item quantity="other">vor %d Min.</item>
+    </plurals>
+    <string name="reading_with_age">%1$d %2$s, %3$s</string>
+    <string name="sent_just_now">Gerade eben</string>
+
+    <string name="action_settings">Einstellungen</string>
+    <string name="quick_settings_title">Sensor und Anzeige</string>
+    <string name="quick_settings_sensor_label">Aktiver Sensor (zum Wechseln tippen):</string>
+    <string name="action_open_full_settings">Erweiterte Einstellungen →</string>
+    <string name="quick_settings_details">Grenzwerte, Einheit und Health Connect</string>
+    <string name="action_back_top">← Zurück</string>
+    <string name="disclaimer">Zeigt einen Wert an, den die offizielle App bereits berechnet hat. Kein Medizinprodukt: Nutze ihn nie für Therapieentscheidungen und bestätige ihn immer mit der offiziellen App oder einem Blutzuckermessgerät.</string>
+
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_source_title">Quelle für Uhr und Health Connect</string>
+    <string name="settings_source_data_note">Nur Glukose · Trend von CGM Glance berechnet</string>
+    <string name="settings_source_note">LinX ist standardmäßig gewählt und hat Vorrang, wenn beide Sensoren laufen. Die Quelle wechselt nie automatisch. Wähle hier Dexcom ONE+, wenn du so weit bist. Die Verläufe bleiben getrennt. Hat die neue Quelle noch keinen Messwert, behält die Uhr den vorherigen Wert mit seinem ursprünglichen Alter, bis einer eintrifft.</string>
+    <string name="settings_dexcom_note">Aktiviere „Quick Glance“ in Dexcom ONE+ und erteile dem einzigen Eintrag „CGM Glance“ (gemeinsam mit LinX) den Benachrichtigungszugriff. Der Glukosewert muss eine ausdrückliche Einheit enthalten; mehrdeutige Benachrichtigungen werden abgelehnt.</string>
+    <string name="settings_subtitle">Wird nur für Farbe und Formulierung verwendet. Diese App warnt nie anhand dieser Werte — Alarme bleiben Sache der offiziellen App.</string>
+    <string name="field_urgent_low">Sehr niedrig</string>
+    <string name="field_low">Niedrig</string>
+    <string name="field_high">Hoch</string>
+    <string name="field_very_high">Sehr hoch</string>
+    <string name="settings_units_note">Alle Werte in mg/dL.</string>
+    <string name="settings_display_unit">Anzeigeeinheit</string>
+
+    <string name="settings_delta_title">Zeitfenster der Glukoseänderung (Delta)</string>
+    <string name="settings_delta_subtitle">Berechnet die Differenz (+ / -) zu einem früheren Messwert. Wird im Telefon-Widget, in der Uhr-Kachel und in den Komplikationen der Uhr angezeigt.</string>
+    <string name="settings_delta_5m">5 Min.</string>
+    <string name="settings_delta_10m">10 Min. (empfohlen)</string>
+    <string name="settings_delta_15m">15 Min.</string>
+    <string name="settings_delta_20m">20 Min.</string>
+    <string name="settings_language_title">Sprache</string>
+    <string name="settings_language_subtitle">Gilt für diese App, ihre Widgets und ihre Benachrichtigungen. Die Uhr folgt der Sprache der Uhr.</string>
+    <string name="settings_language_system">Systemsprache</string>
+    <string name="settings_invalid">„Sehr niedrig“ muss unter „Niedrig“ liegen, „Niedrig“ unter „Hoch“ und „Hoch“ unter „Sehr hoch“. Alle vier müssen Werte sein, die ein Sensor melden kann.</string>
+    <string name="action_save">Speichern</string>
+    <string name="action_back">Zurück</string>
+    <string name="action_reset">Auf 55 / 70 / 180 / 260 zurücksetzen</string>
+
+    <string name="channel_status_name">App-Status</string>
+    <string name="channel_status_description">Meldet, wenn CGM Glance keine Messwerte mehr empfängt.</string>
+    <string name="notif_no_permission_title">Benachrichtigungszugriff ist aus</string>
+    <string name="notif_no_permission_text">Ohne ihn kann CGM Glance keine Glukosewerte lesen. Zum Beheben tippen.</string>
+    <string name="notif_not_receiving_title">Keine Messwerte</string>
+    <string name="notif_not_receiving_text">Von der gewählten CGM-Quelle ist seit einiger Zeit nichts angekommen. Prüfe, ob ihre App läuft und mit dem Sensor verbunden ist.</string>
+
+    <!-- Deliberately identical to the English one: a build identifier, not prose. -->
+    <string name="version_label">Version %1$s</string>
+
+    <string name="health_export_title">Health Connect</string>
+    <string name="health_export_disabled">Aus. Schalte es unter &#8222;Einstellungen&#8220; ein, um Messwerte in Health Connect zu schreiben.</string>
+    <string name="health_export_working">Schreibe alle %1$d Minuten einen Messwert in Health Connect. Samsung Health liest sie von dort, wenn du diese Verknüpfung in dessen Einstellungen aktiviert hast.</string>
+    <string name="health_export_waiting">Eingerichtet. Der nächste fällige Messwert wird geschrieben, danach einer alle %1$d Minuten.</string>
+    <string name="health_export_needs_setup">Erlaube CGM Glance, Glukosewerte in Health Connect zu schreiben. Samsung Health liest sie dann von dort.</string>
+    <string name="health_export_unavailable">Health Connect ist auf diesem Telefon nicht verfügbar. Installiere es und aktiviere dann die Health-Connect-Verknüpfung in Samsung Health.</string>
+    <string name="health_export_update_required">Health Connect muss aktualisiert werden, bevor es Messwerte annehmen kann.</string>
+    <string name="health_export_failing">Der letzte Schreibvorgang ist fehlgeschlagen. Messwerte erreichen die Uhr weiterhin.</string>
+    <string name="health_export_last_write">Zuletzt geschrieben %1$s</string>
+    <string name="action_grant_health_permission">Schreiben von Glukosewerten erlauben</string>
+
+    <string name="settings_health_title">Health Connect</string>
+    <string name="settings_health_subtitle">Schreibt deine Messwerte in Health Connect, von wo Samsung Health sie liest. Es wird nie etwas zurückgelesen.</string>
+    <string name="settings_health_enabled">Daten an Health Connect senden</string>
+    <string name="settings_health_interval">Senden alle (Minuten)</string>
+    <string name="settings_health_interval_note">Zwischen %1$d und %2$d Minuten. Standard ist 15.</string>
+    <string name="settings_health_invalid">Das Intervall muss zwischen %1$d und %2$d Minuten liegen.</string>
+
+    <string name="guide_title">Einrichtung von Uhr und Telefon</string>
+    <string name="guide_subtitle">So installierst du die App auf der Uhr und zeigst den Glukosewert auf dem Zifferblatt, in einer Kachel oder auf dem Telefon an.</string>
+
+    <string name="guide_tab_install">1. Uhr-App</string>
+    <string name="guide_tab_complication">2. Zifferblatt</string>
+    <string name="guide_tab_tile">3. Kachel</string>
+    <string name="guide_tab_widget">4. Widget</string>
+
+    <string name="guide_install_intro">Installiere die Begleit-App auf deiner Wear-OS-Uhr, damit die Messwerte dein Handgelenk erreichen.</string>
+    <string name="guide_install_step1_title">Variante A — Über Google Play auf dem Telefon</string>
+    <string name="guide_install_step1_body">Tippe unten auf „In Google Play öffnen“, klappe „Auf weiteren Geräten verfügbar“ auf (neben Installiert/Öffnen), setze den Haken bei deiner Uhr und tippe auf Installieren.</string>
+    <string name="guide_install_step2_title">Variante B — Direkt auf der Uhr</string>
+    <string name="guide_install_step2_body">Öffne den Google Play Store auf der Uhr, scrolle zu „Apps auf deinem Smartphone“, wähle CGM Glance und tippe auf Installieren.</string>
+    <string name="guide_install_step3_title">Verbindung prüfen</string>
+    <string name="guide_install_step3_body">Nach der Installation wechselt die Zeile „Uhr“ oben unter Details auf „Verbunden“ und der neueste Messwert wird automatisch gesendet.</string>
+    <string name="guide_install_tip">Tipp: Lass Bluetooth und WLAN auf der Uhr während der Installation eingeschaltet, damit Google Play die Uhr-App schnell herunterlädt.</string>
+
+    <string name="guide_complication_intro">Immer sichtbar auf dem Zifferblatt, neben der Uhrzeit.</string>
+    <string name="guide_complication_step1_title">Zifferblatt gedrückt halten</string>
+    <string name="guide_complication_step1_body">Halte den Bildschirm der Uhr gedrückt und tippe auf Anpassen (oder bearbeite das Zifferblatt in der App Galaxy Wearable / Pixel Watch auf dem Telefon).</string>
+    <string name="guide_complication_step2_title">Zu den Komplikationen wischen</string>
+    <string name="guide_complication_step2_body">Wische durch die Anpassungsseiten nach links, bis die Datenfelder des Zifferblatts hervorgehoben sind.</string>
+    <string name="guide_complication_step3_title">CGM Glance → Glukose wählen</string>
+    <string name="guide_complication_step3_body">Tippe auf das Feld, in dem der Glukosewert erscheinen soll, scrolle durch die Liste und wähle CGM Glance (Glukose).</string>
+    <string name="guide_complication_tip">Tipp: Ein Tipp auf die Komplikation öffnet auf der Uhr den vollständigen CGM-Glance-Bildschirm mit dem genauen Alter des Messwerts. Akzeptiert ein Zifferblatt nur Symbole, wähle eines mit Textfeld.</string>
+
+    <string name="guide_tile_intro">Eine eigene bildschirmfüllende Karte mit großen Ziffern, einen Wisch vom Zifferblatt entfernt.</string>
+    <string name="guide_tile_step1_title">Auf der Uhr nach links wischen</string>
+    <string name="guide_tile_step1_body">Wische vom Zifferblatt aus nach links durch deine Kacheln (oder öffne den Bereich Kacheln in der App Galaxy Wearable / Pixel Watch).</string>
+    <string name="guide_tile_step2_title">Auf Kachel hinzufügen (+) tippen</string>
+    <string name="guide_tile_step2_body">Halte eine beliebige Kachel gedrückt oder wische bis ans Ende und tippe auf + (Kachel hinzufügen).</string>
+    <string name="guide_tile_step3_title">CGM Glance auswählen</string>
+    <string name="guide_tile_step3_body">Scrolle zu CGM Glance und tippe darauf, um die Kachel hinzuzufügen. Ziehe sie an die erste Position, damit sie direkt neben dem Zifferblatt liegt.</string>
+    <string name="guide_tile_tip">Tipp: Die Kachel färbt den Messwert nach Bereich (grün, gelb, rot) und dunkelt ihn automatisch ab, wenn die Daten veraltet sind.</string>
+
+    <string name="guide_widget_intro">Glukosewert, berechneter Trendpfeil und Alter des Messwerts auf dem Startbildschirm des Telefons.</string>
+    <string name="guide_widget_step1_title">Startbildschirm gedrückt halten</string>
+    <string name="guide_widget_step1_body">Halte eine freie Stelle auf dem Startbildschirm gedrückt und tippe auf Widgets.</string>
+    <string name="guide_widget_step2_title">CGM Glance auf den Bildschirm ziehen</string>
+    <string name="guide_widget_step2_body">Suche CGM Glance in der Widget-Liste, halte das Widget „Glukose“ gedrückt und platziere es an der gewünschten Stelle.</string>
+    <string name="guide_widget_step3_title">Quelle des Widgets wählen</string>
+    <string name="guide_widget_step3_body">Wähle, ob das Widget der Quelle der Uhr folgt oder fest auf LinX bzw. Dexcom ONE+ bleibt, und tippe dann auf Speichern.</string>
+    <string name="guide_widget_tip">Tipp: Ein Tipp auf das Widget öffnet die offizielle Sensor-App. Du kannst zwei Widgets nebeneinander platzieren, um zwei Sensoren zu vergleichen.</string>
+</resources>

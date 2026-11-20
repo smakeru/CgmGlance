@@ -3,6 +3,7 @@ package ro.smakeru.cgmglance.phone
 import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -35,6 +36,10 @@ import androidx.compose.ui.unit.dp
 
 /** Launcher configuration and reconfiguration; backing out never creates a widget. */
 class GlucoseWidgetConfigureActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLanguageController.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setResult(Activity.RESULT_CANCELED)

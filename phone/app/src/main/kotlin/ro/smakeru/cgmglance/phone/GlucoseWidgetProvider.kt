@@ -91,6 +91,8 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
         @Synchronized
         fun refresh(context: Context) {
             val appContext = context.applicationContext
+            // Below Android 13 the chosen language lives in this app, not in the platform.
+            val localized = AppLanguageController.wrap(appContext)
             val manager = AppWidgetManager.getInstance(appContext)
             val ids = manager.getAppWidgetIds(ComponentName(appContext, GlucoseWidgetProvider::class.java))
             if (ids.isEmpty()) {
@@ -157,7 +159,7 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
                 views.setInt(R.id.widget_root, "setBackgroundResource", backgroundFor(color))
                 views.setTextViewText(
                     R.id.widget_status,
-                    appContext.getString(
+                    localized.getString(
                         when (freshness) {
                             ReadingFreshness.FRESH, ReadingFreshness.AGING -> R.string.widget_reading
                             ReadingFreshness.STALE -> R.string.widget_stale
@@ -186,7 +188,7 @@ class GlucoseWidgetProvider : AppWidgetProvider() {
                     views.setChronometer(
                         R.id.widget_age,
                         elapsed - age.coerceAtLeast(0L),
-                        appContext.getString(
+                        localized.getString(
                             when (freshness) {
                                 ReadingFreshness.STALE -> R.string.widget_stale_age_format
                                 ReadingFreshness.NO_DATA -> R.string.widget_expired_age_format

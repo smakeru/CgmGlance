@@ -19,11 +19,16 @@ import androidx.core.app.NotificationCompat
  * appears often stops being read.
  */
 class AppStateNotifier(
-    private val context: Context,
+    private val appContext: Context,
 ) {
-    private val manager = context.getSystemService(NotificationManager::class.java)
+    private val manager = appContext.getSystemService(NotificationManager::class.java)
+
+    /** Resolved on every use: the language can change while the process lives. */
+    private val context: Context
+        get() = AppLanguageController.wrap(appContext)
 
     fun ensureChannel() {
+        val context = context
         val channel =
             NotificationChannel(
                 CHANNEL_ID,
@@ -58,12 +63,13 @@ class AppStateNotifier(
                 }
             }
 
-        val title = context.getString(titleRes)
-        val text = context.getString(textRes)
+        val localized = context
+        val title = localized.getString(titleRes)
+        val text = localized.getString(textRes)
 
         val notification =
             NotificationCompat
-                .Builder(context, CHANNEL_ID)
+                .Builder(appContext, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.stat_notify_error)
                 .setContentTitle(title)
                 .setContentText(text)
@@ -82,9 +88,9 @@ class AppStateNotifier(
 
     private fun openApp(): PendingIntent =
         PendingIntent.getActivity(
-            context,
+            appContext,
             0,
-            Intent(context, MainActivity::class.java),
+            Intent(appContext, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
 

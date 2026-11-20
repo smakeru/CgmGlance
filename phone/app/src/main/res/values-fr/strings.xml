@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Le nom de l'application reste non traduit : c'est un nom propre.
+      Les apostrophes sont typographiques (’) : aucune séquence d'échappement n'est nécessaire.
+    -->
+
+    <string name="health_ok_title">Fonctionne</string>
+    <string name="health_ok_body">Les mesures arrivent et la montre a la plus récente.</string>
+    <string name="health_no_permission_title">Accès aux notifications requis</string>
+    <string name="health_no_permission_body">Cette application lit la glycémie dans les notifications de LinX ou de Dexcom ONE+. Activez l’unique entrée « CGM Glance » dans l’accès aux notifications, puis choisissez votre capteur dans les Paramètres. Si seule l’ancienne entrée Dexcom était activée avant cette mise à jour, accordez l’accès une nouvelle fois. Les autres applications sont ignorées.</string>
+    <string name="health_waiting_title">En attente de la première mesure</string>
+    <string name="health_waiting_body">L’autorisation est accordée. Ouvrez l’application CGM sélectionnée pour qu’elle actualise sa notification. Pour Dexcom ONE+, activez « Quick Glance ».</string>
+    <string name="health_not_receiving_title">Aucune mesure reçue</string>
+    <string name="health_not_receiving_body">Rien n’est arrivé récemment de la source sélectionnée. Vérifiez que son application CGM est ouverte et connectée au capteur.</string>
+    <string name="health_watch_title">Montre injoignable</string>
+    <string name="health_watch_body">Les mesures arrivent, mais la montre est hors de portée ou éteinte. Elle se remettra à jour toute seule dès qu’elle sera reconnectée.</string>
+    <string name="health_watch_missing_title">Application introuvable sur la montre</string>
+    <string name="health_watch_missing_body">Les mesures arrivent, mais CGM Glance n’est pas encore installée sur votre montre. Installez-la sur la montre depuis Google Play (soit via le menu « Disponible sur d’autres appareils » de ce téléphone, soit dans le Play Store de la montre, sous « Applications sur votre téléphone »). Si vous avez installé un APK, le téléphone et la montre doivent provenir de la même compilation.</string>
+
+    <string name="action_open_notification_access">Ouvrir l’accès aux notifications</string>
+    <string name="action_open_play_store">Ouvrir dans Google Play</string>
+
+    <string name="fallback_title">Lecture par la méthode de secours</string>
+    <string name="fallback_body">La source sélectionnée est lue par l’analyseur de secours. Vérifiez le format de sa notification ; la prise en charge de Dexcom doit encore être validée sur un appareil réel.</string>
+
+    <string name="details_heading">Détails</string>
+    <string name="detail_source">Source</string>
+    <string name="detail_parse_failure">Dernière notification refusée</string>
+    <string name="detail_permission">Accès aux notifications</string>
+    <string name="detail_last_reading">Dernière mesure</string>
+    <string name="detail_sent">Envoyé à la montre</string>
+    <string name="detail_watch">Montre</string>
+    <string name="value_granted">Accordé</string>
+    <string name="value_not_granted">Non accordé</string>
+    <string name="value_connected">Connectée</string>
+    <string name="value_not_reachable">Injoignable</string>
+    <string name="value_watch_no_app">Application introuvable</string>
+    <string name="value_none_yet">Aucune pour l’instant</string>
+    <string name="value_not_yet">Pas encore</string>
+
+    <string name="age_just_now">à l’instant</string>
+    <plurals name="age_minutes_ago">
+        <item quantity="one">il y a %d min</item>
+        <item quantity="many">il y a %d min</item>
+        <item quantity="other">il y a %d min</item>
+    </plurals>
+    <string name="reading_with_age">%1$d %2$s, %3$s</string>
+    <string name="sent_just_now">À l’instant</string>
+
+    <string name="action_settings">Paramètres</string>
+    <string name="quick_settings_title">Capteur et affichage</string>
+    <string name="quick_settings_sensor_label">Capteur actif (touchez pour changer) :</string>
+    <string name="action_open_full_settings">Paramètres avancés →</string>
+    <string name="quick_settings_details">Seuils, unité et Health Connect</string>
+    <string name="action_back_top">← Retour</string>
+    <string name="disclaimer">Affiche une valeur que l’application officielle a déjà calculée. Ce n’est pas un dispositif médical : ne l’utilisez jamais pour une décision de traitement et confirmez toujours avec l’application officielle ou un lecteur de glycémie.</string>
+
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_source_title">Source pour la montre et Health Connect</string>
+    <string name="settings_source_data_note">Glycémie uniquement · tendance calculée par CGM Glance</string>
+    <string name="settings_source_note">LinX est sélectionné par défaut et a la priorité lorsque les deux capteurs fonctionnent. La source ne change jamais automatiquement. Sélectionnez Dexcom ONE+ ici quand vous êtes prêt. Les historiques restent séparés. Si la nouvelle source n’a pas encore de mesure, la montre conserve la valeur précédente avec son âge d’origine jusqu’à ce qu’une mesure arrive.</string>
+    <string name="settings_dexcom_note">Activez « Quick Glance » dans Dexcom ONE+ et accordez l’accès aux notifications à l’unique entrée « CGM Glance » (partagée avec LinX). La glycémie doit comporter une unité explicite ; les notifications ambiguës sont refusées.</string>
+    <string name="settings_subtitle">Utilisé uniquement pour la couleur et la formulation. Cette application n’alerte jamais sur ces valeurs — les alarmes restent du ressort de l’application officielle.</string>
+    <string name="field_urgent_low">Très bas</string>
+    <string name="field_low">Bas</string>
+    <string name="field_high">Élevé</string>
+    <string name="field_very_high">Très élevé</string>
+    <string name="settings_units_note">Toutes les valeurs sont en mg/dL.</string>
+    <string name="settings_display_unit">Unité d’affichage</string>
+
+    <string name="settings_delta_title">Fenêtre de variation de la glycémie (Delta)</string>
+    <string name="settings_delta_subtitle">Calcule la différence (+ / -) par rapport à une mesure antérieure. Affichée sur le widget du téléphone, la carte de la montre et les complications de la montre.</string>
+    <string name="settings_delta_5m">5 min</string>
+    <string name="settings_delta_10m">10 min (recommandé)</string>
+    <string name="settings_delta_15m">15 min</string>
+    <string name="settings_delta_20m">20 min</string>
+    <string name="settings_language_title">Langue</string>
+    <string name="settings_language_subtitle">S’applique à cette application, à ses widgets et à ses notifications. La montre suit la langue de la montre.</string>
+    <string name="settings_language_system">Langue du système</string>
+    <string name="settings_invalid">« Très bas » doit être inférieur à « Bas », « Bas » à « Élevé » et « Élevé » à « Très élevé ». Les quatre doivent être des valeurs qu’un capteur peut indiquer.</string>
+    <string name="action_save">Enregistrer</string>
+    <string name="action_back">Retour</string>
+    <string name="action_reset">Rétablir 55 / 70 / 180 / 260</string>
+
+    <string name="channel_status_name">État de l’application</string>
+    <string name="channel_status_description">Vous prévient lorsque CGM Glance ne reçoit plus de mesures.</string>
+    <string name="notif_no_permission_title">L’accès aux notifications est désactivé</string>
+    <string name="notif_no_permission_text">Sans lui, CGM Glance ne peut pas lire la glycémie. Touchez pour corriger.</string>
+    <string name="notif_not_receiving_title">Aucune mesure reçue</string>
+    <string name="notif_not_receiving_text">Rien n’est arrivé depuis un moment de la source CGM sélectionnée. Vérifiez que son application est ouverte et connectée au capteur.</string>
+
+    <!-- Deliberately identical to the English one: a build identifier, not prose. -->
+    <string name="version_label">Version %1$s</string>
+
+    <string name="health_export_title">Health Connect</string>
+    <string name="health_export_disabled">Désactivé. Activez-le dans « Paramètres » pour écrire les mesures dans Health Connect.</string>
+    <string name="health_export_working">Écriture d’une mesure toutes les %1$d minutes dans Health Connect. Samsung Health les lit à partir de là, si vous avez activé ce lien dans ses paramètres.</string>
+    <string name="health_export_waiting">Configuré. La prochaine mesure attendue sera écrite, puis une toutes les %1$d minutes.</string>
+    <string name="health_export_needs_setup">Autorisez CGM Glance à écrire la glycémie dans Health Connect. Samsung Health la lit ensuite à partir de là.</string>
+    <string name="health_export_unavailable">Health Connect n’est pas disponible sur ce téléphone. Installez-le, puis activez le lien Health Connect dans Samsung Health.</string>
+    <string name="health_export_update_required">Health Connect doit être mis à jour avant de pouvoir accepter des mesures.</string>
+    <string name="health_export_failing">La dernière écriture a échoué. Les mesures arrivent toujours sur la montre.</string>
+    <string name="health_export_last_write">Dernière écriture %1$s</string>
+    <string name="action_grant_health_permission">Autoriser l’écriture de la glycémie</string>
+
+    <string name="settings_health_title">Health Connect</string>
+    <string name="settings_health_subtitle">Écrit vos mesures dans Health Connect, où Samsung Health les lit. Rien n’est jamais relu.</string>
+    <string name="settings_health_enabled">Envoyer les données à Health Connect</string>
+    <string name="settings_health_interval">Envoyer toutes les (minutes)</string>
+    <string name="settings_health_interval_note">Entre %1$d et %2$d minutes. La valeur par défaut est 15.</string>
+    <string name="settings_health_invalid">L’intervalle doit être compris entre %1$d et %2$d minutes.</string>
+
+    <string name="guide_title">Guide montre et téléphone</string>
+    <string name="guide_subtitle">Comment installer l’application sur la montre et afficher la glycémie sur le cadran, sur une carte ou sur l’écran du téléphone.</string>
+
+    <string name="guide_tab_install">1. Montre</string>
+    <string name="guide_tab_complication">2. Cadran</string>
+    <string name="guide_tab_tile">3. Carte</string>
+    <string name="guide_tab_widget">4. Widget</string>
+
+    <string name="guide_install_intro">Installez l’application compagnon sur votre montre Wear OS pour que les mesures arrivent à votre poignet.</string>
+    <string name="guide_install_step1_title">Option A — Depuis Google Play sur le téléphone</string>
+    <string name="guide_install_step1_body">Touchez « Ouvrir dans Google Play » ci-dessous, dépliez « Disponible sur d’autres appareils » (à côté de Installée/Ouvrir), cochez votre montre et touchez Installer.</string>
+    <string name="guide_install_step2_title">Option B — Directement depuis la montre</string>
+    <string name="guide_install_step2_body">Ouvrez le Google Play Store sur la montre, faites défiler jusqu’à « Applications sur votre téléphone », sélectionnez CGM Glance et touchez Installer.</string>
+    <string name="guide_install_step3_title">Vérifier la connexion</string>
+    <string name="guide_install_step3_body">Une fois l’installation terminée, la ligne « Montre » des Détails ci-dessus passe à « Connectée » et la dernière mesure est envoyée automatiquement.</string>
+    <string name="guide_install_tip">Astuce : laissez le Bluetooth et le Wi-Fi activés sur la montre pendant l’installation pour que Google Play télécharge rapidement l’application.</string>
+
+    <string name="guide_complication_intro">Toujours visible sur le cadran principal de la montre, à côté de l’heure.</string>
+    <string name="guide_complication_step1_title">Appuyez longuement sur le cadran</string>
+    <string name="guide_complication_step1_body">Maintenez le doigt sur l’écran de la montre, puis touchez Personnaliser (ou modifiez le cadran depuis l’application Galaxy Wearable / Pixel Watch du téléphone).</string>
+    <string name="guide_complication_step2_title">Faites glisser jusqu’aux Complications</string>
+    <string name="guide_complication_step2_body">Faites glisser vers la gauche dans les pages de personnalisation jusqu’à ce que les emplacements de données du cadran soient mis en évidence.</string>
+    <string name="guide_complication_step3_title">Choisissez CGM Glance → Glycémie</string>
+    <string name="guide_complication_step3_body">Touchez l’emplacement où la glycémie doit apparaître, faites défiler la liste et choisissez CGM Glance (Glycémie).</string>
+    <string name="guide_complication_tip">Astuce : toucher la complication sur la montre ouvre l’écran complet de CGM Glance avec l’âge exact de la mesure. Si un cadran n’accepte que des icônes, choisissez-en un avec un emplacement de texte.</string>
+
+    <string name="guide_tile_intro">Une carte plein écran dédiée, avec de grands chiffres, à un glissement du cadran.</string>
+    <string name="guide_tile_step1_title">Faites glisser vers la gauche sur la montre</string>
+    <string name="guide_tile_step1_body">Depuis le cadran, faites glisser vers la gauche parmi vos cartes (ou ouvrez la section Cartes dans l’application Galaxy Wearable / Pixel Watch).</string>
+    <string name="guide_tile_step2_title">Touchez Ajouter une carte (+)</string>
+    <string name="guide_tile_step2_body">Appuyez longuement sur une carte ou faites glisser jusqu’au bout et touchez le bouton + (Ajouter une carte).</string>
+    <string name="guide_tile_step3_title">Choisissez CGM Glance</string>
+    <string name="guide_tile_step3_body">Faites défiler jusqu’à CGM Glance et touchez-la pour ajouter la carte. Déplacez-la en première position pour qu’elle soit juste à côté du cadran.</string>
+    <string name="guide_tile_tip">Astuce : la carte colore la mesure selon la plage (vert, jaune, rouge) et l’estompe automatiquement lorsque les données sont trop anciennes.</string>
+
+    <string name="guide_widget_intro">Glycémie, flèche de tendance calculée et âge de la mesure sur l’écran d’accueil du téléphone.</string>
+    <string name="guide_widget_step1_title">Appuyez longuement sur l’écran d’accueil</string>
+    <string name="guide_widget_step1_body">Maintenez le doigt sur un espace vide de l’écran d’accueil et touchez Widgets.</string>
+    <string name="guide_widget_step2_title">Faites glisser CGM Glance sur l’écran</string>
+    <string name="guide_widget_step2_body">Trouvez CGM Glance dans la liste des widgets, puis maintenez le doigt sur le widget Glycémie pour le placer où vous voulez.</string>
+    <string name="guide_widget_step3_title">Choisissez la source du widget</string>
+    <string name="guide_widget_step3_body">Choisissez si le widget suit la source de la montre ou reste fixé sur LinX ou Dexcom ONE+, puis touchez Enregistrer.</string>
+    <string name="guide_widget_tip">Astuce : toucher le widget ouvre l’application officielle du capteur. Vous pouvez placer deux widgets côte à côte pour comparer deux capteurs.</string>
+</resources>

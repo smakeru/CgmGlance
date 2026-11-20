@@ -1,6 +1,8 @@
 package ro.smakeru.cgmglance.phone
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -10,15 +12,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,7 +36,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ro.smakeru.cgmglance.domain.glucose.GlucoseUnit
@@ -48,6 +59,8 @@ fun SettingsScreen(
     initialHealthExport: HealthExportSettings,
     initialSource: GlucoseSource,
     initialDeltaInterval: Int,
+    currentLanguage: AppLanguage,
+    onSelectLanguage: (AppLanguage) -> Unit,
     onSave: (RangeThresholds, GlucoseUnit, HealthExportSettings, GlucoseSource, Int) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -170,6 +183,16 @@ fun SettingsScreen(
             }
         }
 
+        // Applied on tap rather than on Save: the screen is rebuilt in the new language at once,
+        // which is the only confirmation that means anything to someone who cannot read the
+        // current one. Values typed above and not yet saved are discarded by that rebuild.
+        Spacer(Modifier.height(28.dp))
+        Text(stringResource(R.string.settings_language_title), style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text(stringResource(R.string.settings_language_subtitle), style = MaterialTheme.typography.bodySmall)
+        Spacer(Modifier.height(12.dp))
+        LanguagePicker(current = currentLanguage, onSelect = onSelectLanguage)
+
         Spacer(Modifier.height(28.dp))
         Text(stringResource(R.string.settings_health_title), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(4.dp))
@@ -254,6 +277,75 @@ fun SettingsScreen(
                 veryHigh = defaults.veryHighMgdl.toString()
             },
         ) { Text(stringResource(R.string.action_reset)) }
+    }
+}
+
+/**
+ * One card, one row per language, the current one marked.
+ *
+ * A list rather than chips: each row is a full-width touch target, and the two-letter badge
+ * gives someone stranded in the wrong language something to recognise besides the name.
+ */
+@Composable
+private fun LanguagePicker(
+    current: AppLanguage,
+    onSelect: (AppLanguage) -> Unit,
+) {
+    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+        AppLanguage.entries.forEachIndexed { index, candidate ->
+            val selected = candidate == current
+            if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            if (selected) MaterialTheme.colorScheme.secondaryContainer else Color.Transparent,
+                        ).selectable(
+                            selected = selected,
+                            onClick = { if (!selected) onSelect(candidate) },
+                            role = Role.RadioButton,
+                        ).padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier =
+                        Modifier
+                            .size(36.dp)
+                            .background(
+                                color =
+                                    if (selected) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.surfaceVariant
+                                    },
+                                shape = CircleShape,
+                            ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        // The system row has no language of its own to abbreviate.
+                        text = candidate.tag?.uppercase() ?: "A",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color =
+                            if (selected) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
+                    )
+                }
+                Spacer(Modifier.width(16.dp))
+                Text(
+                    text = candidate.endonym ?: stringResource(R.string.settings_language_system),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                    modifier = Modifier.weight(1f),
+                )
+                RadioButton(selected = selected, onClick = null)
+            }
+        }
     }
 }
 

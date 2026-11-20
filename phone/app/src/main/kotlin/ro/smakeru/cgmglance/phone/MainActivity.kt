@@ -2,6 +2,7 @@ package ro.smakeru.cgmglance.phone
 
 import android.Manifest
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -38,6 +39,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +66,10 @@ import ro.smakeru.cgmglance.sync.SyncContract
  * revive a stopped app from a background trigger.
  */
 class MainActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLanguageController.wrap(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestNotificationPermissionIfNeeded()
@@ -72,8 +78,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 // Two screens and no back stack worth preserving, so a boolean beats pulling in
-                // a navigation library and its graph.
-                var showSettings by remember { mutableStateOf(false) }
+                // a navigation library and its graph. Saveable, because choosing a language
+                // recreates the activity and should land back on the settings screen.
+                var showSettings by rememberSaveable { mutableStateOf(false) }
 
                 Surface(modifier = Modifier.fillMaxSize()) {
                     if (showSettings) {
@@ -86,6 +93,13 @@ class MainActivity : ComponentActivity() {
                             initialHealthExport = app.preferences.loadHealthExportSettings(),
                             initialSource = app.preferences.loadSource(),
                             initialDeltaInterval = app.preferences.loadDeltaIntervalMinutes(),
+                            currentLanguage = AppLanguageController.current(this@MainActivity),
+                            onSelectLanguage = { language ->
+                                AppLanguageController.apply(this@MainActivity, language)
+                                app.onLanguageChanged()
+                                // From Android 13 the system recreates the activity itself.
+                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) recreate()
+                            },
                             onSave = { thresholds, unit, healthExport, glucoseSource, deltaInterval ->
                                 app.updatePreferences(thresholds, unit, healthExport, glucoseSource, deltaInterval)
                                 showSettings = false

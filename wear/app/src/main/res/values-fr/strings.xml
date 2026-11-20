@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Le nom de l’application reste non traduit : c’est un nom propre. -->
+
+    <!-- Court, pour ne pas être tronqué sur le petit écran, et sans marque de fabricant. -->
+    <string name="complication_label">Glycémie</string>
+
+    <string name="age_just_now">à l’instant</string>
+    <plurals name="age_minutes_ago">
+        <item quantity="one">il y a %d min</item>
+        <item quantity="many">il y a %d min</item>
+        <item quantity="other">il y a %d min</item>
+    </plurals>
+    <string name="age_no_recent_data">pas de données récentes</string>
+    <string name="age_may_be_out_of_date">peut-être obsolète</string>
+
+    <string name="cd_glucose">Glycémie %1$s %2$s</string>
+    <string name="cd_delta">variation %1$s</string>
+    <string name="cd_no_reading">Aucune mesure de glycémie récente</string>
+    <string name="cd_out_of_date">la mesure est peut-être obsolète</string>
+    <string name="unit_spoken_mgdl">milligrammes par décilitre</string>
+    <string name="unit_spoken_mmol">millimoles par litre</string>
+
+    <string name="range_urgent_low">très bas</string>
+    <string name="range_low">bas</string>
+    <string name="range_high">élevé</string>
+    <string name="range_very_high">très élevé</string>
+
+    <string name="trend_rising_rapidly">monte rapidement</string>
+    <string name="trend_rising">monte</string>
+    <string name="trend_rising_slightly">monte lentement</string>
+    <string name="trend_steady">stable</string>
+    <string name="trend_falling_slightly">baisse lentement</string>
+    <string name="trend_falling">baisse</string>
+    <string name="trend_falling_rapidly">baisse rapidement</string>
+    <string name="trend_unknown">tendance inconnue</string>
+</resources>

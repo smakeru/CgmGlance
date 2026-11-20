@@ -76,6 +76,9 @@
     <string name="settings_delta_10m">10 min (recommended)</string>
     <string name="settings_delta_15m">15 min</string>
     <string name="settings_delta_20m">20 min</string>
+    <string name="settings_language_title">Language</string>
+    <string name="settings_language_subtitle">Applies to this app, its widgets and its notifications. The watch follows the watch\'s own language.</string>
+    <string name="settings_language_system">System default</string>
     <string name="settings_invalid">Urgent low must be below low, low below high, and high below very high. All four must be values a sensor can report.</string>
     <string name="action_save">Save</string>
     <string name="action_back">Back</string>

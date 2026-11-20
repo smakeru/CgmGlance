@@ -64,7 +64,9 @@ Acest document păstrează ideile și oportunitățile de dezvoltare identificat
 
 ---
 
-## 8. Suport Multi-Limbă Extins & Selector Manual de Limbă în Setări — *To-Do Prioritar*
+## 8. Suport Multi-Limbă Extins & Selector Manual de Limbă în Setări — *Parțial implementat*
+> Implementat: selector în Setări (implicit sistem + EN / RO / DE / FR), aplicat pe telefon, widgeturi și notificări; traduceri DE și FR și pe ceas. Rămas: alte limbi și sincronizarea alegerii către ceas (ceasul folosește limba lui).
+
 * **Concept:** Extinderea traducerilor aplicației (peste Română și Engleză) cu cele mai folosite limbi europene/internaționale (ex. Germană `de`, Franceză `fr`, Spaniolă `es`, Italiană `it`, Poloneză `pl`, Maghiară `hu`, etc.) și adăugarea unui **selector de limbă direct în ecranul de Setări** al aplicației.
 * **Comportament vizat:**
   * Opțiune *„Implicit sistem (System default)”* + alegere manuală a limbii dorite direct din Setările CGM Glance, independent de limba generală a telefonului.
