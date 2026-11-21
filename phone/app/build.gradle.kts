@@ -55,6 +55,15 @@ android {
         }
     }
 
+    // Play splits a bundle by language and delivers only the phone's own. The in-app language
+    // picker offers languages the phone is not set to, so every one of them must ship in the
+    // base APK; split, German on a Romanian phone silently falls back to English.
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+
     buildFeatures {
         compose = true
 

@@ -183,16 +183,6 @@ fun SettingsScreen(
             }
         }
 
-        // Applied on tap rather than on Save: the screen is rebuilt in the new language at once,
-        // which is the only confirmation that means anything to someone who cannot read the
-        // current one. Values typed above and not yet saved are discarded by that rebuild.
-        Spacer(Modifier.height(28.dp))
-        Text(stringResource(R.string.settings_language_title), style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(4.dp))
-        Text(stringResource(R.string.settings_language_subtitle), style = MaterialTheme.typography.bodySmall)
-        Spacer(Modifier.height(12.dp))
-        LanguagePicker(current = currentLanguage, onSelect = onSelectLanguage)
-
         Spacer(Modifier.height(28.dp))
         Text(stringResource(R.string.settings_health_title), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(4.dp))
@@ -277,6 +267,20 @@ fun SettingsScreen(
                 veryHigh = defaults.veryHighMgdl.toString()
             },
         ) { Text(stringResource(R.string.action_reset)) }
+
+        // Last on the screen, below Save, because it is not part of what Save stores: it is
+        // applied on tap and the screen is rebuilt in the new language at once, which is the
+        // only confirmation that means anything to someone who cannot read the current one.
+        // Values typed above and not yet saved are discarded by that rebuild.
+        Spacer(Modifier.height(28.dp))
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        Spacer(Modifier.height(20.dp))
+        Text(stringResource(R.string.settings_language_title), style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text(stringResource(R.string.settings_language_subtitle), style = MaterialTheme.typography.bodySmall)
+        Spacer(Modifier.height(12.dp))
+        LanguagePicker(current = currentLanguage, onSelect = onSelectLanguage)
+        Spacer(Modifier.height(12.dp))
     }
 }
 
