@@ -3,6 +3,13 @@
 Shows the glucose value your official CGM app already receives on any Wear OS watch face, as a
 standard Complication and Tile, and on your phone's home screen as a widget.
 
+## Why this exists / How it was built
+
+For people using LinX or Dexcom ONE+ who want a discreet glance at their glucose on a watch or phone widget, without opening the official app.
+The product scope is deliberately narrow: passive display, explicit source selection, and no treatment guidance or alarms.
+Built with AI coding agents, guided by [repository rules](AGENTS.md), [architecture](docs/architecture.md) and a [decision log](docs/decisions.md).
+Verified by **222 automated tests** across domain logic, notification parsing, phone behaviour and watch surfaces.
+
 Two sensors are supported, both implemented and in daily use:
 
 | Sensor | Official app | What is read |
@@ -26,8 +33,13 @@ official app's responsibility.
 
 ## Status
 
-Version **1.2**, working end to end on real hardware: Galaxy S25 Ultra paired to a Galaxy Watch 8.
-Not published on any store; personal use.
+Current builds: **phone 1.2.5** and **watch 1.2**, working end to end on real hardware:
+Galaxy S25 Ultra paired to a Galaxy Watch 8.
+
+[Google Play](https://play.google.com/store/apps/details?id=ro.smakeru.cgmglance) ·
+[Website](https://cgm-glance-play.web.app) · [GitHub releases](https://github.com/smakeru/CgmGlance/releases)
+
+This remains a personal project, with the limitations and no-support policy below.
 
 | | |
 | --- | --- |
@@ -37,7 +49,7 @@ Not published on any store; personal use.
 | Phone app | Source selection (LinX by default), separate history per sensor, target range with a very-high threshold, status screen, silence watchdog |
 | Range colours | Shared by widget, tile and watch app: red below urgent low and above very high (55 / 260 by default), orange low, green in range, yellow high, grey once stale |
 | Health export | Health Connect, off by default ([below](#health-connect-export)) |
-| Tests | 196 automated tests: domain and sync rules, both notification parsers, shared notification access, source isolation, watch surfaces |
+| Tests | 222 automated tests: domain and sync rules, both notification parsers, shared notification access, source isolation, watch surfaces |
 
 **Verified on the devices above:** LinX and Dexcom ONE+ 1.9.0 readings in mg/dL, both sensors in
 parallel with LinX kept on the watch, explicit switch to Dexcom, the coloured widget, watch sync.
@@ -216,8 +228,9 @@ port is only advertised while the pairing screen is open on the watch.
 | `:wear:app` | Android app | Complication, tile, watch app. |
 
 Both apps share the application id `ro.smakeru.cgmglance`, which the Data Layer requires. Wear
-version codes are offset by one million: phone **1.2** is `versionCode` 3, watch **1.2** is
-1000003. Sync schema 2 only adds the very-high threshold, so either APK can be updated first; a 1.1
+version codes are offset by one million: the current phone **1.2.5** is `versionCode` 15,
+and watch **1.2** is `versionCode` 1000006. Sync schema 2 only adds the very-high threshold,
+so either APK can be updated first; a 1.1
 watch keeps working, it simply shows in range in white and has no very-high red. Both installed
 APKs must use the same signing key.
 

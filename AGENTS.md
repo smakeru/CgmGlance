@@ -10,10 +10,11 @@ Acest fișier (`AGENTS.md`) este încărcat automat în memoria locală a proiec
 - **Application ID**: `ro.smakeru.cgmglance` (identic pe `:phone:app` și `:wear:app`)
 - **Dezvoltator**: `Viorel D` (`draganviorel25@gmail.com`) — Cont Personal
 - **Google Play Console (Publishing Overview)**: `https://play.google.com/console/u/0/developers/7918042599438566714/app/4972634000184074064/publishing`
-- **Grup Google Testeri**: `https://groups.google.com/g/cgm-glance-testers` (`cgm-glance-testers@googlegroups.com`)
+- **Stare**: acces la producție acordat pe 2026-11-23; prima versiune (telefon `15`, ceas `1_000_006`) a fost trimisă pe `production` / `wear:production` în aceeași zi.
+- **Link Google Play Store (public)**: `https://play.google.com/store/apps/details?id=ro.smakeru.cgmglance`
+- **Grup Google Testeri** (folosit la testarea închisă; rămâne pentru versiuni de probă): `https://groups.google.com/g/cgm-glance-testers` (`cgm-glance-testers@googlegroups.com`)
 - **Link Testare Internă**: `https://play.google.com/apps/internaltest/4701313260176212479`
 - **Link Opt-In Testare Închisă (Alpha)**: `https://play.google.com/apps/testing/ro.smakeru.cgmglance`
-- **Link Google Play Store**: `https://play.google.com/store/apps/details?id=ro.smakeru.cgmglance`
 - **Site Oficial de Prezentare (Firebase Hosting — Free)**: `https://cgm-glance-play.web.app` (sursa în `site/`, publicare cu `python scripts/deploy_site.py`)
 - **Privacy Policy URL**: `https://cgm-glance-play.web.app/privacy` (și Gist: `https://gist.github.com/smakeru/9ded20f5b72e9ce082a2d601a36f2edd`, sursa în `docs/privacy-policy.md`)
 - **Documentație completă lansare**: `docs/play-store-release.md`
@@ -33,9 +34,16 @@ Proiectul este conectat la **Google Play Android Developer API v3** prin contul 
   ```powershell
   python scripts/publish_play.py --bump none --target both --upload alpha
   ```
+  Pista `wear:alpha` nu există în Play Console; scriptul o sare, iar ceasul se testează pe `wear:internal`.
+- **Lansare în Producție (100%, publică — doar la cererea explicită a utilizatorului)**:
+  ```powershell
+  python scripts/publish_play.py --bump none --target both --upload production
+  ```
+  Verifică întâi versiunea pe `internal` / `alpha`. `wear:production` moștenește țările de la `production`.
 - **Reguli `versionCode`**:
   - Telefon (`phone/app/build.gradle.kts`): numere mici incrementale (ex. `5`, `6`, ...). Piste API: `internal`, `alpha`, `production`.
-  - Ceas (`wear/app/build.gradle.kts`): offset de `1_000_000` (ex. `1_000_004`, `1_000_005`, ...). Piste API dedicate: `wear:internal`, `wear:alpha`, `wear:production`.
+  - Ceas (`wear/app/build.gradle.kts`): offset de `1_000_000` (ex. `1_000_004`, `1_000_005`, ...). Piste API dedicate: `wear:internal`, `wear:production`.
+- **Limbi**: toate limbile se livrează în APK-ul de bază (`bundle.language.enableSplit = false` în `phone/app/build.gradle.kts`). Nu reactiva împărțirea pe limbi: selectorul de limbă din aplicație ar cădea pe engleză la instalarea din Google Play.
 
 ## 4. Reguli Tehnice & Politici Critice
 1. **Sincronizare Wear OS Data Layer**: Aplicația de telefon și cea de ceas comunică prin Data Layer **doar** dacă sunt semnate cu aceeași cheie (ambele din Google Play / release keystore sau ambele debug). Nu amesteca o instalare din Google Play cu una locală de debug.

@@ -7,6 +7,35 @@ ever gains keys. Wear version codes use the one million offset described in the
 Entries record what changed and, where it is not obvious, why — the reasoning belongs in
 [docs/decisions.md](docs/decisions.md), and this file links to it rather than repeating it.
 
+## 1.2.5 — 2026-11-23
+
+First release on the Google Play production track: phone `versionCode` 15, wear `versionCode`
+1000006. Collects everything shipped to testers since 1.2.1. The sync contract only gained an
+optional delta key, so either side may still be updated first.
+
+### Added
+
+- **Language picker** at the end of Settings: system default, English, Romanian, German or
+  French, applied to the app, its widgets and its notifications. German and French are new, on
+  the phone and on the watch; the watch follows its own system language. See
+  [decisions](docs/decisions.md).
+- **Glucose delta**: the signed change against a reading a configurable 5 to 20 minutes earlier,
+  on the phone widget, the watch tile and the complication.
+- **Setup guide** on the status screen: watch install, complication, tile and phone widget.
+- **Quick sensor and settings card** on the status screen.
+
+### Changed
+
+- **Trend arrow reacts sooner.** The fit covers ten minutes instead of fifteen, and a slope
+  sitting on a boundary keeps the arrow already shown instead of flickering between two.
+
+### Fixed
+
+- German and French chosen in the app fell back to English when installed from Google Play,
+  which delivers only the phone's own languages. All languages now ship in the base APK.
+- System back on the settings screen returns to the main screen instead of closing the app.
+- The widget keeps mmol/L readings on one line.
+
 ## 1.2.1 — 2026-11-07
 
 Phone-only update; the watch and sync contract are unchanged.

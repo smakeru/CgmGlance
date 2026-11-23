@@ -62,12 +62,14 @@ python scripts/publish_play.py --bump none --target both --upload alpha
 - **Telefon (`:phone:app` în `phone/app/build.gradle.kts`)**:
   - Pista de testare internă în API: `internal`
   - Pista de testare închisă în API: `alpha`
-  - Versiune curentă publicată: `versionCode = 5` (`versionName = "1.2"`, `status = completed` pe `internal` și `alpha`).
+  - Pista de producție în API: `production`
+  - Versiune curentă: `versionCode = 15` (`versionName = "1.2.5"`) pe `internal`, `alpha` și `production`.
 - **Ceas Wear OS (`:wear:app` în `wear/app/build.gradle.kts`)**:
   - Are offset de `1_000_000` față de telefon pentru a nu se ciocni niciodată codurile de versiune.
   - Pista de testare internă în API: `wear:internal`
-  - Pista de testare închisă în API: `wear:alpha` (necesită activarea inițială din UI în *Testare închisă -> Alpha -> selector Wear OS*)
-  - Versiune curentă publicată: `versionCode = 1_000_004` (`versionName = "1.2"`, `status = completed` pe `wear:internal`).
+  - Pista de testare închisă `wear:alpha` nu a fost activată; scriptul o sare.
+  - Pista de producție în API: `wear:production`
+  - Versiune curentă: `versionCode = 1_000_006` (`versionName = "1.2"`) pe `wear:internal` și `wear:production`.
 
 ---
 
@@ -91,7 +93,31 @@ Pentru ca aplicația să nu fie blocată de restricțiile Google pentru organiza
 
 ---
 
-## 6. Cum Trecem de la Testare la Producție (Cei 12 Testeri × 14 Zile)
+## 6. Producție
+
+Accesul la producție a fost acordat pe **2026-11-23**, la o zi după cerere. Prima versiune —
+telefon `1.2.5 (15)`, ceas `1.2 (1000006)` — a fost trimisă în aceeași zi, la 100%.
+
+```powershell
+# Lansează în producție versiunile deja încărcate (telefon + ceas), la 100%:
+python scripts/publish_play.py --bump none --target both --upload production
+```
+
+Ce am învățat la prima lansare:
+
+- **Țările se setează din Play Console, pe pista Producție** (*Testează și lansează → Producție →
+  Țări/regiuni*). Fără ele API-ul respinge commit-ul cu `Release in track targeting no countries`.
+  Testarea deschisă și cea închisă au liste proprii; `wear:production` o moștenește pe cea de
+  producție.
+- **Modificările intră la examinare.** Starea se vede doar în *Prezentare generală a publicării*,
+  nu prin API.
+- **Fișa din magazin** există în `en-US` (cu imagini) și `ro` (doar text).
+- **Rapoartele de instalări** apar în bucket-ul `pubsite_prod_7918042599438566714` cu câteva zile
+  întârziere; metricile de crash/ANR din Play Developer Reporting API sunt goale la volum mic.
+
+## 7. Istoric: de la Testare la Producție (Cei 12 Testeri × 14 Zile)
+
+Etapă încheiată. Păstrată ca referință pentru un cont sau o aplicație nouă.
 
 1. **Testare internă (`https://play.google.com/apps/internaltest/4701313260176212479`)**:
    - Funcționează pentru persoanele ale căror adrese Gmail sunt adăugate în lista de emailuri din *Testare internă* (atât pe pista de telefon, cât și pe pista *Wear OS -> Testeri*).
