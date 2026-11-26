@@ -7,7 +7,12 @@
 <meta name="description" content="Aplicație Android & Wear OS gratuită, fără reclame și Open Source pentru vizualizarea glicemiei din SinoCare LinX și Dexcom ONE+ direct pe ceas și în widget-uri pe telefon.">
 <meta property="og:title" content="CGM Glance — Glicemia pe Ceas (Wear OS) & Widget Telefon">
 <meta property="og:description" content="Vezi glicemia din SinoCare LinX și Dexcom ONE+ direct pe cadranul ceasului (Wear OS) și în widget-uri pe ecranul telefonului. 100% gratuit, fără cont, fără reclame.">
-<meta property="og:image" content="assets/phone-screenshot-2.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cgm-glance-play.web.app/">
+<meta property="og:image" content="https://cgm-glance-play.web.app/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f2f5f1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0c1513" media="(prefers-color-scheme: dark)">
 <link rel="icon" type="image/png" href="assets/icon-512.png">
@@ -231,6 +236,16 @@
   .steps .actions { display: grid; gap: 10px; margin-top: 6px; }
   .keep { margin-top: 24px; max-width: 46rem; color: var(--ink-soft); }
   .keep strong { color: var(--ink); }
+  .faq { max-width: 46rem; border-top: 1px solid var(--line); }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    cursor: pointer; list-style: none; padding: 16px 28px 16px 0; position: relative;
+    font: 700 1.05rem/1.3 var(--display); letter-spacing: -0.01em;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; position: absolute; right: 4px; top: 14px; color: var(--accent); font-size: 1.3rem; font-weight: 500; }
+  .faq details[open] summary::after { content: "–"; }
+  .faq p { color: var(--ink-soft); font-size: 0.97rem; padding: 0 28px 18px 0; }
 
   /* showcases */
   .shots { display: grid; gap: clamp(24px, 4vw, 40px); }
@@ -679,6 +694,65 @@
           <dd lang="en">No ads, no analytics service and no account to create. Install and use.</dd>
         </div>
       </dl>
+    </div>
+  </section>
+
+  <section class="band section" id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><span lang="ro">Întrebări frecvente</span><span lang="en">Questions</span></p>
+        <h2 lang="ro">Ce întreabă lumea înainte să instaleze</h2>
+        <h2 lang="en">What people ask before installing</h2>
+        <p lang="ro">Aplicația e făcută de cineva care poartă senzor și o folosește zilnic, de câteva luni.</p>
+        <p lang="en">The app is built by someone who wears a sensor and has used it every day for months.</p>
+      </div>
+      <div class="faq">
+        <details>
+          <summary><span lang="ro">Am nevoie de ceas?</span><span lang="en">Do I need a watch?</span></summary>
+          <p lang="ro">Nu. Widgetul de pe telefon merge și singur; ceasul e un plus.</p>
+          <p lang="en">No. The phone widget works on its own; the watch is a bonus.</p>
+        </details>
+        <details>
+          <summary><span lang="ro">Ce ceasuri merg?</span><span lang="en">Which watches work?</span></summary>
+          <p lang="ro">Orice ceas cu Wear OS 3 sau mai nou: Samsung Galaxy Watch 4 și următoarele, Google Pixel Watch, Xiaomi Watch 2. Ceasurile Samsung mai vechi (Tizen), Huawei, Garmin și Apple Watch nu sunt Wear OS, deci nu merg.</p>
+          <p lang="en">Any Wear OS 3 or newer watch: Samsung Galaxy Watch 4 and later, Google Pixel Watch, Xiaomi Watch 2. Older Samsung watches (Tizen), Huawei, Garmin and Apple Watch are not Wear OS, so they will not work.</p>
+        </details>
+        <details>
+          <summary><span lang="ro">Merge cu Libre, Dexcom G6/G7 sau Dexcom ONE (fără plus)?</span><span lang="en">Does it work with Libre, Dexcom G6/G7 or the original Dexcom ONE?</span></summary>
+          <p lang="ro">Deocamdată nu. Aplicația citește doar SinoCare LinX și Dexcom ONE+.</p>
+          <p lang="en">Not for now. The app reads only SinoCare LinX and Dexcom ONE+.</p>
+        </details>
+        <details>
+          <summary><span lang="ro">Merge pe iPhone?</span><span lang="en">Does it work on iPhone?</span></summary>
+          <p lang="ro">Nu. Doar pe telefoane Android și ceasuri Wear OS.</p>
+          <p lang="en">No. Android phones and Wear OS watches only.</p>
+        </details>
+        <details>
+          <summary><span lang="ro">Ce se întâmplă cu datele mele?</span><span lang="en">What happens to my data?</span></summary>
+          <p lang="ro">Rămân pe telefon și pe ceas. Aplicația nu are permisiunea de internet în Android, deci nu are cum să trimită ceva în altă parte. Codul e public pe GitHub.</p>
+          <p lang="en">It stays on your phone and watch. The app does not have Android's internet permission, so it has no way to send anything elsewhere. The code is public on GitHub.</p>
+        </details>
+        <details>
+          <summary><span lang="ro">Cum ia valoarea?</span><span lang="en">How does it get the value?</span></summary>
+          <p lang="ro">Citește notificarea pe care aplicația oficială a senzorului o afișează oricum pe telefon. Nu se conectează la senzor și nu modifică nimic în aplicația oficială.</p>
+          <p lang="en">It reads the notification the official sensor app already shows on your phone. It does not connect to the sensor and changes nothing in the official app.</p>
+        </details>
+        <details>
+          <summary><span lang="ro">Săgeata e aceeași ca în aplicația oficială?</span><span lang="en">Is the arrow the same as in the official app?</span></summary>
+          <p lang="ro">Nu neapărat. CGM Glance își calculează săgeata din ultimele 10 minute de citiri, deci poate diferi puțin de cea din aplicația senzorului.</p>
+          <p lang="en">Not necessarily. CGM Glance calculates its own arrow from the last 10 minutes of readings, so it can differ slightly from the one in the sensor app.</p>
+        </details>
+        <details>
+          <summary><span lang="ro">Are alarme?</span><span lang="en">Does it have alarms?</span></summary>
+          <p lang="ro">Nu. Doar afișează. Alarmele și deciziile de tratament rămân la aplicația oficială sau la glucometru.</p>
+          <p lang="en">No. It only displays. Alarms and treatment decisions stay with the official app or a meter.</p>
+        </details>
+        <details>
+          <summary><span lang="ro">În ce limbi e aplicația?</span><span lang="en">Which languages does the app speak?</span></summary>
+          <p lang="ro">Română, engleză, germană și franceză. Alegi limba din Setări sau o lași pe cea a telefonului.</p>
+          <p lang="en">English, Romanian, German and French. Pick one in Settings or leave it on the phone's language.</p>
+        </details>
+      </div>
     </div>
   </section>
 </main>
